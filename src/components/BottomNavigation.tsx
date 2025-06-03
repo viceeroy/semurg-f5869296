@@ -29,7 +29,7 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
               <Button
                 key={tab.id}
                 onClick={onUploadClick}
-                className="w-12 h-12 rounded-full nature-gradient text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
                 size="sm"
               >
                 <Icon className="w-6 h-6" />
@@ -42,7 +42,7 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={`flex flex-col items-center py-2 px-3 transition-colors duration-200 ${
-                isActive ? 'text-nature-green' : 'text-gray-500 hover:text-gray-700'
+                isActive ? 'text-emerald-600' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               <Icon className={`w-6 h-6 ${isActive ? 'stroke-2' : 'stroke-1.5'}`} />

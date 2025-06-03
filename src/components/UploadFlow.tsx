@@ -3,48 +3,94 @@ import { useState } from "react";
 import { Camera, Upload, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface UploadFlowProps {
   onClose: () => void;
+  onPostCreated?: () => void;
 }
 
-const UploadFlow = ({ onClose }: UploadFlowProps) => {
-  const [currentStep, setCurrentStep] = useState<"upload" | "analyzing" | "result" | "publish">("upload");
+const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
+  const { user } = useAuth();
+  const [currentStep, setCurrentStep] = useState<"upload" | "details" | "publishing">("upload");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [userNotes, setUserNotes] = useState("");
-  
-  // Mock AI result data
-  const [aiResult] = useState({
-    speciesName: "American Robin",
-    confidence: 94,
-    facts: "The American Robin (Turdus migratorius) is a migratory bird found throughout North America. Known for their orange-red breast and melodious song, they're often considered a sign of spring.",
-    habitat: "Gardens, parks, yards, and forests",
-    diet: "Earthworms, insects, and berries"
-  });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
         setSelectedImage(e.target?.result as string);
-        setCurrentStep("analyzing");
-        
-        // Simulate AI processing
-        setTimeout(() => {
-          setCurrentStep("result");
-        }, 3000);
+        setCurrentStep("details");
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handlePublish = () => {
-    setCurrentStep("publish");
-    setTimeout(() => {
-      onClose();
-    }, 2000);
+  const handlePublish = async () => {
+    if (!user || !selectedFile || !title) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    setCurrentStep("publishing");
+
+    try {
+      // Upload image to Supabase Storage (for now we'll use the data URL)
+      // In a real app, you'd upload to Supabase Storage and get a public URL
+      
+      // Create post in database
+      const { error } = await supabase
+        .from('posts')
+        .insert({
+          user_id: user.id,
+          title,
+          description,
+          image_url: selectedImage!, // In production, use actual uploaded image URL
+          location_name: location,
+          latitude: 0, // You could add geolocation here
+          longitude: 0
+        });
+
+      if (error) {
+        toast.error('Error creating post: ' + error.message);
+        setCurrentStep("details");
+        return;
+      }
+
+      toast.success('Post published successfully!');
+      onPostCreated?.();
+      setTimeout(() => {
+        onClose();
+      }, 1000);
+    } catch (error) {
+      toast.error('Error publishing post');
+      setCurrentStep("details");
+    }
   };
+
+  if (!user) {
+    return (
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-6 max-w-md w-full text-center">
+          <h3 className="text-lg font-semibold mb-2">Sign in required</h3>
+          <p className="text-gray-600 mb-4">Please sign in to upload photos</p>
+          <Button onClick={onClose} className="w-full">
+            Close
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -53,9 +99,8 @@ const UploadFlow = ({ onClose }: UploadFlowProps) => {
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-xl font-bold text-gray-900">
             {currentStep === "upload" && "Upload Photo"}
-            {currentStep === "analyzing" && "Analyzing..."}
-            {currentStep === "result" && "Species Identified!"}
-            {currentStep === "publish" && "Publishing..."}
+            {currentStep === "details" && "Add Details"}
+            {currentStep === "publishing" && "Publishing..."}
           </h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="w-5 h-5" />
@@ -67,16 +112,16 @@ const UploadFlow = ({ onClose }: UploadFlowProps) => {
           <div className="p-6">
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
               <div className="space-y-4">
-                <div className="w-16 h-16 bg-nature-green/10 rounded-full flex items-center justify-center mx-auto">
-                  <Camera className="w-8 h-8 text-nature-green" />
+                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
+                  <Camera className="w-8 h-8 text-emerald-600" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Take or Upload a Photo</h3>
-                  <p className="text-gray-600 text-sm">Capture wildlife and let AI identify the species for you</p>
+                  <p className="text-gray-600 text-sm">Capture wildlife and share your discovery</p>
                 </div>
                 <div className="space-y-3">
                   <label htmlFor="photo-upload">
-                    <Button className="w-full nature-gradient text-white" asChild>
+                    <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" asChild>
                       <span>
                         <Upload className="w-4 h-4 mr-2" />
                         Choose from Gallery
@@ -90,90 +135,74 @@ const UploadFlow = ({ onClose }: UploadFlowProps) => {
                     className="hidden"
                     onChange={handleImageUpload}
                   />
-                  <Button variant="outline" className="w-full">
-                    <Camera className="w-4 h-4 mr-2" />
-                    Take Photo
-                  </Button>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Analyzing Step */}
-        {currentStep === "analyzing" && selectedImage && (
-          <div className="p-6">
-            <div className="text-center space-y-4">
-              <img
-                src={selectedImage}
-                alt="Uploaded"
-                className="w-full h-64 object-cover rounded-lg"
-              />
-              <div className="space-y-2">
-                <Loader2 className="w-8 h-8 animate-spin text-nature-green mx-auto" />
-                <h3 className="text-lg font-semibold text-gray-900">Analyzing your photo...</h3>
-                <p className="text-gray-600">Our AI is identifying the species</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Result Step */}
-        {currentStep === "result" && selectedImage && (
+        {/* Details Step */}
+        {currentStep === "details" && selectedImage && (
           <div className="p-6 space-y-6">
             <img
               src={selectedImage}
-              alt="Uploaded"
+              alt="Preview"
               className="w-full h-48 object-cover rounded-lg"
             />
             
-            <div className="bg-nature-green/10 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-bold text-gray-900">{aiResult.speciesName}</h3>
-                <span className="bg-nature-green text-white px-2 py-1 rounded-full text-xs font-medium">
-                  {aiResult.confidence}% confident
-                </span>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="title">Species/Title *</Label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g., American Robin"
+                  required
+                />
               </div>
-              <p className="text-sm text-gray-700 mb-3">{aiResult.facts}</p>
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div>
-                  <span className="font-medium text-gray-900">Habitat:</span>
-                  <p className="text-gray-600">{aiResult.habitat}</p>
-                </div>
-                <div>
-                  <span className="font-medium text-gray-900">Diet:</span>
-                  <p className="text-gray-600">{aiResult.diet}</p>
-                </div>
-              </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Add your notes (optional)
-              </label>
-              <Textarea
-                placeholder="Share your experience or observations..."
-                value={userNotes}
-                onChange={(e) => setUserNotes(e.target.value)}
-                className="min-h-[80px]"
-              />
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Share details about your wildlife discovery..."
+                  className="min-h-[80px]"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="e.g., Central Park, NYC"
+                />
+              </div>
             </div>
 
             <div className="flex space-x-3">
-              <Button variant="outline" className="flex-1" onClick={onClose}>
-                Save Draft
+              <Button variant="outline" className="flex-1" onClick={() => setCurrentStep("upload")}>
+                Back
               </Button>
-              <Button className="flex-1 nature-gradient text-white" onClick={handlePublish}>
+              <Button 
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white" 
+                onClick={handlePublish}
+                disabled={!title}
+              >
                 Publish
               </Button>
             </div>
           </div>
         )}
 
-        {/* Publish Step */}
-        {currentStep === "publish" && (
+        {/* Publishing Step */}
+        {currentStep === "publishing" && (
           <div className="p-6 text-center space-y-4">
-            <div className="w-16 h-16 bg-nature-green rounded-full flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 bg-emerald-600 rounded-full flex items-center justify-center mx-auto">
               <Loader2 className="w-8 h-8 animate-spin text-white" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900">Publishing your discovery...</h3>
