@@ -11,6 +11,7 @@ interface SavedPost {
   image: string;
   speciesName: string;
   aiInfo: string;
+  userNotes: string;
   userName: string;
   userAvatar: string;
   likes: number;
@@ -63,6 +64,7 @@ const CollectionsPage = () => {
         image: post.image_url,
         speciesName: post.title,
         aiInfo: post.description || '',
+        userNotes: '',
         userName: post.profiles?.username || 'You',
         userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
         likes: post.likes.length,
