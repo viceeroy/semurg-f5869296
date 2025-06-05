@@ -63,6 +63,42 @@ const CollectionsPage = () => {
       likes: 15,
       isLiked: true,
       category: 'mammal'
+    },
+    {
+      id: 'saved-4',
+      image: 'https://images.unsplash.com/photo-1470509037663-253afd7f0f51?w=800',
+      speciesName: 'Wild Sunflower',
+      aiInfo: 'Wild Sunflowers (Helianthus) are native wildflowers that provide essential food for birds and pollinators. They can grow up to 10 feet tall and bloom from summer through fall.',
+      userNotes: 'Beautiful field of sunflowers found during nature walk.',
+      userName: 'You',
+      userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      likes: 23,
+      isLiked: true,
+      category: 'plant'
+    },
+    {
+      id: 'saved-5',
+      image: 'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=800',
+      speciesName: 'Red Fox',
+      aiInfo: 'The Red Fox (Vulpes vulpes) is the most widespread carnivore in the world. They are highly adaptable animals with excellent hearing and can detect small mammals under snow.',
+      userNotes: 'Lucky to spot this beautiful fox at dawn in the forest.',
+      userName: 'You',
+      userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      likes: 31,
+      isLiked: false,
+      category: 'mammal'
+    },
+    {
+      id: 'saved-6',
+      image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
+      speciesName: 'White Oak',
+      aiInfo: 'The White Oak (Quercus alba) is a majestic tree that can live for centuries. It provides food for over 500 species of butterflies and moths, and its acorns feed many wildlife species.',
+      userNotes: 'This ancient oak has been standing here for over 200 years.',
+      userName: 'You',
+      userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      likes: 18,
+      isLiked: true,
+      category: 'plant'
     }
   ];
 

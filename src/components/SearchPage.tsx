@@ -19,26 +19,26 @@ const SearchPage = () => {
 
   const recentSearches = [
     "Northern Red Cardinal",
-    "Monarch Butterfly Migration",
+    "White Oak Tree",
     "Eastern Gray Squirrel",
     "White-tailed Deer",
     "Great Blue Heron",
+    "Wild Sunflower",
     "Red-winged Blackbird",
-    "Cooper's Hawk",
-    "Wild Turkey"
+    "American Robin"
   ];
 
   const trendingSpecies = [
     { name: "Northern Cardinal", count: "1,247 posts" },
-    { name: "American Robin", count: "1,156 posts" },
+    { name: "White Oak Tree", count: "1,156 posts" },
     { name: "Blue Jay", count: "987 posts" },
-    { name: "House Sparrow", count: "854 posts" },
-    { name: "Red-tailed Hawk", count: "723 posts" },
-    { name: "White-tailed Deer", count: "698 posts" },
+    { name: "Red-tailed Hawk", count: "854 posts" },
+    { name: "White-tailed Deer", count: "723 posts" },
+    { name: "Wild Rose", count: "698 posts" },
     { name: "Eastern Gray Squirrel", count: "634 posts" },
-    { name: "Mourning Dove", count: "567 posts" },
-    { name: "American Goldfinch", count: "523 posts" },
-    { name: "Red-winged Blackbird", count: "489 posts" }
+    { name: "American Robin", count: "567 posts" },
+    { name: "Black Bear", count: "523 posts" },
+    { name: "Purple Coneflower", count: "489 posts" }
   ];
 
   return (
