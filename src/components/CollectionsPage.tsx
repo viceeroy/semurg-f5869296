@@ -26,6 +26,46 @@ const CollectionsPage = () => {
   const [savedPosts, setSavedPosts] = useState<SavedPost[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Mock saved posts for when user has no posts
+  const mockSavedPosts = [
+    {
+      id: 'saved-1',
+      image: 'https://images.unsplash.com/photo-1518373714866-3f1478910cc0?w=800',
+      speciesName: 'Northern Cardinal',
+      aiInfo: 'The Northern Cardinal (Cardinalis cardinalis) is a beautiful songbird native to North America. Males are brilliant red with a black face mask, while females are warm brown with reddish tinges.',
+      userNotes: 'Spotted this gorgeous male cardinal in my backyard this morning!',
+      userName: 'You',
+      userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      likes: 12,
+      isLiked: true,
+      category: 'bird'
+    },
+    {
+      id: 'saved-2',
+      image: 'https://images.unsplash.com/photo-1558618066-fcd25c85cd64?w=800',
+      speciesName: 'Great Blue Heron',
+      aiInfo: 'The Great Blue Heron (Ardea herodias) is the largest North American heron. These impressive wading birds are patient hunters, often standing motionless for long periods.',
+      userNotes: 'Amazing patience watching this heron hunt for fish at the lake.',
+      userName: 'You',
+      userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      likes: 8,
+      isLiked: false,
+      category: 'bird'
+    },
+    {
+      id: 'saved-3',
+      image: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800',
+      speciesName: 'White-tailed Deer',
+      aiInfo: 'White-tailed deer (Odocoileus virginianus) are medium-sized deer native to North America. They are recognizable by the white underside of their tails.',
+      userNotes: 'Family of deer spotted during early morning hike.',
+      userName: 'You',
+      userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      likes: 15,
+      isLiked: true,
+      category: 'mammal'
+    }
+  ];
+
   const filters = [
     { id: "all", label: "All", count: savedPosts.length },
     { id: "birds", label: "Birds", count: savedPosts.filter(p => p.category === "bird").length },
@@ -72,7 +112,7 @@ const CollectionsPage = () => {
         category: 'bird' // Default category, in real app this would come from AI identification
       })) || [];
 
-      setSavedPosts(formattedPosts);
+      setSavedPosts(formattedPosts.length > 0 ? formattedPosts : mockSavedPosts);
     } catch (error) {
       console.error('Error:', error);
     } finally {

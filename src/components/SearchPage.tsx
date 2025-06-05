@@ -18,17 +18,27 @@ const SearchPage = () => {
   ];
 
   const recentSearches = [
-    "Red Cardinal",
-    "Oak Tree",
-    "Monarch Butterfly",
-    "Eastern Chipmunk",
+    "Northern Red Cardinal",
+    "Monarch Butterfly Migration",
+    "Eastern Gray Squirrel",
+    "White-tailed Deer",
+    "Great Blue Heron",
+    "Red-winged Blackbird",
+    "Cooper's Hawk",
+    "Wild Turkey"
   ];
 
   const trendingSpecies = [
-    { name: "Ruby-throated Hummingbird", count: "234 posts" },
-    { name: "American Robin", count: "189 posts" },
-    { name: "Blue Jay", count: "167 posts" },
-    { name: "House Sparrow", count: "145 posts" },
+    { name: "Northern Cardinal", count: "1,247 posts" },
+    { name: "American Robin", count: "1,156 posts" },
+    { name: "Blue Jay", count: "987 posts" },
+    { name: "House Sparrow", count: "854 posts" },
+    { name: "Red-tailed Hawk", count: "723 posts" },
+    { name: "White-tailed Deer", count: "698 posts" },
+    { name: "Eastern Gray Squirrel", count: "634 posts" },
+    { name: "Mourning Dove", count: "567 posts" },
+    { name: "American Goldfinch", count: "523 posts" },
+    { name: "Red-winged Blackbird", count: "489 posts" }
   ];
 
   return (
