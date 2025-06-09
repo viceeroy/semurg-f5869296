@@ -71,6 +71,12 @@ Please identify this wildlife species and provide detailed information.`
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        throw new Error('Rate limit exceeded. Please wait a moment and try again.');
+      }
+      if (response.status === 401) {
+        throw new Error('Invalid API key. Please check your OpenAI API key.');
+      }
       throw new Error(`OpenAI API error: ${response.statusText}`);
     }
 
