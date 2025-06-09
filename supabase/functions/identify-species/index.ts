@@ -26,7 +26,15 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured');
     }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    console.log('Making OpenAI API request with image...');
+
+    // Add retry logic for rate limiting
+    let retries = 0;
+    const maxRetries = 3;
+    let response;
+
+    while (retries <= maxRetries) {
+      response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${openAIApiKey}`,
@@ -70,14 +78,28 @@ Please identify this wildlife species and provide detailed information.`
       }),
     });
 
-    if (!response.ok) {
-      if (response.status === 429) {
-        throw new Error('Rate limit exceeded. Please wait a moment and try again.');
+      if (response.ok) {
+        break; // Success, exit retry loop
       }
+
+      if (response.status === 429 && retries < maxRetries) {
+        console.log(`Rate limited, retrying in ${(retries + 1) * 2} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, (retries + 1) * 2000));
+        retries++;
+        continue;
+      }
+
+      // Handle other errors
       if (response.status === 401) {
         throw new Error('Invalid API key. Please check your OpenAI API key.');
       }
-      throw new Error(`OpenAI API error: ${response.statusText}`);
+      if (response.status === 429) {
+        throw new Error('Rate limit exceeded. Please wait a moment and try again.');
+      }
+      
+      const errorText = await response.text();
+      console.error('OpenAI API error:', errorText);
+      throw new Error(`OpenAI API error (${response.status}): ${errorText}`);
     }
 
     const data = await response.json();
