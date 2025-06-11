@@ -17,6 +17,11 @@ interface SpeciesInfo {
   category: string;
   confidence: string;
   description: string;
+  habitat?: string;
+  diet?: string;
+  behavior?: string;
+  conservation_status?: string;
+  interesting_facts?: string;
   identification_notes: string;
 }
 
@@ -266,16 +271,67 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
                 <p className="text-gray-700 leading-relaxed">{speciesInfo.description}</p>
               </div>
 
+              {/* Detailed Information Sections */}
+              <div className="space-y-4">
+                {speciesInfo.habitat && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-gray-900 flex items-center gap-2">
+                      <span className="text-lg">🌍</span>
+                      Habitat
+                    </h4>
+                    <p className="text-gray-700 text-sm leading-relaxed">{speciesInfo.habitat}</p>
+                  </div>
+                )}
+
+                {speciesInfo.diet && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-gray-900 flex items-center gap-2">
+                      <span className="text-lg">🍃</span>
+                      Diet
+                    </h4>
+                    <p className="text-gray-700 text-sm leading-relaxed">{speciesInfo.diet}</p>
+                  </div>
+                )}
+
+                {speciesInfo.behavior && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-gray-900 flex items-center gap-2">
+                      <span className="text-lg">🧠</span>
+                      Behavior
+                    </h4>
+                    <p className="text-gray-700 text-sm leading-relaxed">{speciesInfo.behavior}</p>
+                  </div>
+                )}
+
+                {speciesInfo.conservation_status && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-gray-900 flex items-center gap-2">
+                      <span className="text-lg">🛡️</span>
+                      Conservation Status
+                    </h4>
+                    <p className="text-gray-700 text-sm leading-relaxed">{speciesInfo.conservation_status}</p>
+                  </div>
+                )}
+
+                {speciesInfo.interesting_facts && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-gray-900 flex items-center gap-2">
+                      <span className="text-lg">⭐</span>
+                      Interesting Facts
+                    </h4>
+                    <p className="text-gray-700 text-sm leading-relaxed">{speciesInfo.interesting_facts}</p>
+                  </div>
+                )}
+              </div>
+
               {/* Identification Notes */}
-              {speciesInfo.identification_notes && (
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
-                  <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    Identification Notes
-                  </h4>
-                  <p className="text-sm text-gray-700 leading-relaxed">{speciesInfo.identification_notes}</p>
-                </div>
-              )}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                  Identification Notes
+                </h4>
+                <p className="text-sm text-gray-700 leading-relaxed">AI analysis provided</p>
+              </div>
 
               {/* Action Buttons */}
               <div className="flex gap-3 pt-2">

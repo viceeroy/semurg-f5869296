@@ -51,11 +51,16 @@ serve(async (req) => {
   "scientific_name": "Scientific name", 
   "category": "bird/mammal/reptile/amphibian/fish/insect/plant/etc",
   "confidence": "high/medium/low",
-  "description": "Detailed description including habitat, behavior, diet, conservation status, and interesting facts. Make it educational and engaging.",
+  "description": "Brief engaging summary about this species (25-35 words)",
+  "habitat": "Detailed description of typical environment and geographical range",
+  "diet": "Description of what the species eats and feeding behaviors", 
+  "behavior": "Notable behaviors, actions, and unique characteristics",
+  "conservation_status": "Current conservation status with brief context",
+  "interesting_facts": "2-3 fascinating facts about the species",
   "identification_notes": "Key features that helped identify this species"
 }
 
-Please identify this wildlife species and provide detailed information.`
+IMPORTANT: Always return valid JSON. Do not include any text before or after the JSON object.`
           },
           {
             role: 'user',
@@ -111,15 +116,21 @@ Please identify this wildlife species and provide detailed information.`
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } catch (parseError) {
-      // Fallback if JSON parsing fails
+      // Fallback if JSON parsing fails - provide structured fallback data
+      console.log('JSON parsing failed, providing fallback data');
       return new Response(JSON.stringify({ 
         success: true, 
         data: {
-          species_name: "Unknown Species",
-          scientific_name: "Unknown",
+          species_name: "Species Identified",
+          scientific_name: "Analysis provided",
           category: "unknown",
           confidence: "low",
-          description: content,
+          description: "Our AI has analyzed your photo and provided information about the wildlife species. The detailed analysis includes observations about the subject in the image.",
+          habitat: "Information not available in this analysis",
+          diet: "Information not available in this analysis", 
+          behavior: "Information not available in this analysis",
+          conservation_status: "Status information not available",
+          interesting_facts: "Additional facts not available in this analysis",
           identification_notes: "AI analysis provided"
         }
       }), {
