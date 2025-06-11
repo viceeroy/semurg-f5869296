@@ -60,7 +60,7 @@ serve(async (req) => {
   "identification_notes": "Key features that helped identify this species"
 }
 
-IMPORTANT: Always return valid JSON. Do not include any text before or after the JSON object.`
+CRITICAL: Fill all existing detailed information sections (Habitat, Diet, Behavior, Conservation Status, and Interesting Facts) with comprehensive and specific content relevant to the identified species. Ensure the content for each section is well-written and informative. If specific categorized data is not explicitly provided by the identification AI, synthesize it intelligently from the overall description to populate these fields. The goal is to present a full, beautiful result, with no sections remaining empty or showing 'Information not available'. Always return valid JSON. Do not include any text before or after the JSON object.`
           },
           {
             role: 'user',
