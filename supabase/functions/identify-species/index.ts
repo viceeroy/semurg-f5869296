@@ -123,6 +123,21 @@ CRITICAL: Fill all existing detailed information sections (Habitat, Diet, Behavi
       }
       
       const speciesInfo = JSON.parse(jsonContent);
+      
+      // Validate that the identified species is wildlife (birds, animals, plants)
+      const allowedCategories = ['bird', 'mammal', 'reptile', 'amphibian', 'fish', 'insect', 'plant', 'fungi', 'marine life'];
+      const identifiedCategory = speciesInfo.category?.toLowerCase() || '';
+      
+      if (!allowedCategories.includes(identifiedCategory)) {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: "Please upload a picture of an animal, bird, or plant to analyze and help you discover wildlife species."
+        }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
       return new Response(JSON.stringify({ success: true, data: speciesInfo }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -183,6 +198,21 @@ Image: ${imageUrl}`
           }
           
           const retrySpeciesInfo = JSON.parse(retryJsonContent);
+          
+          // Validate retry result as well
+          const allowedCategories = ['bird', 'mammal', 'reptile', 'amphibian', 'fish', 'insect', 'plant', 'fungi', 'marine life'];
+          const retryCategory = retrySpeciesInfo.category?.toLowerCase() || '';
+          
+          if (!allowedCategories.includes(retryCategory)) {
+            return new Response(JSON.stringify({ 
+              success: false, 
+              error: "Please upload a picture of an animal, bird, or plant to analyze and help you discover wildlife species."
+            }), {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
+          }
+          
           return new Response(JSON.stringify({ success: true, data: retrySpeciesInfo }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
