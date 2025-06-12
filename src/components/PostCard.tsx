@@ -127,25 +127,23 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
           </Button>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onSave(post.id)}
-            className="text-muted-foreground hover:text-emerald-600 text-xs"
+            className="p-2 text-muted-foreground hover:text-emerald-600"
           >
-            <Bookmark className="w-4 h-4 mr-1" />
-            Save to Collection
+            <Bookmark className="w-5 h-5" />
           </Button>
           
           <Button
             variant="ghost"
             size="sm"
             onClick={handleShare}
-            className="text-muted-foreground hover:text-emerald-600 text-xs"
+            className="p-2 text-muted-foreground hover:text-emerald-600"
           >
-            <Share2 className="w-4 h-4 mr-1" />
-            Share Discovery
+            <Share2 className="w-5 h-5" />
           </Button>
         </div>
       </div>
