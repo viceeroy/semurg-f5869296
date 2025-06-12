@@ -111,29 +111,92 @@ CRITICAL: Fill all existing detailed information sections (Habitat, Diet, Behavi
     const content = data.choices[0].message.content;
     
     try {
-      const speciesInfo = JSON.parse(content);
+      // Try to extract JSON from the response, handling cases where OpenAI adds extra text
+      let jsonContent = content.trim();
+      
+      // Look for JSON object in the response
+      const jsonStart = jsonContent.indexOf('{');
+      const jsonEnd = jsonContent.lastIndexOf('}');
+      
+      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+        jsonContent = jsonContent.substring(jsonStart, jsonEnd + 1);
+      }
+      
+      const speciesInfo = JSON.parse(jsonContent);
       return new Response(JSON.stringify({ success: true, data: speciesInfo }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } catch (parseError) {
-      // Fallback if JSON parsing fails - provide structured fallback data
-      console.log('JSON parsing failed, providing fallback data');
-      return new Response(JSON.stringify({ 
-        success: true, 
-        data: {
-          species_name: "Species Identified",
-          scientific_name: "Analysis provided",
-          category: "unknown",
-          confidence: "low",
-          description: "Our AI has analyzed your photo and provided information about the wildlife species. The detailed analysis includes observations about the subject in the image.",
-          habitat: "Information not available in this analysis",
-          diet: "Information not available in this analysis", 
-          behavior: "Information not available in this analysis",
-          conservation_status: "Status information not available",
-          interesting_facts: "Additional facts not available in this analysis",
-          identification_notes: "AI analysis provided"
+      console.error('JSON parsing failed:', parseError);
+      console.log('Original content:', content);
+      
+      // Try to make another request with a more explicit prompt
+      const retryResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${openAIApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a wildlife expert. Return ONLY a valid JSON object with species information. No other text.`
+            },
+            {
+              role: 'user',
+              content: `Please identify this wildlife species and return ONLY valid JSON with this exact structure:
+{
+  "species_name": "Common name",
+  "scientific_name": "Scientific name", 
+  "category": "bird/mammal/reptile/etc",
+  "confidence": "high/medium/low",
+  "description": "Brief description",
+  "habitat": "Habitat information",
+  "diet": "Diet information", 
+  "behavior": "Behavior information",
+  "conservation_status": "Conservation status",
+  "interesting_facts": "Interesting facts",
+  "identification_notes": "Key identification features"
+}
+
+Image: ${imageUrl}`
+            }
+          ],
+          max_tokens: 800,
+          temperature: 0.1
+        }),
+      });
+
+      if (retryResponse.ok) {
+        const retryData = await retryResponse.json();
+        const retryContent = retryData.choices[0].message.content.trim();
+        
+        try {
+          let retryJsonContent = retryContent;
+          const retryJsonStart = retryJsonContent.indexOf('{');
+          const retryJsonEnd = retryJsonContent.lastIndexOf('}');
+          
+          if (retryJsonStart !== -1 && retryJsonEnd !== -1 && retryJsonEnd > retryJsonStart) {
+            retryJsonContent = retryJsonContent.substring(retryJsonStart, retryJsonEnd + 1);
+          }
+          
+          const retrySpeciesInfo = JSON.parse(retryJsonContent);
+          return new Response(JSON.stringify({ success: true, data: retrySpeciesInfo }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        } catch (retryParseError) {
+          console.error('Retry parsing also failed:', retryParseError);
         }
+      }
+      
+      // Final fallback
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: "Unable to parse species identification results"
       }), {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
