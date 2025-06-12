@@ -191,10 +191,15 @@ const HomeFeed = () => {
               userName: post.profiles?.username || 'Anonymous',
               userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
               likes: post.likes.length,
-              isLiked: post.likes.some(like => like.user_id === user?.id)
+              isLiked: post.likes.some(like => like.user_id === user?.id),
+              tags: [`#${post.title.replace(/\s+/g, '')}`, '#Wildlife'],
+              badge: 'Newly Discovered',
+              comments: 0
             }}
             onLike={handleLike}
             onSave={handleSave}
+            onComment={() => {}}
+            onShare={() => {}}
           />
         ))}
       </div>

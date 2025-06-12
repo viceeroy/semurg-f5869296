@@ -17,6 +17,9 @@ interface SavedPost {
   likes: number;
   isLiked: boolean;
   category: string;
+  tags: string[];
+  badge?: string;
+  comments: number;
 }
 
 const CollectionsPage = () => {
@@ -38,7 +41,10 @@ const CollectionsPage = () => {
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
       likes: 12,
       isLiked: true,
-      category: 'bird'
+      category: 'bird',
+      tags: ['#NorthernCardinal', '#Backyard'],
+      badge: 'Easy to spot',
+      comments: 3
     },
     {
       id: 'saved-2',
@@ -50,7 +56,10 @@ const CollectionsPage = () => {
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
       likes: 8,
       isLiked: false,
-      category: 'bird'
+      category: 'bird',
+      tags: ['#GreatBlueHeron', '#Lake'],
+      badge: 'Patient Hunter',
+      comments: 1
     },
     {
       id: 'saved-3',
@@ -62,7 +71,10 @@ const CollectionsPage = () => {
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
       likes: 15,
       isLiked: true,
-      category: 'mammal'
+      category: 'mammal',
+      tags: ['#WhiteTailedDeer', '#Morning'],
+      badge: 'Family Group',
+      comments: 2
     },
     {
       id: 'saved-4',
@@ -74,7 +86,10 @@ const CollectionsPage = () => {
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
       likes: 23,
       isLiked: true,
-      category: 'plant'
+      category: 'plant',
+      tags: ['#Sunflower', '#Prairie'],
+      badge: 'Pollinator Friendly',
+      comments: 5
     },
     {
       id: 'saved-5',
@@ -86,7 +101,10 @@ const CollectionsPage = () => {
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
       likes: 31,
       isLiked: false,
-      category: 'mammal'
+      category: 'mammal',
+      tags: ['#RedFox', '#Dawn'],
+      badge: 'Rare Sighting',
+      comments: 4
     },
     {
       id: 'saved-6',
@@ -98,7 +116,10 @@ const CollectionsPage = () => {
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
       likes: 18,
       isLiked: true,
-      category: 'plant'
+      category: 'plant',
+      tags: ['#WhiteOak', '#Ancient'],
+      badge: 'Historic Tree',
+      comments: 0
     }
   ];
 
@@ -145,7 +166,10 @@ const CollectionsPage = () => {
         userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
         likes: post.likes.length,
         isLiked: post.likes.some(like => like.user_id === user?.id),
-        category: 'bird' // Default category, in real app this would come from AI identification
+        category: 'bird', // Default category, in real app this would come from AI identification
+        tags: [`#${post.title.replace(/\s+/g, '')}`, '#MyDiscovery'],
+        badge: 'My Discovery',
+        comments: 0
       })) || [];
 
       setSavedPosts(formattedPosts.length > 0 ? formattedPosts : mockSavedPosts);
@@ -249,6 +273,8 @@ const CollectionsPage = () => {
                     post={post}
                     onLike={handleLike}
                     onSave={handleSave}
+                    onComment={() => {}}
+                    onShare={() => {}}
                   />
                 ) : (
                   <div className="glass-card rounded-xl overflow-hidden">

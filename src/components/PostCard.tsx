@@ -1,6 +1,8 @@
 
-import { Heart, MessageCircle, Bookmark } from "lucide-react";
+import { Heart, MessageCircle, Bookmark, Share2, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 
 interface PostCardProps {
   post: {
@@ -13,79 +15,164 @@ interface PostCardProps {
     userAvatar: string;
     likes: number;
     isLiked: boolean;
+    tags: string[];
+    badge?: string;
+    comments: number;
   };
   onLike: (postId: string) => void;
   onSave: (postId: string) => void;
+  onComment: (postId: string) => void;
+  onShare: (postId: string) => void;
 }
 
-const PostCard = ({ post, onLike, onSave }: PostCardProps) => {
+const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) => {
+  const [showComments, setShowComments] = useState(false);
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: `Check out this ${post.speciesName}`,
+        text: post.aiInfo,
+        url: window.location.href,
+      });
+    } else {
+      // Fallback for browsers without native sharing
+      navigator.clipboard.writeText(window.location.href);
+      // You could show a toast here
+    }
+    onShare(post.id);
+  };
+
   return (
-    <div className="glass-card rounded-2xl overflow-hidden mb-6 shadow-sm">
-      {/* Header */}
-      <div className="flex items-center p-4 pb-3">
-        <img
-          src={post.userAvatar}
-          alt={post.userName}
-          className="w-10 h-10 rounded-full object-cover mr-3"
-        />
-        <div className="flex-1">
-          <h3 className="font-semibold text-gray-900">{post.userName}</h3>
-          <p className="text-sm text-gray-600">{post.speciesName}</p>
+    <div className="bg-emerald-50/80 rounded-2xl p-4 mb-6 shadow-lg border border-emerald-100">
+      {/* User Info Row */}
+      <div className="flex items-center mb-4">
+        <div className="w-10 h-10 rounded-full bg-emerald-200 flex items-center justify-center mr-3">
+          <Leaf className="w-6 h-6 text-emerald-600" />
         </div>
+        <div className="flex-1">
+          <h3 className="font-semibold text-foreground">{post.userName}</h3>
+          <p className="text-sm text-emerald-600 font-medium">Species Identified</p>
+        </div>
+        {post.badge && (
+          <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 border-emerald-200">
+            {post.badge}
+          </Badge>
+        )}
       </div>
 
-      {/* Image */}
-      <div className="relative">
+      {/* Image Section */}
+      <div className="bg-blue-50 rounded-xl p-4 mb-4">
         <img
           src={post.image}
           alt={post.speciesName}
-          className="w-full h-80 object-cover"
+          className="w-full h-64 object-cover rounded-lg"
         />
       </div>
 
-      {/* Actions */}
-      <div className="flex items-center justify-between p-4">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onLike(post.id)}
-            className={`p-2 ${post.isLiked ? 'text-red-500' : 'text-gray-600'} hover:text-red-500`}
-          >
-            <Heart className={`w-6 h-6 ${post.isLiked ? 'fill-current' : ''}`} />
-          </Button>
-          <Button variant="ghost" size="sm" className="p-2 text-gray-600 hover:text-gray-800">
-            <MessageCircle className="w-6 h-6" />
-          </Button>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onSave(post.id)}
-          className="p-2 text-gray-600 hover:text-nature-green"
-        >
-          <Bookmark className="w-6 h-6" />
-        </Button>
-      </div>
+      {/* Description Section */}
+      <div className="mb-4">
+        <h4 className="font-bold text-foreground mb-2">AI Identification</h4>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+          {post.aiInfo}
+        </p>
 
-      {/* Content */}
-      <div className="px-4 pb-4">
-        <p className="font-semibold text-gray-900 mb-1">{post.likes} likes</p>
-        
-        {/* AI Info */}
-        <div className="bg-nature-green/10 rounded-lg p-3 mb-3">
-          <p className="text-sm text-gray-800 font-medium mb-1">AI Identification:</p>
-          <p className="text-sm text-gray-700">{post.aiInfo}</p>
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mb-3">
+          {post.tags.map((tag, index) => (
+            <Button
+              key={index}
+              variant="outline"
+              size="sm"
+              className="bg-blue-100 border-blue-200 text-blue-700 hover:bg-blue-200 rounded-full px-3 py-1 text-xs"
+            >
+              {tag}
+            </Button>
+          ))}
         </div>
 
         {/* User Notes */}
         {post.userNotes && (
-          <p className="text-sm text-gray-800">
+          <p className="text-sm text-foreground">
             <span className="font-semibold mr-2">{post.userName}</span>
             {post.userNotes}
           </p>
         )}
       </div>
+
+      {/* Interaction Row */}
+      <div className="flex items-center justify-between pt-3 border-t border-emerald-100">
+        <div className="flex items-center space-x-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onLike(post.id)}
+            className={`p-2 ${post.isLiked ? 'text-red-500' : 'text-muted-foreground'} hover:text-red-500`}
+          >
+            <Heart className={`w-5 h-5 ${post.isLiked ? 'fill-current' : ''}`} />
+            <span className="ml-1 text-sm">{post.likes}</span>
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setShowComments(!showComments);
+              onComment(post.id);
+            }}
+            className="p-2 text-muted-foreground hover:text-foreground"
+          >
+            <MessageCircle className="w-5 h-5" />
+            <span className="ml-1 text-sm">{post.comments}</span>
+          </Button>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onSave(post.id)}
+            className="text-muted-foreground hover:text-emerald-600 text-xs"
+          >
+            <Bookmark className="w-4 h-4 mr-1" />
+            Save to Collection
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleShare}
+            className="text-muted-foreground hover:text-emerald-600 text-xs"
+          >
+            <Share2 className="w-4 h-4 mr-1" />
+            Share Discovery
+          </Button>
+        </div>
+      </div>
+
+      {/* Comments Section */}
+      {showComments && (
+        <div className="mt-4 pt-3 border-t border-emerald-100">
+          <div className="space-y-2 mb-3">
+            {/* Mock comments - in real app, these would come from props */}
+            <div className="text-sm">
+              <span className="font-semibold text-foreground">naturelover23:</span>{" "}
+              <span className="text-muted-foreground">Great shot! I love seeing these in the wild.</span>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              placeholder="Add a comment..."
+              className="flex-1 px-3 py-2 text-sm bg-white border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+              <Share2 className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
