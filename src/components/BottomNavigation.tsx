@@ -1,5 +1,5 @@
 
-import { Home, Search, Plus, Heart, User } from "lucide-react";
+import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface BottomNavigationProps {
@@ -8,12 +8,25 @@ interface BottomNavigationProps {
   onUploadClick: () => void;
 }
 
+// Custom icons based on the design
+const DiscoverIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M12 6v6l4 2"/>
+  </svg>
+);
+
+const IdentifySpeciesIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+    <polyline points="7.5,10 12,15 16.5,10"/>
+  </svg>
+);
+
 const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavigationProps) => {
   const tabs = [
-    { id: 'home', icon: Home, label: 'Home' },
-    { id: 'search', icon: Search, label: 'Search' },
-    { id: 'upload', icon: Plus, label: 'Upload', isSpecial: true },
-    { id: 'collections', icon: Heart, label: 'Collections' },
+    { id: 'home', icon: DiscoverIcon, label: 'Discovery' },
+    { id: 'upload', icon: IdentifySpeciesIcon, label: 'Identify Species', isSpecial: true },
     { id: 'profile', icon: User, label: 'Profile' },
   ];
 
