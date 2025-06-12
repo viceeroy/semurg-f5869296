@@ -45,11 +45,13 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are a wildlife expert. Analyze the image and provide detailed information about the species in JSON format:
+            content: `You are a wildlife expert. CRITICAL: Only identify REAL wildlife species (birds, mammals, reptiles, amphibians, fish, insects, plants, fungi, marine life). If the image shows anything else (people, objects, buildings, food, vehicles, etc.), you MUST respond with a category of "not_wildlife".
+
+Analyze the image and provide detailed information about the species in JSON format:
 {
   "species_name": "Common name of the species",
   "scientific_name": "Scientific name", 
-  "category": "bird/mammal/reptile/amphibian/fish/insect/plant/etc",
+  "category": "bird/mammal/reptile/amphibian/fish/insect/plant/fungi/marine_life/not_wildlife",
   "confidence": "high/medium/low",
   "description": "Brief engaging summary about this species (25-35 words)",
   "habitat": "Detailed description of typical environment and geographical range",
@@ -60,7 +62,13 @@ serve(async (req) => {
   "identification_notes": "Key features that helped identify this species"
 }
 
-CRITICAL: Fill all existing detailed information sections (Habitat, Diet, Behavior, Conservation Status, and Interesting Facts) with comprehensive and specific content relevant to the identified species. Ensure the content for each section is well-written and informative. If specific categorized data is not explicitly provided by the identification AI, synthesize it intelligently from the overall description to populate these fields. The goal is to present a full, beautiful result, with no sections remaining empty or showing 'Information not available'. Always return valid JSON. Do not include any text before or after the JSON object.`
+IMPORTANT RULES:
+1. If you see a person, object, building, food item, vehicle, or anything that is NOT a living wildlife species, set category to "not_wildlife"
+2. Only use wildlife categories if you can clearly see an actual living organism in its natural form
+3. Be very conservative - when in doubt, use "not_wildlife"
+4. Do not try to identify wildlife in logos, drawings, or artificial representations
+
+Always return valid JSON. Do not include any text before or after the JSON object.`
           },
           {
             role: 'user',
@@ -126,9 +134,9 @@ CRITICAL: Fill all existing detailed information sections (Habitat, Diet, Behavi
       
       // Validate that the identified species is wildlife (birds, animals, plants)
       const allowedCategories = ['bird', 'mammal', 'reptile', 'amphibian', 'fish', 'insect', 'plant', 'fungi', 'marine life'];
-      const identifiedCategory = speciesInfo.category?.toLowerCase() || '';
+      const identifiedCategory = speciesInfo.category?.toLowerCase().replace('_', ' ') || '';
       
-      if (!allowedCategories.includes(identifiedCategory)) {
+      if (!allowedCategories.includes(identifiedCategory) || identifiedCategory === 'not wildlife') {
         return new Response(JSON.stringify({ 
           success: false, 
           error: "Please upload a picture of an animal, bird, or plant to analyze and help you discover wildlife species."
@@ -157,7 +165,7 @@ CRITICAL: Fill all existing detailed information sections (Habitat, Diet, Behavi
           messages: [
             {
               role: 'system',
-              content: `You are a wildlife expert. Return ONLY a valid JSON object with species information. No other text.`
+              content: `You are a wildlife expert. CRITICAL: Only identify REAL wildlife species. If the image shows anything else (people, objects, buildings, food, vehicles, etc.), you MUST respond with a category of "not_wildlife". Return ONLY a valid JSON object with species information. No other text.`
             },
             {
               role: 'user',
@@ -165,7 +173,7 @@ CRITICAL: Fill all existing detailed information sections (Habitat, Diet, Behavi
 {
   "species_name": "Common name",
   "scientific_name": "Scientific name", 
-  "category": "bird/mammal/reptile/etc",
+  "category": "bird/mammal/reptile/amphibian/fish/insect/plant/fungi/marine_life/not_wildlife",
   "confidence": "high/medium/low",
   "description": "Brief description",
   "habitat": "Habitat information",
@@ -175,6 +183,8 @@ CRITICAL: Fill all existing detailed information sections (Habitat, Diet, Behavi
   "interesting_facts": "Interesting facts",
   "identification_notes": "Key identification features"
 }
+
+IMPORTANT: If this is not a real wildlife species, set category to "not_wildlife"
 
 Image: ${imageUrl}`
             }
@@ -201,9 +211,9 @@ Image: ${imageUrl}`
           
           // Validate retry result as well
           const allowedCategories = ['bird', 'mammal', 'reptile', 'amphibian', 'fish', 'insect', 'plant', 'fungi', 'marine life'];
-          const retryCategory = retrySpeciesInfo.category?.toLowerCase() || '';
+          const retryCategory = retrySpeciesInfo.category?.toLowerCase().replace('_', ' ') || '';
           
-          if (!allowedCategories.includes(retryCategory)) {
+          if (!allowedCategories.includes(retryCategory) || retryCategory === 'not wildlife') {
             return new Response(JSON.stringify({ 
               success: false, 
               error: "Please upload a picture of an animal, bird, or plant to analyze and help you discover wildlife species."
