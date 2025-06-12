@@ -133,7 +133,7 @@ CRITICAL: Fill all existing detailed information sections (Habitat, Diet, Behavi
           success: false, 
           error: "Please upload a picture of an animal, bird, or plant to analyze and help you discover wildlife species."
         }), {
-          status: 400,
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
@@ -208,7 +208,7 @@ Image: ${imageUrl}`
               success: false, 
               error: "Please upload a picture of an animal, bird, or plant to analyze and help you discover wildlife species."
             }), {
-              status: 400,
+              status: 200,
               headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             });
           }
