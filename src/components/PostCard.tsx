@@ -47,15 +47,17 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
     <div className="bg-emerald-50/80 rounded-2xl p-4 mb-6 shadow-lg border border-emerald-100">
       {/* User Info Row */}
       <div className="flex items-center mb-4">
-        <div className="w-10 h-10 rounded-full bg-emerald-200 flex items-center justify-center mr-3">
-          <Leaf className="w-6 h-6 text-emerald-600" />
-        </div>
+        <img 
+          src={post.userAvatar} 
+          alt={post.userName}
+          className="w-10 h-10 rounded-full object-cover mr-3"
+        />
         <div className="flex-1">
           <h3 className="font-semibold text-foreground">{post.userName}</h3>
-          <p className="text-sm text-emerald-600 font-medium">Species Identified</p>
+          <p className="text-xs text-emerald-600 font-medium">Species Identified</p>
         </div>
         {post.badge && (
-          <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 border-emerald-200">
+          <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 border-emerald-200 text-xs px-2 py-1">
             {post.badge}
           </Badge>
         )}
