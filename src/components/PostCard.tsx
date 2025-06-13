@@ -4,6 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 
+interface Comment {
+  id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  profiles: {
+    username: string;
+  };
+}
+
 interface PostCardProps {
   post: {
     id: string;
@@ -17,16 +27,17 @@ interface PostCardProps {
     isLiked: boolean;
     tags: string[];
     badge?: string;
-    comments: number;
+    comments: Comment[];
   };
   onLike: (postId: string) => void;
   onSave: (postId: string) => void;
-  onComment: (postId: string) => void;
+  onComment: (postId: string, content: string) => void;
   onShare: (postId: string) => void;
 }
 
 const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
+  const [newComment, setNewComment] = useState('');
 
   const handleShare = () => {
     if (navigator.share) {
@@ -118,14 +129,11 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => {
-              setShowComments(!showComments);
-              onComment(post.id);
-            }}
+            onClick={() => setShowComments(!showComments)}
             className="p-2 text-muted-foreground hover:text-foreground"
           >
             <MessageCircle className="w-5 h-5" />
-            <span className="ml-1 text-sm">{post.comments}</span>
+            <span className="ml-1 text-sm">{post.comments.length}</span>
           </Button>
         </div>
         
@@ -154,20 +162,38 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
       {showComments && (
         <div className="mt-4 pt-3 border-t border-emerald-100">
           <div className="space-y-2 mb-3">
-            {/* Mock comments - in real app, these would come from props */}
-            <div className="text-sm">
-              <span className="font-semibold text-foreground">naturelover23:</span>{" "}
-              <span className="text-muted-foreground">Great shot! I love seeing these in the wild.</span>
-            </div>
+            {post.comments.map((comment) => (
+              <div key={comment.id} className="text-sm">
+                <span className="font-semibold text-foreground">{comment.profiles.username}:</span>{" "}
+                <span className="text-muted-foreground">{comment.content}</span>
+              </div>
+            ))}
           </div>
           
           <div className="flex items-center space-x-2">
             <input
               type="text"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
               placeholder="Add a comment..."
               className="flex-1 px-3 py-2 text-sm bg-white border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && newComment.trim()) {
+                  onComment(post.id, newComment.trim());
+                  setNewComment('');
+                }
+              }}
             />
-            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+            <Button 
+              size="sm" 
+              className="bg-emerald-600 hover:bg-emerald-700"
+              onClick={() => {
+                if (newComment.trim()) {
+                  onComment(post.id, newComment.trim());
+                  setNewComment('');
+                }
+              }}
+            >
               <Share2 className="w-4 h-4" />
             </Button>
           </div>

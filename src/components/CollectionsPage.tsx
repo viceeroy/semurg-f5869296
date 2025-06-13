@@ -6,6 +6,16 @@ import PostCard from "./PostCard";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
+interface Comment {
+  id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  profiles: {
+    username: string;
+  };
+}
+
 interface SavedPost {
   id: string;
   image: string;
@@ -19,7 +29,7 @@ interface SavedPost {
   category: string;
   tags: string[];
   badge?: string;
-  comments: number;
+  comments: Comment[];
 }
 
 const CollectionsPage = () => {
@@ -44,7 +54,7 @@ const CollectionsPage = () => {
       category: 'bird',
       tags: ['#NorthernCardinal', '#Backyard'],
       badge: 'Easy to spot',
-      comments: 3
+      comments: []
     },
     {
       id: 'saved-2',
@@ -59,7 +69,7 @@ const CollectionsPage = () => {
       category: 'bird',
       tags: ['#GreatBlueHeron', '#Lake'],
       badge: 'Patient Hunter',
-      comments: 1
+      comments: []
     },
     {
       id: 'saved-3',
@@ -74,7 +84,7 @@ const CollectionsPage = () => {
       category: 'mammal',
       tags: ['#WhiteTailedDeer', '#Morning'],
       badge: 'Family Group',
-      comments: 2
+      comments: []
     },
     {
       id: 'saved-4',
@@ -89,7 +99,7 @@ const CollectionsPage = () => {
       category: 'plant',
       tags: ['#Sunflower', '#Prairie'],
       badge: 'Pollinator Friendly',
-      comments: 5
+      comments: []
     },
     {
       id: 'saved-5',
@@ -104,7 +114,7 @@ const CollectionsPage = () => {
       category: 'mammal',
       tags: ['#RedFox', '#Dawn'],
       badge: 'Rare Sighting',
-      comments: 4
+      comments: []
     },
     {
       id: 'saved-6',
@@ -119,7 +129,7 @@ const CollectionsPage = () => {
       category: 'plant',
       tags: ['#WhiteOak', '#Ancient'],
       badge: 'Historic Tree',
-      comments: 0
+      comments: []
     }
   ];
 
@@ -169,7 +179,7 @@ const CollectionsPage = () => {
         category: 'bird', // Default category, in real app this would come from AI identification
         tags: [`#${post.title.replace(/\s+/g, '')}`, '#MyDiscovery'],
         badge: 'My Discovery',
-        comments: 0
+        comments: []
       })) || [];
 
       setSavedPosts(formattedPosts.length > 0 ? formattedPosts : mockSavedPosts);

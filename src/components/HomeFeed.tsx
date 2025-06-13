@@ -17,6 +17,15 @@ interface Post {
     avatar_url: string;
   };
   likes: { user_id: string }[];
+  comments: {
+    id: string;
+    user_id: string;
+    content: string;
+    created_at: string;
+    profiles: {
+      username: string;
+    };
+  }[];
   _count?: {
     likes: number;
   };
@@ -37,7 +46,8 @@ const HomeFeed = () => {
       image_url: 'https://images.unsplash.com/photo-1518373714866-3f1478910cc0?w=800',
       created_at: '2024-01-15T10:30:00Z',
       profiles: { username: 'BirdWatcher92', avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100' },
-      likes: [{ user_id: 'user1' }, { user_id: 'user2' }]
+      likes: [{ user_id: 'user1' }, { user_id: 'user2' }],
+      comments: []
     },
     {
       id: 'mock-2',
@@ -47,7 +57,8 @@ const HomeFeed = () => {
       image_url: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800',
       created_at: '2024-01-14T07:45:00Z',
       profiles: { username: 'NatureExplorer', avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100' },
-      likes: [{ user_id: 'user3' }]
+      likes: [{ user_id: 'user3' }],
+      comments: []
     },
     {
       id: 'mock-3',
@@ -57,7 +68,8 @@ const HomeFeed = () => {
       image_url: 'https://images.unsplash.com/photo-1558618066-fcd25c85cd64?w=800',
       created_at: '2024-01-13T16:20:00Z',
       profiles: { username: 'WildlifePhotog', avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100' },
-      likes: [{ user_id: 'user1' }, { user_id: 'user3' }, { user_id: 'user4' }]
+      likes: [{ user_id: 'user1' }, { user_id: 'user3' }, { user_id: 'user4' }],
+      comments: []
     },
     {
       id: 'mock-4',
@@ -67,7 +79,8 @@ const HomeFeed = () => {
       image_url: 'https://images.unsplash.com/photo-1470509037663-253afd7f0f51?w=800',
       created_at: '2024-01-12T14:30:00Z',
       profiles: { username: 'PlantLover', avatar_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100' },
-      likes: [{ user_id: 'user2' }, { user_id: 'user4' }]
+      likes: [{ user_id: 'user2' }, { user_id: 'user4' }],
+      comments: []
     },
     {
       id: 'mock-5',
@@ -77,7 +90,8 @@ const HomeFeed = () => {
       image_url: 'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=800',
       created_at: '2024-01-11T06:15:00Z',
       profiles: { username: 'ForestWanderer', avatar_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100' },
-      likes: [{ user_id: 'user1' }, { user_id: 'user2' }, { user_id: 'user3' }, { user_id: 'user5' }]
+      likes: [{ user_id: 'user1' }, { user_id: 'user2' }, { user_id: 'user3' }, { user_id: 'user5' }],
+      comments: []
     }
   ];
 
@@ -92,7 +106,14 @@ const HomeFeed = () => {
         .select(`
           *,
           profiles (username, avatar_url),
-          likes (user_id)
+          likes (user_id),
+          comments (
+            id,
+            user_id,
+            content,
+            created_at,
+            profiles (username)
+          )
         `)
         .order('created_at', { ascending: false });
 
@@ -156,6 +177,34 @@ const HomeFeed = () => {
     toast.success('Post saved to your collections!');
   };
 
+  const handleComment = async (postId: string, content: string) => {
+    if (!user) {
+      toast.error('Please sign in to comment');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('comments')
+        .insert({
+          post_id: postId,
+          user_id: user.id,
+          content: content
+        });
+
+      if (error) {
+        toast.error('Error adding comment');
+        return;
+      }
+
+      // Refresh posts to show new comment
+      fetchPosts();
+      toast.success('Comment added!');
+    } catch (error) {
+      toast.error('Error adding comment');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
@@ -194,11 +243,11 @@ const HomeFeed = () => {
               isLiked: post.likes.some(like => like.user_id === user?.id),
               tags: [`#${post.title.replace(/\s+/g, '')}`, '#Wildlife'],
               badge: 'Newly Discovered',
-              comments: 0
+              comments: post.comments || []
             }}
             onLike={handleLike}
             onSave={handleSave}
-            onComment={() => {}}
+            onComment={handleComment}
             onShare={() => {}}
           />
         ))}
