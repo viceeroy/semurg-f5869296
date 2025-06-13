@@ -240,16 +240,16 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
                 <p className="text-gray-600 text-sm">AI will identify the wildlife species in your image</p>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button 
                 variant="outline" 
-                className="flex-1" 
+                className="flex-1 w-full" 
                 onClick={() => setCurrentStep("upload")}
               >
                 Choose Different Photo
               </Button>
               <Button 
-                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white" 
+                className="flex-1 w-full bg-emerald-600 hover:bg-emerald-700 text-white" 
                 onClick={identifySpecies}
               >
                 <Sparkles className="w-4 h-4 mr-2" />
