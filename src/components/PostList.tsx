@@ -9,9 +9,12 @@ interface PostListProps {
   onComment: (postId: string, content: string) => void;
   onShare: (postId: string) => void;
   onPostClick?: (postId: string) => void;
+  onEdit?: (postId: string) => void;
+  onDelete?: (postId: string) => void;
+  onInfo?: (postId: string) => void;
 }
 
-const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick }: PostListProps) => {
+const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick, onEdit, onDelete, onInfo }: PostListProps) => {
   const { user } = useAuth();
 
   return (

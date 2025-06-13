@@ -9,6 +9,21 @@ const HomeFeed = () => {
   const { posts, loading, handleLike, handleSave, handleComment } = usePosts();
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
+  const handleEdit = (postId: string) => {
+    console.log('Edit post:', postId);
+    // TODO: Implement edit functionality
+  };
+
+  const handleDelete = (postId: string) => {
+    console.log('Delete post:', postId);
+    // TODO: Implement delete functionality with confirmation
+  };
+
+  const handleInfo = (postId: string) => {
+    console.log('Show info for post:', postId);
+    // TODO: Implement info modal
+  };
+
   const selectedPost = selectedPostId ? posts.find(p => p.id === selectedPostId) : null;
 
   if (loading) {
@@ -30,7 +45,6 @@ const HomeFeed = () => {
           isLiked: selectedPost.likes.some(like => like.user_id === selectedPost.user_id),
           isSaved: false,
           tags: [`#${selectedPost.title.replace(/\s+/g, '')}`, '#Wildlife'],
-          badge: 'Newly Discovered',
           comments: selectedPost.comments || [],
           uploadDate: selectedPost.created_at
         }}
@@ -39,6 +53,9 @@ const HomeFeed = () => {
         onSave={handleSave}
         onComment={handleComment}
         onShare={() => {}}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onInfo={handleInfo}
       />
     );
   }
@@ -53,6 +70,9 @@ const HomeFeed = () => {
         onComment={handleComment}
         onShare={() => {}}
         onPostClick={setSelectedPostId}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onInfo={handleInfo}
       />
     </div>
   );
