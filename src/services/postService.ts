@@ -18,6 +18,7 @@ export const fetchPosts = async (): Promise<Post[]> => {
           profiles (username)
         )
       `)
+      .eq('is_private', false)
       .order('created_at', { ascending: false });
 
     if (error) {

@@ -124,6 +124,7 @@ export type Database = {
           description: string | null
           id: string
           image_url: string
+          is_private: boolean
           latitude: number
           location_name: string | null
           longitude: number
@@ -137,6 +138,7 @@ export type Database = {
           description?: string | null
           id?: string
           image_url: string
+          is_private?: boolean
           latitude: number
           location_name?: string | null
           longitude: number
@@ -150,6 +152,7 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string
+          is_private?: boolean
           latitude?: number
           location_name?: string | null
           longitude?: number

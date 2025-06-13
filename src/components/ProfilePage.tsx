@@ -17,15 +17,21 @@ const ProfilePage = ({ onEditProfile }: ProfilePageProps) => {
   const { handleLike, handleSave, handleComment } = usePosts();
   const [profile, setProfile] = useState<any>(null);
   const [userPosts, setUserPosts] = useState<any[]>([]);
+  const [savedPosts, setSavedPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("posts");
 
   useEffect(() => {
     if (user) {
       fetchProfile();
-      fetchUserPosts();
+      if (activeTab === "posts") {
+        fetchUserPosts();
+      } else if (activeTab === "saved") {
+        fetchSavedPosts();
+      }
     }
-  }, [user]);
+  }, [user, activeTab]);
 
   const fetchProfile = async () => {
     try {
@@ -63,6 +69,7 @@ const ProfilePage = ({ onEditProfile }: ProfilePageProps) => {
           )
         `)
         .eq('user_id', user?.id)
+        .eq('is_private', false)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -78,11 +85,49 @@ const ProfilePage = ({ onEditProfile }: ProfilePageProps) => {
     }
   };
 
+  const fetchSavedPosts = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('saved_posts')
+        .select(`
+          posts (
+            *,
+            profiles (username, avatar_url),
+            likes (user_id),
+            comments (
+              id,
+              user_id,
+              content,
+              created_at,
+              profiles (username)
+            )
+          )
+        `)
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching saved posts:', error);
+        return;
+      }
+
+      // Extract posts from the nested structure
+      const posts = data?.map(item => item.posts).filter(Boolean) || [];
+      setSavedPosts(posts);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSignOut = async () => {
     await signOut();
   };
 
-  const selectedPost = selectedPostId ? userPosts.find(p => p.id === selectedPostId) : null;
+  const allPosts = [...userPosts, ...savedPosts];
+  const selectedPost = selectedPostId ? allPosts.find(p => p.id === selectedPostId) : null;
 
   if (selectedPost) {
     return (
@@ -178,7 +223,7 @@ const ProfilePage = ({ onEditProfile }: ProfilePageProps) => {
         </div>
 
         {/* Content Tabs */}
-        <Tabs defaultValue="posts" className="w-full">
+        <Tabs defaultValue="posts" className="w-full" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-sm">
             <TabsTrigger value="posts" className="flex items-center">
               <Grid3X3 className="w-4 h-4 mr-2" />
@@ -219,13 +264,31 @@ const ProfilePage = ({ onEditProfile }: ProfilePageProps) => {
           </TabsContent>
 
           <TabsContent value="saved" className="mt-4">
-            <div className="text-center py-12">
-              <Bookmark className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="font-semibold text-gray-900 mb-2">No saved posts yet</h3>
-              <p className="text-sm text-gray-600">
-                Posts you save will appear here
-              </p>
-            </div>
+            {savedPosts.length === 0 ? (
+              <div className="text-center py-12">
+                <Bookmark className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="font-semibold text-gray-900 mb-2">No saved posts yet</h3>
+                <p className="text-sm text-gray-600">
+                  Posts you save will appear here
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-1">
+                {savedPosts.map((post) => (
+                  <div
+                    key={post.id}
+                    className="aspect-square bg-white rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                    onClick={() => setSelectedPostId(post.id)}
+                  >
+                    <img
+                      src={post.image_url}
+                      alt={post.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>

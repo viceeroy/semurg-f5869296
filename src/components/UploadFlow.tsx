@@ -97,7 +97,8 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
           image_url: selectedImage!,
           location_name: '',
           latitude: 0,
-          longitude: 0
+          longitude: 0,
+          is_private: false
         });
 
       if (error) {
@@ -124,7 +125,7 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
     }
 
     try {
-      // First create a post in the database
+      // Create a private post for personal collection
       const { data: postData, error: postError } = await supabase
         .from('posts')
         .insert({
@@ -134,7 +135,8 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
           image_url: selectedImage,
           location_name: '',
           latitude: 0,
-          longitude: 0
+          longitude: 0,
+          is_private: true
         })
         .select()
         .single();
