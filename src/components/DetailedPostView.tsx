@@ -1,5 +1,6 @@
 import { ArrowLeft, MoreHorizontal, Heart, MessageCircle, Bookmark, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -43,9 +44,12 @@ interface DetailedPostViewProps {
   onSave: (postId: string) => void;
   onComment: (postId: string, content: string) => void;
   onShare: (postId: string) => void;
+  onEdit?: (postId: string) => void;
+  onDelete?: (postId: string) => void;
+  onInfo?: (postId: string) => void;
 }
 
-const DetailedPostView = ({ post, onClose, onLike, onSave, onComment, onShare }: DetailedPostViewProps) => {
+const DetailedPostView = ({ post, onClose, onLike, onSave, onComment, onShare, onEdit, onDelete, onInfo }: DetailedPostViewProps) => {
   const { user } = useAuth();
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
@@ -87,13 +91,28 @@ const DetailedPostView = ({ post, onClose, onLike, onSave, onComment, onShare }:
           >
             <ArrowLeft className="w-6 h-6" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-foreground hover:bg-accent"
-          >
-            <MoreHorizontal className="w-6 h-6" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-foreground hover:bg-accent"
+              >
+                <MoreHorizontal className="w-6 h-6" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onEdit?.(post.id)}>
+                Edit Post
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onDelete?.(post.id)}>
+                Delete Post
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onInfo?.(post.id)}>
+                Info
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

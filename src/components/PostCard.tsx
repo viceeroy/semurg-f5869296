@@ -1,7 +1,7 @@
 
-import { Heart, MessageCircle, Bookmark, Share2, Leaf } from "lucide-react";
+import { Heart, MessageCircle, Bookmark, Share2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 
 interface Comment {
@@ -35,9 +35,12 @@ interface PostCardProps {
   onComment: (postId: string, content: string) => void;
   onShare: (postId: string) => void;
   onPostClick?: (postId: string) => void;
+  onEdit?: (postId: string) => void;
+  onDelete?: (postId: string) => void;
+  onInfo?: (postId: string) => void;
 }
 
-const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick }: PostCardProps) => {
+const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick, onEdit, onDelete, onInfo }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
 
@@ -70,13 +73,20 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick }: Pos
         />
         <div className="flex-1">
           <h3 className="font-semibold text-foreground">{post.userName}</h3>
-          <p className="text-xs text-emerald-600 font-medium">Species Identified</p>
+          <p className="text-xs text-emerald-600 font-medium">{post.speciesName}</p>
         </div>
-        {post.badge && (
-          <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 border-emerald-200 text-xs px-2 py-1">
-            {post.badge}
-          </Badge>
-        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
+              <MoreHorizontal className="w-5 h-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit?.(post.id); }}>Edit Post</DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDelete?.(post.id); }}>Delete Post</DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onInfo?.(post.id); }}>Info</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Image Section */}

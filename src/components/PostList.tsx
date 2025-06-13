@@ -31,7 +31,6 @@ const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick }: Po
             isLiked: post.likes.some(like => like.user_id === user?.id),
             isSaved: false, // This will be updated when we fetch saved posts
             tags: [`#${post.title.replace(/\s+/g, '')}`, '#Wildlife'],
-            badge: 'Newly Discovered',
             comments: post.comments || []
           }}
           onLike={onLike}
@@ -39,6 +38,9 @@ const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick }: Po
           onComment={onComment}
           onShare={onShare}
           onPostClick={onPostClick}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onInfo={onInfo}
         />
       ))}
     </div>
