@@ -81,10 +81,16 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick, onEdi
               <MoreHorizontal className="w-5 h-5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit?.(post.id); }}>Edit Post</DropdownMenuItem>
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDelete?.(post.id); }}>Delete Post</DropdownMenuItem>
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onInfo?.(post.id); }}>Info</DropdownMenuItem>
+          <DropdownMenuContent align="end" className="bg-white border border-border rounded-xl shadow-lg z-50">
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit?.(post.id); }}>
+              Edit Post
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDelete?.(post.id); }}>
+              Delete Post
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onInfo?.(post.id); }}>
+              Info
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

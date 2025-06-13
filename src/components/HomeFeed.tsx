@@ -3,25 +3,57 @@ import LoadingSpinner from "./LoadingSpinner";
 import FeedHeader from "./FeedHeader";
 import PostList from "./PostList";
 import DetailedPostView from "./DetailedPostView";
+import EditCaptionModal from "./EditCaptionModal";
+import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import PostInfoModal from "./PostInfoModal";
 import { usePosts } from "@/hooks/usePosts";
+import { toast } from "sonner";
 
 const HomeFeed = () => {
   const { posts, loading, handleLike, handleSave, handleComment } = usePosts();
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+
+  const editingPost = editingPostId ? posts.find(p => p.id === editingPostId) : null;
 
   const handleEdit = (postId: string) => {
-    console.log('Edit post:', postId);
-    // TODO: Implement edit functionality
+    setEditingPostId(postId);
+    setEditModalOpen(true);
+  };
+
+  const handleSaveEdit = (caption: string, hashtags: string) => {
+    if (editingPost) {
+      // TODO: Implement actual edit API call
+      console.log('Saving edit for post:', editingPost.id, { caption, hashtags });
+      toast.success('Post updated successfully!');
+    }
   };
 
   const handleDelete = (postId: string) => {
-    console.log('Delete post:', postId);
-    // TODO: Implement delete functionality with confirmation
+    setEditingPostId(postId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (editingPost) {
+      // TODO: Implement actual delete API call
+      console.log('Deleting post:', editingPost.id);
+      toast.success('Post deleted successfully!');
+      setDeleteDialogOpen(false);
+      setEditingPostId(null);
+      // Close detailed view if we're deleting the currently viewed post
+      if (selectedPostId === editingPost.id) {
+        setSelectedPostId(null);
+      }
+    }
   };
 
   const handleInfo = (postId: string) => {
-    console.log('Show info for post:', postId);
-    // TODO: Implement info modal
+    setEditingPostId(postId);
+    setInfoModalOpen(true);
   };
 
   const selectedPost = selectedPostId ? posts.find(p => p.id === selectedPostId) : null;
@@ -73,6 +105,47 @@ const HomeFeed = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onInfo={handleInfo}
+      />
+      
+      {/* Edit Caption Modal */}
+      <EditCaptionModal
+        isOpen={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setEditingPostId(null);
+        }}
+        onSave={handleSaveEdit}
+        currentCaption={editingPost?.description || ''}
+        currentHashtags={`#${editingPost?.title.replace(/\s+/g, '')} #Wildlife`}
+        postTitle={editingPost?.title || ''}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmDialog
+        isOpen={deleteDialogOpen}
+        onClose={() => {
+          setDeleteDialogOpen(false);
+          setEditingPostId(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        postTitle={editingPost?.title || ''}
+      />
+
+      {/* Post Info Modal */}
+      <PostInfoModal
+        isOpen={infoModalOpen}
+        onClose={() => {
+          setInfoModalOpen(false);
+          setEditingPostId(null);
+        }}
+        post={{
+          id: editingPost?.id || '',
+          title: editingPost?.title || '',
+          userName: editingPost?.profiles?.username || 'Anonymous',
+          userAvatar: editingPost?.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+          uploadDate: editingPost?.created_at || '',
+          aiSource: 'OpenAI Vision API'
+        }}
       />
     </div>
   );

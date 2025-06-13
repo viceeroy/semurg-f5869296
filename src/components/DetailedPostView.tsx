@@ -101,7 +101,7 @@ const DetailedPostView = ({ post, onClose, onLike, onSave, onComment, onShare, o
                 <MoreHorizontal className="w-6 h-6" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-white border border-border rounded-xl shadow-lg z-50">
               <DropdownMenuItem onClick={() => onEdit?.(post.id)}>
                 Edit Post
               </DropdownMenuItem>
