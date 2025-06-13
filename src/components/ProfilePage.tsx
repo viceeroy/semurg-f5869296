@@ -5,6 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import DetailedPostView from "./DetailedPostView";
+import { usePosts } from "@/hooks/usePosts";
 
 interface ProfilePageProps {
   onEditProfile: () => void;
@@ -12,9 +14,11 @@ interface ProfilePageProps {
 
 const ProfilePage = ({ onEditProfile }: ProfilePageProps) => {
   const { user, signOut } = useAuth();
+  const { handleLike, handleSave, handleComment } = usePosts();
   const [profile, setProfile] = useState<any>(null);
   const [userPosts, setUserPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -46,7 +50,18 @@ const ProfilePage = ({ onEditProfile }: ProfilePageProps) => {
     try {
       const { data, error } = await supabase
         .from('posts')
-        .select('*')
+        .select(`
+          *,
+          profiles (username, avatar_url),
+          likes (user_id),
+          comments (
+            id,
+            user_id,
+            content,
+            created_at,
+            profiles (username)
+          )
+        `)
         .eq('user_id', user?.id)
         .order('created_at', { ascending: false });
 
@@ -66,6 +81,35 @@ const ProfilePage = ({ onEditProfile }: ProfilePageProps) => {
   const handleSignOut = async () => {
     await signOut();
   };
+
+  const selectedPost = selectedPostId ? userPosts.find(p => p.id === selectedPostId) : null;
+
+  if (selectedPost) {
+    return (
+      <DetailedPostView
+        post={{
+          id: selectedPost.id,
+          image: selectedPost.image_url,
+          speciesName: selectedPost.title,
+          aiInfo: selectedPost.description || '',
+          userNotes: selectedPost.caption || '',
+          userName: selectedPost.profiles?.username || profile?.username || 'Anonymous',
+          userAvatar: selectedPost.profiles?.avatar_url || profile?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+          likes: selectedPost.likes?.length || 0,
+          isLiked: selectedPost.likes?.some(like => like.user_id === user?.id) || false,
+          isSaved: false,
+          tags: [`#${selectedPost.title.replace(/\s+/g, '')}`, '#Wildlife'],
+          comments: selectedPost.comments || [],
+          uploadDate: selectedPost.created_at
+        }}
+        onClose={() => setSelectedPostId(null)}
+        onLike={handleLike}
+        onSave={handleSave}
+        onComment={handleComment}
+        onShare={() => {}}
+      />
+    );
+  }
 
   if (loading) {
     return (
@@ -161,6 +205,7 @@ const ProfilePage = ({ onEditProfile }: ProfilePageProps) => {
                   <div
                     key={post.id}
                     className="aspect-square bg-white rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                    onClick={() => setSelectedPostId(post.id)}
                   >
                     <img
                       src={post.image_url}
