@@ -157,6 +157,44 @@ export const usePosts = () => {
     }
   };
 
+  const handleEditPost = async (postId: string, caption: string, hashtags: string) => {
+    if (!user) {
+      toast.error('Please sign in to edit posts');
+      return;
+    }
+
+    try {
+      // TODO: Implement actual edit API call to update post description/caption
+      // For now, we'll update the local state
+      setPosts(prevPosts => 
+        prevPosts.map(post => 
+          post.id === postId 
+            ? { ...post, description: caption }
+            : post
+        )
+      );
+      
+      toast.success('Post updated successfully!');
+    } catch (error) {
+      toast.error('Error updating post');
+    }
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    if (!user) {
+      toast.error('Please sign in to delete posts');
+      return;
+    }
+
+    try {
+      // TODO: Implement actual delete API call
+      setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+      toast.success('Post deleted successfully!');
+    } catch (error) {
+      toast.error('Error deleting post');
+    }
+  };
+
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -166,6 +204,8 @@ export const usePosts = () => {
     loading,
     handleLike,
     handleSave,
-    handleComment
+    handleComment,
+    handleEditPost,
+    handleDeletePost
   };
 };

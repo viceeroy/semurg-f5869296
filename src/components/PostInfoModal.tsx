@@ -31,7 +31,7 @@ const PostInfoModal = ({ isOpen, onClose, post }: PostInfoModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl z-[70]">
         <DialogHeader>
           <DialogTitle>Post Information</DialogTitle>
         </DialogHeader>

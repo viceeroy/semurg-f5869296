@@ -81,14 +81,27 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick, onEdi
               <MoreHorizontal className="w-5 h-5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-white border border-border rounded-xl shadow-lg z-50">
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit?.(post.id); }}>
+          <DropdownMenuContent 
+            align="end" 
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-[60] min-w-[150px]"
+            sideOffset={5}
+          >
+            <DropdownMenuItem 
+              onClick={(e) => { e.stopPropagation(); onEdit?.(post.id); }}
+              className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2"
+            >
               Edit Post
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDelete?.(post.id); }}>
+            <DropdownMenuItem 
+              onClick={(e) => { e.stopPropagation(); onDelete?.(post.id); }}
+              className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 text-red-600"
+            >
               Delete Post
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onInfo?.(post.id); }}>
+            <DropdownMenuItem 
+              onClick={(e) => { e.stopPropagation(); onInfo?.(post.id); }}
+              className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2"
+            >
               Info
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -125,12 +138,14 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick, onEdi
           ))}
         </div>
 
-        {/* User Notes */}
+        {/* User Caption */}
         {post.userNotes && (
-          <p className="text-sm text-foreground">
-            <span className="font-semibold mr-2">{post.userName}</span>
-            {post.userNotes}
-          </p>
+          <div className="mt-3 p-3 bg-white/50 rounded-lg border border-emerald-200">
+            <p className="text-sm text-foreground">
+              <span className="font-semibold mr-2">{post.userName}:</span>
+              {post.userNotes}
+            </p>
+          </div>
         )}
       </div>
 

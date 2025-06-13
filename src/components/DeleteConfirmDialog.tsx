@@ -11,7 +11,7 @@ interface DeleteConfirmDialogProps {
 const DeleteConfirmDialog = ({ isOpen, onClose, onConfirm, postTitle }: DeleteConfirmDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl z-[70]">
         <DialogHeader>
           <DialogTitle>Delete Post</DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">

@@ -10,7 +10,7 @@ import { usePosts } from "@/hooks/usePosts";
 import { toast } from "sonner";
 
 const HomeFeed = () => {
-  const { posts, loading, handleLike, handleSave, handleComment } = usePosts();
+  const { posts, loading, handleLike, handleSave, handleComment, handleEditPost, handleDeletePost } = usePosts();
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -24,11 +24,11 @@ const HomeFeed = () => {
     setEditModalOpen(true);
   };
 
-  const handleSaveEdit = (caption: string, hashtags: string) => {
+  const handleSaveEdit = async (caption: string, hashtags: string) => {
     if (editingPost) {
-      // TODO: Implement actual edit API call
-      console.log('Saving edit for post:', editingPost.id, { caption, hashtags });
-      toast.success('Post updated successfully!');
+      await handleEditPost(editingPost.id, caption, hashtags);
+      setEditModalOpen(false);
+      setEditingPostId(null);
     }
   };
 
@@ -37,11 +37,9 @@ const HomeFeed = () => {
     setDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (editingPost) {
-      // TODO: Implement actual delete API call
-      console.log('Deleting post:', editingPost.id);
-      toast.success('Post deleted successfully!');
+      await handleDeletePost(editingPost.id);
       setDeleteDialogOpen(false);
       setEditingPostId(null);
       // Close detailed view if we're deleting the currently viewed post
@@ -70,7 +68,7 @@ const HomeFeed = () => {
           image: selectedPost.image_url,
           speciesName: selectedPost.title,
           aiInfo: selectedPost.description || '',
-          userNotes: '',
+          userNotes: selectedPost.description || '', // Use description as caption
           userName: selectedPost.profiles?.username || 'Anonymous',
           userAvatar: selectedPost.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
           likes: selectedPost.likes.length,
