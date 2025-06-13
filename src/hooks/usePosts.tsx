@@ -164,12 +164,23 @@ export const usePosts = () => {
     }
 
     try {
-      // TODO: Implement actual edit API call to update post description/caption
-      // For now, we'll update the local state
+      // Update the caption field, not the description (AI identification)
+      const { error } = await supabase
+        .from('posts')
+        .update({ caption: caption })
+        .eq('id', postId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        toast.error('Error updating post');
+        return;
+      }
+
+      // Update local state
       setPosts(prevPosts => 
         prevPosts.map(post => 
           post.id === postId 
-            ? { ...post, description: caption }
+            ? { ...post, caption: caption }
             : post
         )
       );

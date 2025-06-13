@@ -3,6 +3,7 @@ export interface Post {
   user_id: string;
   title: string;
   description: string;
+  caption?: string;
   image_url: string;
   created_at: string;
   profiles: {

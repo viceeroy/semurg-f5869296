@@ -119,6 +119,7 @@ export type Database = {
       }
       posts: {
         Row: {
+          caption: string | null
           created_at: string
           description: string | null
           id: string
@@ -131,6 +132,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          caption?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -143,6 +145,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          caption?: string | null
           created_at?: string
           description?: string | null
           id?: string

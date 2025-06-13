@@ -68,7 +68,7 @@ const HomeFeed = () => {
           image: selectedPost.image_url,
           speciesName: selectedPost.title,
           aiInfo: selectedPost.description || '',
-          userNotes: selectedPost.description || '', // Use description as caption
+          userNotes: selectedPost.caption || '', // Use caption field for user notes
           userName: selectedPost.profiles?.username || 'Anonymous',
           userAvatar: selectedPost.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
           likes: selectedPost.likes.length,
@@ -113,7 +113,7 @@ const HomeFeed = () => {
           setEditingPostId(null);
         }}
         onSave={handleSaveEdit}
-        currentCaption={editingPost?.description || ''}
+        currentCaption={editingPost?.caption || ''}
         currentHashtags={`#${editingPost?.title.replace(/\s+/g, '')} #Wildlife`}
         postTitle={editingPost?.title || ''}
       />
