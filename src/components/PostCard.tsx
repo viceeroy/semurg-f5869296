@@ -25,6 +25,7 @@ interface PostCardProps {
     userAvatar: string;
     likes: number;
     isLiked: boolean;
+    isSaved?: boolean;
     tags: string[];
     badge?: string;
     comments: Comment[];
@@ -142,9 +143,9 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
             variant="ghost"
             size="sm"
             onClick={() => onSave(post.id)}
-            className="p-2 text-muted-foreground hover:text-emerald-600"
+            className={`p-2 ${post.isSaved ? 'text-emerald-600' : 'text-muted-foreground'} hover:text-emerald-600`}
           >
-            <Bookmark className="w-5 h-5" />
+            <Bookmark className={`w-5 h-5 ${post.isSaved ? 'fill-current' : ''}`} />
           </Button>
           
           <Button

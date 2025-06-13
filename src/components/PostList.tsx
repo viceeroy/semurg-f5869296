@@ -28,6 +28,7 @@ const PostList = ({ posts, onLike, onSave, onComment, onShare }: PostListProps) 
             userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
             likes: post.likes.length,
             isLiked: post.likes.some(like => like.user_id === user?.id),
+            isSaved: false, // This will be updated when we fetch saved posts
             tags: [`#${post.title.replace(/\s+/g, '')}`, '#Wildlife'],
             badge: 'Newly Discovered',
             comments: post.comments || []

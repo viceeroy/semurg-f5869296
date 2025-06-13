@@ -112,14 +112,46 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
   };
 
   const handleSaveToCollection = async () => {
-    if (!user || !speciesInfo) {
+    if (!user || !speciesInfo || !selectedImage) {
       toast.error('Please sign in to save discoveries');
       return;
     }
 
-    // For now, we'll just show a success message
-    // In a real app, you'd save to a collections table
-    toast.success('Discovery saved to your collection!');
+    try {
+      // First create a post in the database
+      const { data: postData, error: postError } = await supabase
+        .from('posts')
+        .insert({
+          user_id: user.id,
+          title: speciesInfo.species_name,
+          description: speciesInfo.description,
+          image_url: selectedImage,
+          location_name: '',
+          latitude: 0,
+          longitude: 0
+        })
+        .select()
+        .single();
+
+      if (postError) {
+        toast.error('Error saving discovery');
+        return;
+      }
+
+      // Then save it to saved_posts
+      const { error: saveError } = await supabase
+        .from('saved_posts')
+        .insert({ user_id: user.id, post_id: postData.id });
+
+      if (saveError) {
+        toast.error('Error adding to saved collection');
+        return;
+      }
+
+      toast.success('Discovery saved to your collection!');
+    } catch (error) {
+      toast.error('Error saving discovery');
+    }
   };
 
   if (!user) {

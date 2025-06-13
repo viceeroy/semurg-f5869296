@@ -84,8 +84,49 @@ export const usePosts = () => {
     }
   };
 
-  const handleSave = (postId: string) => {
-    toast.success('Post saved to your collections!');
+  const handleSave = async (postId: string) => {
+    if (!user) {
+      toast.error('Please sign in to save posts');
+      return;
+    }
+
+    try {
+      // Check if post is already saved
+      const { data: existingSave } = await supabase
+        .from('saved_posts')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('post_id', postId)
+        .single();
+
+      if (existingSave) {
+        // Unsave the post
+        const { error } = await supabase
+          .from('saved_posts')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('post_id', postId);
+
+        if (error) {
+          toast.error('Error removing from saved posts');
+          return;
+        }
+        toast.success('Post removed from saved');
+      } else {
+        // Save the post
+        const { error } = await supabase
+          .from('saved_posts')
+          .insert({ user_id: user.id, post_id: postId });
+
+        if (error) {
+          toast.error('Error saving post');
+          return;
+        }
+        toast.success('Post saved to your collection!');
+      }
+    } catch (error) {
+      toast.error('Error updating saved posts');
+    }
   };
 
   const handleComment = async (postId: string, content: string) => {
