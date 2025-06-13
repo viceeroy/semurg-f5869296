@@ -27,7 +27,7 @@ interface SpeciesInfo {
 
 const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
   const { user } = useAuth();
-  const [currentStep, setCurrentStep] = useState<"upload" | "identifying" | "results" | "publishing">("upload");
+  const [currentStep, setCurrentStep] = useState<"upload" | "confirm" | "identifying" | "results" | "failed" | "publishing">("upload");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [speciesInfo, setSpeciesInfo] = useState<SpeciesInfo | null>(null);
@@ -40,23 +40,24 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
       reader.onload = (e) => {
         const imageDataUrl = e.target?.result as string;
         setSelectedImage(imageDataUrl);
-        identifySpecies(imageDataUrl);
+        setCurrentStep("confirm");
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const identifySpecies = async (imageDataUrl: string) => {
+  const identifySpecies = async () => {
+    if (!selectedImage) return;
+    
     setCurrentStep("identifying");
     
     try {
       const { data, error } = await supabase.functions.invoke('identify-species', {
-        body: { imageUrl: imageDataUrl }
+        body: { imageUrl: selectedImage }
       });
 
       if (error) {
-        toast.error('Error identifying species: ' + error.message);
-        setCurrentStep("upload");
+        setCurrentStep("failed");
         return;
       }
 
@@ -64,13 +65,18 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
         setSpeciesInfo(data.data);
         setCurrentStep("results");
       } else {
-        toast.error('Failed to identify species');
-        setCurrentStep("upload");
+        setCurrentStep("failed");
       }
     } catch (error) {
-      toast.error('Error identifying species');
-      setCurrentStep("upload");
+      setCurrentStep("failed");
     }
+  };
+
+  const handleTryAgain = () => {
+    setSelectedImage(null);
+    setSelectedFile(null);
+    setSpeciesInfo(null);
+    setCurrentStep("upload");
   };
 
   const handlePublish = async () => {
@@ -175,8 +181,10 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-xl font-bold text-gray-900">
             {currentStep === "upload" && "Identify Wildlife"}
+            {currentStep === "confirm" && "Ready to Identify"}
             {currentStep === "identifying" && "Analyzing..."}
             {currentStep === "results" && "Species Identified"}
+            {currentStep === "failed" && "Identification Failed"}
             {currentStep === "publishing" && "Sharing Discovery..."}
           </h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -214,6 +222,39 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Confirm Step */}
+        {currentStep === "confirm" && selectedImage && (
+          <div className="p-6 space-y-6">
+            <div className="text-center space-y-4">
+              <img
+                src={selectedImage}
+                alt="Selected photo"
+                className="w-full h-64 object-cover rounded-lg"
+              />
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold text-gray-900">Ready to analyze this photo?</h3>
+                <p className="text-gray-600 text-sm">AI will identify the wildlife species in your image</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                className="flex-1" 
+                onClick={() => setCurrentStep("upload")}
+              >
+                Choose Different Photo
+              </Button>
+              <Button 
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white" 
+                onClick={identifySpecies}
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Identify Species
+              </Button>
             </div>
           </div>
         )}
@@ -381,6 +422,54 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
                   Share Discovery
                 </Button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Failed Step */}
+        {currentStep === "failed" && (
+          <div className="min-h-[500px] flex flex-col">
+            {/* Full screen error display */}
+            <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gradient-to-br from-red-50 to-orange-50">
+              <div className="text-center space-y-6 max-w-sm">
+                {/* Error Icon */}
+                <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                  <X className="w-10 h-10 text-red-600" />
+                </div>
+                
+                {/* Main Error Message */}
+                <div className="space-y-3">
+                  <h3 className="text-xl font-bold text-gray-900">Failed to identify species</h3>
+                  <div className="space-y-2">
+                    <p className="text-gray-700 font-medium">Note:</p>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Take clear pictures of animals, birds, and plants. Upload again to Semurg for better identification results.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Tips */}
+                <div className="bg-white/70 rounded-lg p-4 text-left space-y-2">
+                  <h4 className="font-semibold text-gray-900 text-sm">Tips for better results:</h4>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    <li>• Ensure good lighting</li>
+                    <li>• Get close to the subject</li>
+                    <li>• Avoid blurry images</li>
+                    <li>• Include distinctive features</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            {/* Bottom Button */}
+            <div className="p-6 bg-white border-t">
+              <Button 
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3" 
+                onClick={handleTryAgain}
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Try Again
+              </Button>
             </div>
           </div>
         )}
