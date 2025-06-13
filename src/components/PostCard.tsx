@@ -34,9 +34,10 @@ interface PostCardProps {
   onSave: (postId: string) => void;
   onComment: (postId: string, content: string) => void;
   onShare: (postId: string) => void;
+  onPostClick?: (postId: string) => void;
 }
 
-const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) => {
+const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
 
@@ -56,7 +57,10 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
   };
 
   return (
-    <div className="bg-emerald-50/80 rounded-2xl p-4 mb-6 shadow-lg border border-emerald-100">
+    <div 
+      className="bg-emerald-50/80 rounded-2xl p-4 mb-6 shadow-lg border border-emerald-100 cursor-pointer"
+      onClick={() => onPostClick?.(post.id)}
+    >
       {/* User Info Row */}
       <div className="flex items-center mb-4">
         <img 
@@ -120,7 +124,10 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onLike(post.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onLike(post.id);
+            }}
             className={`p-2 ${post.isLiked ? 'text-red-500' : 'text-muted-foreground'} hover:text-red-500`}
           >
             <Heart className={`w-5 h-5 ${post.isLiked ? 'fill-current' : ''}`} />
@@ -130,7 +137,10 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowComments(!showComments)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowComments(!showComments);
+            }}
             className="p-2 text-muted-foreground hover:text-foreground"
           >
             <MessageCircle className="w-5 h-5" />
@@ -142,7 +152,10 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onSave(post.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSave(post.id);
+            }}
             className={`p-2 ${post.isSaved ? 'text-emerald-600' : 'text-muted-foreground'} hover:text-emerald-600`}
           >
             <Bookmark className={`w-5 h-5 ${post.isSaved ? 'fill-current' : ''}`} />
@@ -151,7 +164,10 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
           <Button
             variant="ghost"
             size="sm"
-            onClick={handleShare}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleShare();
+            }}
             className="p-2 text-muted-foreground hover:text-emerald-600"
           >
             <Share2 className="w-5 h-5" />
@@ -188,7 +204,8 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare }: PostCardProps) =
             <Button 
               size="sm" 
               className="bg-emerald-600 hover:bg-emerald-700"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 if (newComment.trim()) {
                   onComment(post.id, newComment.trim());
                   setNewComment('');
