@@ -63,15 +63,21 @@ const SearchPage = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSpeciesSearch()}
-          className="pl-10 py-3 bg-white/80 backdrop-blur-sm border-gray-200 rounded-lg focus:ring-2 focus:ring-nature-green/20 focus:border-nature-green"
+          className="pl-10 pr-12 py-3 bg-white/80 backdrop-blur-sm border-gray-200 rounded-lg focus:ring-2 focus:ring-nature-green/20 focus:border-nature-green"
         />
         {searchQuery.trim() && (
           <Button
             onClick={handleSpeciesSearch}
             disabled={searchingSpecies}
-            className="absolute right-2 top-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-sm"
+            variant="ghost"
+            size="icon"
+            className="absolute right-2 top-2 h-8 w-8 hover:bg-emerald-50"
           >
-            {searchingSpecies ? 'Searching...' : 'Find Species'}
+            {searchingSpecies ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600" />
+            ) : (
+              <Sparkles className="h-4 w-4 text-emerald-600 hover:scale-110 transition-transform duration-200" />
+            )}
           </Button>
         )}
       </div>
