@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Camera, Upload, X, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -31,7 +31,30 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [speciesInfo, setSpeciesInfo] = useState<SpeciesInfo | null>(null);
-  const [selectedLanguage, setSelectedLanguage] = useState<'english' | 'uzbek'>('english');
+  const [userLanguage, setUserLanguage] = useState<'english' | 'uzbek'>('english');
+
+  // Fetch user's language preference
+  useEffect(() => {
+    const fetchUserLanguage = async () => {
+      if (!user?.id) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('language_preference')
+          .eq('id', user.id)
+          .single();
+        
+        if (data && !error) {
+          setUserLanguage(data.language_preference === 'uzbek' ? 'uzbek' : 'english');
+        }
+      } catch (error) {
+        console.log('Error fetching language preference:', error);
+      }
+    };
+
+    fetchUserLanguage();
+  }, [user?.id]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -54,7 +77,7 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
     
     try {
       const { data, error } = await supabase.functions.invoke('identify-species', {
-        body: { imageUrl: selectedImage, language: selectedLanguage }
+        body: { imageUrl: selectedImage, language: userLanguage }
       });
 
       if (error) {
@@ -205,30 +228,7 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Capture Wildlife</h3>
-                  <p className="text-gray-600 text-sm">Upload a photo and let AI identify the species</p>
-                </div>
-                
-                {/* Language Selection */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Choose language for species information:</label>
-                  <div className="flex gap-2">
-                    <Button
-                      variant={selectedLanguage === 'english' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setSelectedLanguage('english')}
-                      className="flex-1"
-                    >
-                      English
-                    </Button>
-                    <Button
-                      variant={selectedLanguage === 'uzbek' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setSelectedLanguage('uzbek')}
-                      className="flex-1"
-                    >
-                      O'zbek
-                    </Button>
-                  </div>
+                  <p className="text-gray-600 text-sm">Upload a photo and let AI identify the species in your preferred language</p>
                 </div>
                 <div className="space-y-3">
                   <label htmlFor="photo-upload">

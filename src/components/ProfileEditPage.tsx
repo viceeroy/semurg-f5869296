@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, Upload, User } from 'lucide-react';
+import { ArrowLeft, Save, Upload, User, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -19,6 +19,7 @@ const ProfileEditPage = ({ onBack }: ProfileEditPageProps) => {
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
+  const [languagePreference, setLanguagePreference] = useState<'english' | 'uzbek'>('english');
   const [loading, setLoading] = useState(false);
   const [fetchingProfile, setFetchingProfile] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -47,6 +48,7 @@ const ProfileEditPage = ({ onBack }: ProfileEditPageProps) => {
         setUsername(data.username || '');
         setBio(data.bio || '');
         setAvatarUrl(data.avatar_url || '');
+        setLanguagePreference((data.language_preference === 'uzbek' ? 'uzbek' : 'english'));
       }
     } catch (error) {
       console.error('Error:', error);
@@ -113,6 +115,7 @@ const ProfileEditPage = ({ onBack }: ProfileEditPageProps) => {
           username,
           bio,
           avatar_url: avatarUrl,
+          language_preference: languagePreference,
           updated_at: new Date().toISOString()
         });
 
@@ -176,6 +179,49 @@ const ProfileEditPage = ({ onBack }: ProfileEditPageProps) => {
                   placeholder="Tell us about yourself..."
                   className="min-h-[80px]"
                 />
+              </div>
+              
+              {/* Language Preference Switcher */}
+              <div className="space-y-3">
+                <Label className="flex items-center gap-2">
+                  <Globe className="w-4 h-4" />
+                  Language Preference
+                </Label>
+                <div className="relative">
+                  <div className="flex bg-gray-100 rounded-lg p-1 transition-all duration-300 hover:bg-gray-200">
+                    <button
+                      type="button"
+                      onClick={() => setLanguagePreference('english')}
+                      className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-300 relative ${
+                        languagePreference === 'english'
+                          ? 'bg-white text-emerald-700 shadow-sm'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      <span className="relative z-10">English</span>
+                      {languagePreference === 'english' && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-md opacity-50" />
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLanguagePreference('uzbek')}
+                      className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-300 relative ${
+                        languagePreference === 'uzbek'
+                          ? 'bg-white text-emerald-700 shadow-sm'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                    >
+                      <span className="relative z-10">O'zbek</span>
+                      {languagePreference === 'uzbek' && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-md opacity-50" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Choose your preferred language for wildlife species information
+                </p>
               </div>
               
               <div className="space-y-2">
