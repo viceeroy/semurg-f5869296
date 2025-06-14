@@ -1,9 +1,8 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { LogIn, Mail, Github } from 'lucide-react';
+import { LogIn, Mail } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 
 const AuthPage = () => {
   const { signIn, signUp } = useAuth();
@@ -55,31 +54,6 @@ const AuthPage = () => {
     setLoading(false);
   };
 
-  const handleGoogleAuth = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/`
-      }
-    });
-    
-    if (error) {
-      toast.error(error.message);
-    }
-  };
-
-  const handleGitHubAuth = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: {
-        redirectTo: `${window.location.origin}/`
-      }
-    });
-    
-    if (error) {
-      toast.error(error.message);
-    }
-  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50">
@@ -142,7 +116,7 @@ const AuthPage = () => {
           </button>
         </form>
 
-        <div className="w-full text-center mb-4">
+        <div className="w-full text-center">
           <button
             type="button"
             onClick={() => {
@@ -152,33 +126,6 @@ const AuthPage = () => {
             className="text-sm text-gray-600 hover:underline"
           >
             {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
-          </button>
-        </div>
-        
-        <div className="flex items-center w-full my-2">
-          <div className="flex-grow border-t border-dashed border-gray-200"></div>
-          <span className="mx-2 text-xs text-gray-400">Or continue with</span>
-          <div className="flex-grow border-t border-dashed border-gray-200"></div>
-        </div>
-        
-        <div className="flex gap-3 w-full justify-center mt-2">
-          <button
-            type="button"
-            onClick={handleGoogleAuth}
-            className="flex items-center justify-center w-12 h-12 rounded-xl border bg-white hover:bg-gray-100 transition grow"
-          >
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="w-6 h-6"
-            />
-          </button>
-          <button
-            type="button"
-            onClick={handleGitHubAuth}
-            className="flex items-center justify-center w-12 h-12 rounded-xl border bg-white hover:bg-gray-100 transition grow"
-          >
-            <Github className="w-6 h-6" />
           </button>
         </div>
       </div>
