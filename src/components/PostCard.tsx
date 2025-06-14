@@ -28,6 +28,7 @@ interface PostCardProps {
     tags: string[];
     badge?: string;
     comments: Comment[];
+    userId: string;
   };
   onLike: (postId: string) => void;
   onSave: (postId: string) => void;
@@ -85,7 +86,7 @@ const PostCard = ({
     }
   };
   return <div onClick={() => onPostClick?.(post.id)} className="mb-6 shadow-lg border border-gray-200 cursor-pointer overflow-hidden relative rounded-xl bg-slate-200">
-      <PostCardHeader userName={post.userName} userAvatar={post.userAvatar} speciesName={post.speciesName} postId={post.id} onEdit={onEdit} onDelete={onDelete} onInfo={onInfo} />
+      <PostCardHeader userName={post.userName} userAvatar={post.userAvatar} speciesName={post.speciesName} postId={post.id} postUserId={post.userId} onEdit={onEdit} onDelete={onDelete} onInfo={onInfo} />
 
       <PostCardImage image={post.image} speciesName={post.speciesName} />
 

@@ -17,6 +17,7 @@ export interface DetailedPost {
   userNotes: string;
   userName: string;
   userAvatar: string;
+  userId: string;
   likes: number;
   isLiked: boolean;
   isSaved?: boolean;

@@ -30,6 +30,7 @@ interface SavedPost {
   tags: string[];
   badge?: string;
   comments: Comment[];
+  userId: string;
 }
 
 const CollectionsPage = () => {
@@ -49,6 +50,7 @@ const CollectionsPage = () => {
       userNotes: 'Spotted this gorgeous male cardinal in my backyard this morning!',
       userName: 'You',
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      userId: user?.id || 'mock-user-id',
       likes: 12,
       isLiked: true,
       category: 'bird',
@@ -64,6 +66,7 @@ const CollectionsPage = () => {
       userNotes: 'Amazing patience watching this heron hunt for fish at the lake.',
       userName: 'You',
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      userId: user?.id || 'mock-user-id',
       likes: 8,
       isLiked: false,
       category: 'bird',
@@ -79,6 +82,7 @@ const CollectionsPage = () => {
       userNotes: 'Family of deer spotted during early morning hike.',
       userName: 'You',
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      userId: user?.id || 'mock-user-id',
       likes: 15,
       isLiked: true,
       category: 'mammal',
@@ -94,6 +98,7 @@ const CollectionsPage = () => {
       userNotes: 'Beautiful field of sunflowers found during nature walk.',
       userName: 'You',
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      userId: user?.id || 'mock-user-id',
       likes: 23,
       isLiked: true,
       category: 'plant',
@@ -109,6 +114,7 @@ const CollectionsPage = () => {
       userNotes: 'Lucky to spot this beautiful fox at dawn in the forest.',
       userName: 'You',
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      userId: user?.id || 'mock-user-id',
       likes: 31,
       isLiked: false,
       category: 'mammal',
@@ -124,6 +130,7 @@ const CollectionsPage = () => {
       userNotes: 'This ancient oak has been standing here for over 200 years.',
       userName: 'You',
       userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      userId: user?.id || 'mock-user-id',
       likes: 18,
       isLiked: true,
       category: 'plant',
@@ -174,6 +181,7 @@ const CollectionsPage = () => {
         userNotes: '',
         userName: post.profiles?.username || 'You',
         userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+        userId: post.user_id,
         likes: post.likes.length,
         isLiked: post.likes.some(like => like.user_id === user?.id),
         category: 'bird', // Default category, in real app this would come from AI identification

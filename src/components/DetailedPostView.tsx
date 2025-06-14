@@ -45,6 +45,7 @@ const DetailedPostView = ({
         onDelete={onDelete}
         onInfo={onInfo}
         postId={post.id}
+        postUserId={post.userId}
       />
 
       {/* Main Content */}
