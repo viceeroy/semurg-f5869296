@@ -72,7 +72,7 @@ const SearchPage = () => {
             {searchingSpecies ? (
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600" />
             ) : (
-              <Sparkles className="h-5 w-5 text-emerald-600 hover:scale-110 transition-transform duration-200" />
+              <Search className="h-5 w-5 text-emerald-600 hover:scale-110 transition-transform duration-200" />
             )}
           </Button>
         )}
