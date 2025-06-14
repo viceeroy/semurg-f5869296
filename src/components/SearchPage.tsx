@@ -54,10 +54,14 @@ const SearchPage = () => {
       return;
     }
 
-    const filtered = categorizedPosts[selectedCategory as keyof typeof categorizedPosts].filter(post =>
+    // Search across all categories if "all" is selected, otherwise search within selected category
+    const searchData = selectedCategory === 'all' ? mockSearchPosts : categorizedPosts[selectedCategory as keyof typeof categorizedPosts];
+    
+    const filtered = searchData.filter(post =>
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.scientific_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.description.toLowerCase().includes(searchQuery.toLowerCase())
+      post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.category.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     setSearchResults(filtered);
