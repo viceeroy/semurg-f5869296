@@ -73,6 +73,7 @@ const DetailedPostView = ({
         likes={post.likes}
         isLiked={post.isLiked}
         isSaved={post.isSaved}
+        commentsCount={post.comments.length}
         onLike={onLike}
         onSave={onSave}
         onShare={handleShareClick}

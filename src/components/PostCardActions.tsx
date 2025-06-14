@@ -27,45 +27,51 @@ const PostCardActions = ({
   return (
     <div className="px-4 pb-4">
       <div className="flex items-center justify-between py-2">
-        <div className="flex items-center space-x-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onLike(postId);
-            }}
-            className={`p-2.5 rounded-full ${isLiked ? 'text-red-500' : 'text-gray-600'} hover:text-red-500`}
-          >
-            <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
-          </Button>
-          <span className="text-sm font-medium text-gray-600 mr-3">{likes}</span>
+        <div className="flex items-center space-x-6">
+          <div className="flex flex-col items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onLike(postId);
+              }}
+              className={`p-2.5 rounded-full ${isLiked ? 'text-red-500' : 'text-gray-600'} hover:text-red-500`}
+            >
+              <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+            </Button>
+            <span className="text-xs font-medium text-gray-600 mt-1">{likes}</span>
+          </div>
           
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleComments();
-            }}
-            className="p-2.5 rounded-full text-gray-600 hover:text-gray-800"
-          >
-            <MessageCircle className="w-5 h-5" />
-          </Button>
-          <span className="text-sm font-medium text-gray-600 mr-3">{commentsCount}</span>
+          <div className="flex flex-col items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleComments();
+              }}
+              className="p-2.5 rounded-full text-gray-600 hover:text-gray-800"
+            >
+              <MessageCircle className="w-5 h-5" />
+            </Button>
+            <span className="text-xs font-medium text-gray-600 mt-1">{commentsCount}</span>
+          </div>
           
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onShare();
-            }}
-            className="p-2.5 rounded-full text-gray-600 hover:text-gray-800"
-          >
-            <Send className="w-5 h-5" />
-          </Button>
-          <span className="text-sm font-medium text-gray-600">5</span>
+          <div className="flex flex-col items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onShare();
+              }}
+              className="p-2.5 rounded-full text-gray-600 hover:text-gray-800"
+            >
+              <Send className="w-5 h-5" />
+            </Button>
+            <span className="text-xs font-medium text-gray-600 mt-1">0</span>
+          </div>
         </div>
         
         <Button
