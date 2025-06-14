@@ -1,4 +1,4 @@
-import { User } from "lucide-react";
+import { User, Search, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -27,7 +27,9 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
   const { t } = useLanguage();
   const tabs = [
     { id: 'home', icon: DiscoverIcon, label: t.nav.home },
+    { id: 'search', icon: Search, label: 'Search' },
     { id: 'upload', icon: IdentifySpeciesIcon, label: t.upload.identifyWildlife, isSpecial: true },
+    { id: 'collections', icon: FolderOpen, label: 'Collections' },
     { id: 'profile', icon: User, label: t.nav.profile },
   ];
 
