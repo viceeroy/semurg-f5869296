@@ -4,15 +4,17 @@ import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
 import { LogIn, Mail } from 'lucide-react';
 import { toast } from 'sonner';
+import LanguageSelectionPage from './LanguageSelectionPage';
 
 const AuthPage = () => {
   const { signIn, signUp } = useAuth();
-  const { t } = useLanguage();
+  const { t, setLanguage } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState('');
+  const [showLanguageSelection, setShowLanguageSelection] = useState(false);
 
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -39,7 +41,9 @@ const AuthPage = () => {
         if (error) {
           setError(error.message);
         } else {
-          toast.success('Account created! Check your email to verify your account.');
+          // Show language selection after successful signup
+          setShowLanguageSelection(true);
+          toast.success('Account created! Please select your preferred language.');
         }
       } else {
         const { error } = await signIn(email, password);
@@ -56,6 +60,17 @@ const AuthPage = () => {
     setLoading(false);
   };
 
+  const handleLanguageSelected = async (language: 'en' | 'uz') => {
+    // Update the app language
+    await setLanguage(language);
+    // The user will be automatically redirected to the main app by the auth state change
+  };
+
+
+  // Show language selection after successful signup
+  if (showLanguageSelection) {
+    return <LanguageSelectionPage onLanguageSelected={handleLanguageSelected} />;
+  }
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50">
