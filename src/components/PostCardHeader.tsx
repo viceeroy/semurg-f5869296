@@ -15,11 +15,6 @@ interface PostCardHeaderProps {
 const PostCardHeader = ({ userName, userAvatar, speciesName, postId, onEdit, onDelete, onInfo }: PostCardHeaderProps) => {
   return (
     <>
-      {/* Semurg Brand */}
-      <div className="absolute top-4 left-4 z-10">
-        <h1 className="text-lg font-bold text-gray-900">Semurg</h1>
-      </div>
-
       {/* User Info Row */}
       <div className="flex items-center mb-4 px-4 pt-4">
         <img 
