@@ -49,19 +49,19 @@ serve(async (req) => {
 
 ${language.toLowerCase() === 'uzbek' ? 'IMPORTANT: Provide ALL information in UZBEK language (O\'zbek tilida). All text fields should be in Uzbek except scientific_name which should remain in Latin.' : 'Provide all information in English.'}
 
-Analyze the image and provide detailed information about the species in JSON format:
+Analyze the image and provide comprehensive, detailed information about the species in JSON format:
 {
   "species_name": "Common name of the species",
   "scientific_name": "Scientific name", 
   "category": "bird/mammal/reptile/amphibian/fish/insect/plant/fungi/marine_life/not_wildlife",
   "confidence": "high/medium/low",
-  "description": "Brief engaging summary about this species (25-35 words)",
-  "habitat": "Detailed description of typical environment and geographical range",
-  "diet": "Description of what the species eats and feeding behaviors", 
-  "behavior": "Notable behaviors, actions, and unique characteristics",
-  "conservation_status": "Current conservation status with brief context",
-  "interesting_facts": "2-3 fascinating facts about the species",
-  "identification_notes": "Key features that helped identify this species"
+  "description": "Comprehensive introduction to this species - include their significance in the ecosystem, general characteristics, what makes them unique, their role in nature, and why they're important. Write at least 50-60 words with engaging, educational content that captivates the reader",
+  "habitat": "Detailed description of typical environment and geographical range - include specific locations, climate preferences, elevation ranges, habitat requirements, seasonal movements, and how they adapt to their environment. Describe the ecosystem they live in and their relationship with it. Provide at least 45-55 words",
+  "diet": "Comprehensive description of what the species eats, feeding behaviors, hunting or foraging techniques, seasonal dietary changes, feeding schedule, and their role in the food chain. Include specific food sources, feeding patterns, and how their diet affects the ecosystem. Write at least 45-55 words", 
+  "behavior": "Detailed account of notable behaviors, social structures, mating rituals, territorial habits, daily activities, communication methods, migration patterns, parental care, and unique characteristics that define this species. Include seasonal behaviors and interactions with other species. Provide at least 45-55 words",
+  "conservation_status": "Current conservation status with detailed context about population trends, specific threats they face, ongoing conservation efforts, historical population changes, and what factors affect their survival. Include human impact and conservation success stories if applicable. Write at least 35-45 words",
+  "interesting_facts": "3-4 fascinating, specific facts about the species that highlight their unique abilities, record-breaking characteristics, historical significance, remarkable adaptations, or surprising behaviors. Make these engaging, educational, and memorable. Include specific numbers, comparisons, or unusual traits. Provide at least 50-60 words",
+  "identification_notes": "Detailed key features that helped identify this species - include physical characteristics, distinctive markings, size comparisons, coloration patterns, body shape, and distinguishing features from similar species. Mention age, gender, or seasonal variations if visible. Write at least 35-45 words"
 }
 
 IMPORTANT RULES:
@@ -88,7 +88,7 @@ Always return valid JSON. Do not include any text before or after the JSON objec
             ]
           }
         ],
-        max_tokens: 1000,
+        max_tokens: 1500,
         temperature: 0.3
       }),
     });
@@ -177,13 +177,13 @@ Always return valid JSON. Do not include any text before or after the JSON objec
   "scientific_name": "Scientific name", 
   "category": "bird/mammal/reptile/amphibian/fish/insect/plant/fungi/marine_life/not_wildlife",
   "confidence": "high/medium/low",
-  "description": "Brief description",
-  "habitat": "Habitat information",
-  "diet": "Diet information", 
-  "behavior": "Behavior information",
-  "conservation_status": "Conservation status",
-  "interesting_facts": "Interesting facts",
-  "identification_notes": "Key identification features"
+  "description": "Comprehensive introduction to this species - include their significance in the ecosystem, general characteristics, what makes them unique, their role in nature, and why they're important. Write at least 50-60 words with engaging, educational content",
+  "habitat": "Detailed description of typical environment and geographical range - include specific locations, climate preferences, elevation ranges, habitat requirements, and how they adapt to their environment. Provide at least 45-55 words",
+  "diet": "Comprehensive description of what the species eats, feeding behaviors, hunting techniques, seasonal dietary changes, and their role in the food chain. Write at least 45-55 words", 
+  "behavior": "Detailed account of notable behaviors, social structures, mating rituals, territorial habits, daily activities, and unique characteristics. Provide at least 45-55 words",
+  "conservation_status": "Current conservation status with detailed context about population trends, threats, conservation efforts, and factors affecting survival. Write at least 35-45 words",
+  "interesting_facts": "3-4 fascinating, specific facts about the species that highlight their unique abilities, adaptations, or surprising behaviors. Provide at least 50-60 words",
+  "identification_notes": "Detailed key features that helped identify this species - include physical characteristics, distinctive markings, and distinguishing features. Write at least 35-45 words"
 }
 
 IMPORTANT: If this is not a real wildlife species, set category to "not_wildlife"
@@ -191,7 +191,7 @@ IMPORTANT: If this is not a real wildlife species, set category to "not_wildlife
 Image: ${imageUrl}`
             }
           ],
-          max_tokens: 800,
+          max_tokens: 1200,
           temperature: 0.1
         }),
       });
