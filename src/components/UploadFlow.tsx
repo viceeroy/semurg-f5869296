@@ -1,10 +1,12 @@
 
 import { useState, useEffect } from "react";
-import { Camera, Upload, X, Loader2, Sparkles } from "lucide-react";
+import { Camera, Upload, X, Loader2, Sparkles, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 
 interface UploadFlowProps {
   onClose: () => void;
@@ -59,16 +61,66 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const imageDataUrl = e.target?.result as string;
-        setSelectedImage(imageDataUrl);
-        setCurrentStep("confirm");
-      };
-      reader.readAsDataURL(file);
+      processImage(file);
     }
   };
+
+  const processImage = (file: File) => {
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const imageDataUrl = e.target?.result as string;
+      setSelectedImage(imageDataUrl);
+      setCurrentStep("confirm");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleTakePhoto = async () => {
+    try {
+      const image = await CapacitorCamera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera,
+      });
+
+      if (image.dataUrl) {
+        // Convert dataUrl to file
+        const response = await fetch(image.dataUrl);
+        const blob = await response.blob();
+        const file = new File([blob], "camera-photo.jpg", { type: "image/jpeg" });
+        processImage(file);
+      }
+    } catch (error) {
+      console.error('Error taking photo:', error);
+      toast.error('Failed to take photo');
+    }
+  };
+
+  const handleChooseFromGallery = async () => {
+    try {
+      const image = await CapacitorCamera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Photos,
+      });
+
+      if (image.dataUrl) {
+        // Convert dataUrl to file
+        const response = await fetch(image.dataUrl);
+        const blob = await response.blob();
+        const file = new File([blob], "gallery-photo.jpg", { type: "image/jpeg" });
+        processImage(file);
+      }
+    } catch (error) {
+      console.error('Error choosing from gallery:', error);
+      toast.error('Failed to choose photo');
+    }
+  };
+
+  const isMobile = Capacitor.isNativePlatform();
 
   const identifySpecies = async () => {
     if (!selectedImage) return;
@@ -248,23 +300,46 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Capture Wildlife</h3>
                   <p className="text-gray-600 text-sm">Upload a photo and let AI identify the species in your preferred language</p>
                 </div>
-                <div className="space-y-3">
-                  <label htmlFor="photo-upload">
-                    <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" asChild>
-                      <span>
-                        <Upload className="w-4 h-4 mr-2" />
-                        Choose Photo
-                      </span>
+                
+                {/* Mobile Camera Options */}
+                {isMobile ? (
+                  <div className="space-y-3">
+                    <Button 
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" 
+                      onClick={handleTakePhoto}
+                    >
+                      <Camera className="w-4 h-4 mr-2" />
+                      Take Picture
                     </Button>
-                  </label>
-                  <input
-                    id="photo-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageUpload}
-                  />
-                </div>
+                    <Button 
+                      variant="outline" 
+                      className="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-50" 
+                      onClick={handleChooseFromGallery}
+                    >
+                      <ImageIcon className="w-4 h-4 mr-2" />
+                      Choose from Gallery
+                    </Button>
+                  </div>
+                ) : (
+                  /* Web File Upload */
+                  <div className="space-y-3">
+                    <label htmlFor="photo-upload">
+                      <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" asChild>
+                        <span>
+                          <Upload className="w-4 h-4 mr-2" />
+                          Choose Photo
+                        </span>
+                      </Button>
+                    </label>
+                    <input
+                      id="photo-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
