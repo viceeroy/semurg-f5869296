@@ -56,6 +56,16 @@ const HomeFeed = () => {
     fetchSavedPosts();
   }, [user, posts]); // Re-fetch when posts change
 
+  // Listen for share fallback events
+  useEffect(() => {
+    const handleShareFallback = (event: CustomEvent) => {
+      toast.success(event.detail.message);
+    };
+
+    window.addEventListener('share-fallback', handleShareFallback as EventListener);
+    return () => window.removeEventListener('share-fallback', handleShareFallback as EventListener);
+  }, []);
+
   const handleEdit = (postId: string) => {
     setEditingPostId(postId);
     setEditModalOpen(true);

@@ -51,19 +51,38 @@ const PostCard = ({
 }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: `Check out this ${post.speciesName}`,
-        text: post.aiInfo,
-        url: window.location.href
-      });
-    } else {
-      // Fallback for browsers without native sharing
-      navigator.clipboard.writeText(window.location.href);
-      // You could show a toast here
+  const handleShare = async () => {
+    const shareData = {
+      title: `Check out this ${post.speciesName} on Semurg`,
+      text: `${post.aiInfo.slice(0, 100)}${post.aiInfo.length > 100 ? '...' : ''}`,
+      url: `${window.location.origin}/?post=${post.id}`,
+    };
+
+    try {
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        // Show toast notification
+        const event = new CustomEvent('share-fallback', { 
+          detail: { message: 'Link copied to clipboard!' } 
+        });
+        window.dispatchEvent(event);
+      }
+      onShare(post.id);
+    } catch (error) {
+      console.error('Error sharing:', error);
+      try {
+        await navigator.clipboard.writeText(shareData.url);
+        const event = new CustomEvent('share-fallback', { 
+          detail: { message: 'Link copied to clipboard!' } 
+        });
+        window.dispatchEvent(event);
+        onShare(post.id);
+      } catch (clipboardError) {
+        console.error('Clipboard also failed:', clipboardError);
+      }
     }
-    onShare(post.id);
   };
   return <div onClick={() => onPostClick?.(post.id)} className="mb-6 shadow-lg border border-gray-200 cursor-pointer overflow-hidden relative rounded-xl bg-slate-200">
       <PostCardHeader userName={post.userName} userAvatar={post.userAvatar} speciesName={post.speciesName} postId={post.id} onEdit={onEdit} onDelete={onDelete} onInfo={onInfo} />
