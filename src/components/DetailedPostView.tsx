@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import PostHeader from "./PostHeader";
 import PostContent from "./PostContent";
 import PostEngagement from "./PostEngagement";
 import PostComments from "./PostComments";
+import AppHeader from "./AppHeader";
 import { handleShare } from "@/utils/postUtils";
 import { DetailedPost } from "@/types/detailedPost";
 
@@ -32,13 +33,39 @@ const DetailedPostView = ({
 }: DetailedPostViewProps) => {
   const { user } = useAuth();
   const [showComments, setShowComments] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const handleShareClick = () => {
     handleShare(post.speciesName, post.aiInfo, post.id, onShare);
   };
 
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const currentScrollY = container.scrollTop;
+      const scrollingDown = currentScrollY > lastScrollY;
+      const scrollingUp = currentScrollY < lastScrollY;
+
+      if (scrollingDown && currentScrollY > 100) {
+        setHeaderVisible(false);
+      } else if (scrollingUp || currentScrollY <= 50) {
+        setHeaderVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
   return (
-    <div className="fixed inset-0 bg-background z-50 flex flex-col">
+    <div className="fixed inset-0 bg-background z-40">
+      <AppHeader isVisible={headerVisible} />
       <PostHeader
         onClose={onClose}
         onEdit={onEdit}
@@ -49,7 +76,11 @@ const DetailedPostView = ({
       />
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div 
+        ref={scrollContainerRef}
+        className="overflow-y-auto pt-16 pb-4"
+        style={{ height: 'calc(100vh - 60px)' }}
+      >
         {/* Dominant Image */}
         <div className="w-full">
           <img

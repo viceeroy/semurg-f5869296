@@ -25,7 +25,7 @@ const PostEngagement = ({
   onToggleComments 
 }: PostEngagementProps) => {
   return (
-    <div className="bg-background/95 backdrop-blur-sm border-t border-border p-4">
+    <div className="bg-background/95 backdrop-blur-sm border-t border-border p-4 pb-8">
       <div className="flex items-center justify-between max-w-md mx-auto">
         {/* Left side actions */}
         <div className="flex items-center">
