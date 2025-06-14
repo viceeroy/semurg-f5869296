@@ -35,7 +35,7 @@ const PostCardActions = ({
               e.stopPropagation();
               onLike(postId);
             }}
-            className={`p-1 rounded-full ${isLiked ? 'text-red-500' : 'text-gray-600'} hover:text-red-500`}
+            className={`p-2.5 rounded-full ${isLiked ? 'text-red-500' : 'text-gray-600'} hover:text-red-500`}
           >
             <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
           </Button>
@@ -48,7 +48,7 @@ const PostCardActions = ({
               e.stopPropagation();
               onToggleComments();
             }}
-            className="p-1 rounded-full text-gray-600 hover:text-gray-800"
+            className="p-2.5 rounded-full text-gray-600 hover:text-gray-800"
           >
             <MessageCircle className="w-5 h-5" />
           </Button>
@@ -61,7 +61,7 @@ const PostCardActions = ({
               e.stopPropagation();
               onShare();
             }}
-            className="p-1 rounded-full text-gray-600 hover:text-gray-800"
+            className="p-2.5 rounded-full text-gray-600 hover:text-gray-800"
           >
             <Send className="w-5 h-5" />
           </Button>
@@ -75,7 +75,7 @@ const PostCardActions = ({
             e.stopPropagation();
             onSave(postId);
           }}
-          className={`p-1 rounded-full ${isSaved ? 'text-gray-800' : 'text-gray-600'} hover:text-gray-800`}
+          className={`p-2.5 rounded-full ${isSaved ? 'text-gray-800' : 'text-gray-600'} hover:text-gray-800`}
         >
           <Bookmark className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
         </Button>
