@@ -16,8 +16,10 @@ const AppHeader = ({ onRefresh, refreshing = false, isVisible = true }: AppHeade
   const { t } = useLanguage();
   const [showNotifications, setShowNotifications] = useState(false);
 
+  console.log('AppHeader isVisible:', isVisible);
+
   return (
-    <div className={`bg-white/90 backdrop-blur-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
+    <div className={`bg-white/90 backdrop-blur-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out ${
       isVisible ? 'translate-y-0' : '-translate-y-full'
     }`}>
       <div className="max-w-md mx-auto px-4 py-3">

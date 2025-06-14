@@ -82,8 +82,11 @@ const DetailedPostView = ({
       {/* Scrollable Content */}
       <div 
         ref={scrollContainerRef}
-        className="overflow-y-auto pt-16 pb-4"
-        style={{ height: 'calc(100vh - 60px)' }}
+        className="overflow-y-auto transition-all duration-300 ease-in-out"
+        style={{ 
+          height: 'calc(100vh - 60px)',
+          paddingTop: headerVisible ? '64px' : '16px'
+        }}
       >
         {/* Dominant Image */}
         <div className="w-full">

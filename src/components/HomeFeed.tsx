@@ -243,7 +243,7 @@ const HomeFeed = () => {
       
       <div 
         ref={scrollContainerRef}
-        className="overflow-auto pt-16"
+        className="overflow-auto transition-all duration-300 ease-in-out"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -251,7 +251,7 @@ const HomeFeed = () => {
           height: '100vh', 
           paddingTop: headerVisible ? 
             (isPulling ? `${64 + Math.min(pullDistance * 0.5, 50)}px` : '64px') : 
-            (isPulling ? `${Math.min(pullDistance * 0.5, 50)}px` : '0px'),
+            (isPulling ? `${16 + Math.min(pullDistance * 0.5, 50)}px` : '16px'),
           transition: isPulling ? 'none' : 'padding-top 0.3s ease-out'
         }}
       >
