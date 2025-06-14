@@ -39,18 +39,30 @@ const PostHeader = ({ onClose, onEdit, onDelete, onInfo, postId, postUserId }: P
                 <MoreHorizontal className="w-6 h-6" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-background border border-border rounded-xl shadow-lg z-50">
+            <DropdownMenuContent 
+              align="end" 
+              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 min-w-[140px] backdrop-blur-sm"
+            >
               {isOwner && (
                 <>
-                  <DropdownMenuItem onClick={() => onEdit?.(postId)}>
+                  <DropdownMenuItem 
+                    onClick={() => onEdit?.(postId)}
+                    className="text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer px-3 py-2"
+                  >
                     Edit Post
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onDelete?.(postId)} className="text-red-600">
+                  <DropdownMenuItem 
+                    onClick={() => onDelete?.(postId)} 
+                    className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer px-3 py-2"
+                  >
                     Delete Post
                   </DropdownMenuItem>
                 </>
               )}
-              <DropdownMenuItem onClick={() => onInfo?.(postId)}>
+              <DropdownMenuItem 
+                onClick={() => onInfo?.(postId)}
+                className="text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer px-3 py-2"
+              >
                 Info
               </DropdownMenuItem>
             </DropdownMenuContent>
