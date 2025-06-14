@@ -6,8 +6,10 @@ import { useState } from "react";
 import { mockSearchPosts, categorizedPosts, SearchPost } from "@/data/mockSearchPosts";
 import SearchResultCard from "./SearchResultCard";
 import SearchResultDetailModal from "./SearchResultDetailModal";
+import { useToast } from "@/hooks/use-toast";
 
 const SearchPage = () => {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchResults, setSearchResults] = useState<SearchPost[]>(mockSearchPosts);
@@ -66,6 +68,15 @@ const SearchPage = () => {
 
     setSearchResults(filtered);
     setShowNoResults(filtered.length === 0);
+    
+    // Show toast notification if no results found
+    if (filtered.length === 0) {
+      toast({
+        title: "No results found",
+        description: `No animals found matching "${searchQuery}". Try different keywords or browse categories.`,
+        variant: "destructive"
+      });
+    }
   };
 
   const handleCategoryChange = (category: string) => {
