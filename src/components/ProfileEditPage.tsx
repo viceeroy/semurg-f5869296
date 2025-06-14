@@ -139,7 +139,7 @@ const ProfileEditPage = ({ onBack }: ProfileEditPageProps) => {
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading profile...</p>
+          <p className="mt-2 text-gray-600">{t.profile.loadingProfile}</p>
         </div>
       </div>
     );
@@ -152,7 +152,7 @@ const ProfileEditPage = ({ onBack }: ProfileEditPageProps) => {
           <Button variant="ghost" size="sm" onClick={onBack} className="mr-3">
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-xl font-bold text-gray-900">Edit Profile</h1>
+          <h1 className="text-xl font-bold text-gray-900">{t.profile.editProfile}</h1>
         </div>
 
         <Card>

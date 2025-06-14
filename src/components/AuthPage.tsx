@@ -1,11 +1,13 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/hooks/useLanguage';
 import { LogIn, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AuthPage = () => {
   const { signIn, signUp } = useAuth();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -62,7 +64,7 @@ const AuthPage = () => {
           <LogIn className="w-7 h-7 text-black" />
         </div>
         <h2 className="text-2xl font-semibold mb-2 text-center">
-          {isSignUp ? 'Create Account' : 'Sign in to Semurg'}
+          {isSignUp ? t.auth.createAccount : t.auth.signIn}
         </h2>
         <p className="text-gray-500 text-sm mb-6 text-center">
           Discover Wildlife with AI
@@ -74,7 +76,7 @@ const AuthPage = () => {
               <Mail className="w-4 h-4" />
             </span>
             <input
-              placeholder="Email"
+              placeholder={t.auth.email}
               type="email"
               value={email}
               className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm"
@@ -87,7 +89,7 @@ const AuthPage = () => {
               <Mail className="w-4 h-4" />
             </span>
             <input
-              placeholder="Password"
+              placeholder={t.auth.password}
               type="password"
               value={password}
               className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm"
@@ -102,7 +104,7 @@ const AuthPage = () => {
             )}
             {!isSignUp && (
               <button type="button" className="text-xs hover:underline font-medium ml-auto">
-                Forgot password?
+                {t.auth.forgotPassword}
               </button>
             )}
           </div>
@@ -112,7 +114,7 @@ const AuthPage = () => {
             disabled={loading}
             className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 cursor-pointer transition mb-4 mt-2 disabled:opacity-50"
           >
-            {loading ? (isSignUp ? 'Creating Account...' : 'Signing In...') : (isSignUp ? 'Create Account' : 'Sign In')}
+            {loading ? (isSignUp ? t.common.loading : t.common.loading) : (isSignUp ? t.auth.createAccount : t.auth.signIn)}
           </button>
         </form>
 
@@ -125,7 +127,7 @@ const AuthPage = () => {
             }}
             className="text-sm text-gray-600 hover:underline"
           >
-            {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
+            {isSignUp ? t.auth.alreadyHaveAccount : t.auth.dontHaveAccount}
           </button>
         </div>
       </div>

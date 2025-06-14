@@ -1,5 +1,6 @@
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface BottomNavigationProps {
   activeTab: string;
@@ -23,10 +24,11 @@ const IdentifySpeciesIcon = ({ className }: { className?: string }) => (
 );
 
 const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavigationProps) => {
+  const { t } = useLanguage();
   const tabs = [
-    { id: 'home', icon: DiscoverIcon, label: 'Discovery' },
-    { id: 'upload', icon: IdentifySpeciesIcon, label: 'Identify Species', isSpecial: true },
-    { id: 'profile', icon: User, label: 'Profile' },
+    { id: 'home', icon: DiscoverIcon, label: t.nav.home },
+    { id: 'upload', icon: IdentifySpeciesIcon, label: t.upload.identifyWildlife, isSpecial: true },
+    { id: 'profile', icon: User, label: t.nav.profile },
   ];
 
   return (
