@@ -101,6 +101,11 @@ const SearchPage = () => {
               placeholder="Search species, locations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
               className="pl-10 pr-12 glass-card border-gray-200 focus:border-nature-green"
             />
             <Button 
