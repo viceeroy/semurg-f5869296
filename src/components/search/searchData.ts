@@ -1,10 +1,8 @@
 export const categories = [
-  { id: "all", label: "All", color: "bg-gray-100 text-gray-700" },
-  { id: "birds", label: "Birds", color: "bg-blue-100 text-blue-700" },
-  { id: "mammals", label: "Mammals", color: "bg-orange-100 text-orange-700" },
-  { id: "insects", label: "Insects", color: "bg-green-100 text-green-700" },
-  { id: "plants", label: "Plants", color: "bg-emerald-100 text-emerald-700" },
-  { id: "reptiles", label: "Reptiles", color: "bg-yellow-100 text-yellow-700" },
+  { id: 'all', label: 'All', color: 'bg-gray-100 text-gray-700' },
+  { id: 'animals', label: 'Animals', color: 'bg-green-100 text-green-700' },
+  { id: 'birds', label: 'Birds', color: 'bg-blue-100 text-blue-700' },
+  { id: 'plants', label: 'Plants', color: 'bg-emerald-100 text-emerald-700' },
 ];
 
 export const recentSearches = [
