@@ -25,7 +25,7 @@ const PostCardActions = ({
   onToggleComments 
 }: PostCardActionsProps) => {
   return (
-    <div className="absolute bottom-4 left-4 right-4">
+    <div className="px-4 pb-4">
       <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-3 shadow-lg border border-white/20">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-1">
