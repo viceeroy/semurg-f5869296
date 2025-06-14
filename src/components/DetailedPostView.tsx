@@ -38,7 +38,7 @@ const DetailedPostView = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-background z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-background z-50 flex flex-col">
       <PostHeader
         onClose={onClose}
         onEdit={onEdit}
@@ -48,8 +48,8 @@ const DetailedPostView = ({
         postUserId={post.userId}
       />
 
-      {/* Main Content */}
-      <div className="pb-20">
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto">
         {/* Dominant Image */}
         <div className="w-full">
           <img
