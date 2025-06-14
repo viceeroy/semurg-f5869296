@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-
 interface PostInfoModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -16,8 +15,11 @@ interface PostInfoModalProps {
     imageSize?: string;
   };
 }
-
-const PostInfoModal = ({ isOpen, onClose, post }: PostInfoModalProps) => {
+const PostInfoModal = ({
+  isOpen,
+  onClose,
+  post
+}: PostInfoModalProps) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -28,20 +30,14 @@ const PostInfoModal = ({ isOpen, onClose, post }: PostInfoModalProps) => {
       minute: '2-digit'
     });
   };
-
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl z-[70]">
+  return <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md border border-gray-200 dark:border-gray-700 shadow-xl z-[70] bg-slate-300 rounded">
         <DialogHeader>
           <DialogTitle>Post Information</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="flex items-center space-x-3">
-            <img 
-              src={post.userAvatar} 
-              alt={post.userName}
-              className="w-12 h-12 rounded-full object-cover"
-            />
+            <img src={post.userAvatar} alt={post.userName} className="w-12 h-12 rounded-full object-cover" />
             <div>
               <h3 className="font-semibold text-foreground">{post.userName}</h3>
               <p className="text-sm text-muted-foreground">Post Author</p>
@@ -71,20 +67,16 @@ const PostInfoModal = ({ isOpen, onClose, post }: PostInfoModalProps) => {
               <p className="text-xs text-muted-foreground font-mono">{post.id}</p>
             </div>
             
-            {post.location && (
-              <div>
+            {post.location && <div>
                 <h4 className="font-medium text-foreground">Location</h4>
                 <p className="text-sm text-muted-foreground">{post.location}</p>
-              </div>
-            )}
+              </div>}
           </div>
         </div>
         <div className="flex justify-end pt-4">
           <Button onClick={onClose}>Close</Button>
         </div>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 };
-
 export default PostInfoModal;
