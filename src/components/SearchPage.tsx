@@ -1,233 +1,61 @@
 
-import { Search, Filter } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { mockSearchPosts, categorizedPosts, SearchPost } from "@/data/mockSearchPosts";
-import SearchResultCard from "./SearchResultCard";
+import { SearchPost } from "@/data/mockSearchPosts";
 import SearchResultDetailModal from "./SearchResultDetailModal";
-import { useToast } from "@/hooks/use-toast";
+import SearchHeader from "./search/SearchHeader";
+import CategoryFilter from "./search/CategoryFilter";
+import RecentSearches from "./search/RecentSearches";
+import SearchResults from "./search/SearchResults";
+import CategoryResults from "./search/CategoryResults";
+import TrendingSpecies from "./search/TrendingSpecies";
+import { useSearch } from "@/hooks/useSearch";
+import { categories, recentSearches, trendingSpecies } from "./search/searchData";
 
 const SearchPage = () => {
-  const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [searchResults, setSearchResults] = useState<SearchPost[]>(mockSearchPosts);
-  const [selectedPost, setSelectedPost] = useState<SearchPost | null>(null);
-  const [showNoResults, setShowNoResults] = useState(false);
-
-  const categories = [
-    { id: "all", label: "All", color: "bg-gray-100 text-gray-700" },
-    { id: "birds", label: "Birds", color: "bg-blue-100 text-blue-700" },
-    { id: "mammals", label: "Mammals", color: "bg-orange-100 text-orange-700" },
-    { id: "insects", label: "Insects", color: "bg-green-100 text-green-700" },
-    { id: "plants", label: "Plants", color: "bg-emerald-100 text-emerald-700" },
-    { id: "reptiles", label: "Reptiles", color: "bg-yellow-100 text-yellow-700" },
-  ];
-
-  const recentSearches = [
-    "Northern Red Cardinal",
-    "White Oak Tree",
-    "Eastern Gray Squirrel",
-    "White-tailed Deer",
-    "Great Blue Heron",
-    "Wild Sunflower",
-    "Red-winged Blackbird",
-    "American Robin"
-  ];
-
-  const trendingSpecies = [
-    { name: "Northern Cardinal", count: "1,247 posts" },
-    { name: "White Oak Tree", count: "1,156 posts" },
-    { name: "Blue Jay", count: "987 posts" },
-    { name: "Red-tailed Hawk", count: "854 posts" },
-    { name: "White-tailed Deer", count: "723 posts" },
-    { name: "Wild Rose", count: "698 posts" },
-    { name: "Eastern Gray Squirrel", count: "634 posts" },
-    { name: "American Robin", count: "567 posts" },
-    { name: "Black Bear", count: "523 posts" },
-    { name: "Purple Coneflower", count: "489 posts" }
-  ];
-
-  const handleSearch = () => {
-    console.log('Search triggered with query:', searchQuery);
-    console.log('Selected category:', selectedCategory);
-    
-    if (!searchQuery.trim()) {
-      console.log('Empty search query, showing category results');
-      setSearchResults(categorizedPosts[selectedCategory as keyof typeof categorizedPosts]);
-      setShowNoResults(false);
-      return;
-    }
-
-    // Search across all categories if "all" is selected, otherwise search within selected category
-    const searchData = selectedCategory === 'all' ? mockSearchPosts : categorizedPosts[selectedCategory as keyof typeof categorizedPosts];
-    console.log('Search data source:', searchData.length, 'posts');
-    
-    const filtered = searchData.filter(post =>
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.scientific_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.category.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    console.log('Filtered results:', filtered.length, 'posts found');
-    console.log('First few results:', filtered.slice(0, 3).map(p => p.title));
-
-    setSearchResults(filtered);
-    setShowNoResults(filtered.length === 0);
-    
-    // Show toast notification if no results found
-    if (filtered.length === 0) {
-      toast({
-        title: "No results found",
-        description: `No animals found matching "${searchQuery}". Try different keywords or browse categories.`,
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-    setSearchQuery("");
-    setSearchResults(categorizedPosts[category as keyof typeof categorizedPosts]);
-    setShowNoResults(false);
-  };
+  const {
+    searchQuery,
+    setSearchQuery,
+    selectedCategory,
+    searchResults,
+    selectedPost,
+    setSelectedPost,
+    showNoResults,
+    handleSearch,
+    handleCategoryChange
+  } = useSearch();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-md mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-4">Search</h1>
-          
-          {/* Search Bar */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <Input
-              type="text"
-              placeholder="Search species, locations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSearch();
-                }
-              }}
-              className="pl-10 pr-12 glass-card border-gray-200 focus:border-nature-green"
-            />
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="absolute right-2 top-1/2 transform -translate-y-1/2"
-              onClick={handleSearch}
-            >
-              <Search className="w-4 h-4 text-gray-400" />
-            </Button>
-          </div>
-        </div>
-      </div>
+      <SearchHeader
+        searchQuery={searchQuery}
+        onSearchQueryChange={setSearchQuery}
+        onSearch={handleSearch}
+      />
 
       <div className="max-w-md mx-auto px-4 py-6 pb-24">
-        {/* Categories */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Categories</h2>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => handleCategoryChange(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:bg-white/50 hover:backdrop-blur-sm ${
-                  selectedCategory === category.id
-                    ? `${category.color} scale-110 shadow-lg`
-                    : category.color
-                }`}
-              >
-                {category.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <CategoryFilter
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
+        />
 
-        {/* Recent Searches */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Searches</h2>
-          <div className="space-y-2">
-            {recentSearches.map((search, index) => (
-              <button
-                key={index}
-                className="flex items-center w-full p-3 glass-card rounded-lg text-left hover:bg-white/80 transition-colors duration-200"
-              >
-                <Search className="w-4 h-4 text-gray-400 mr-3" />
-                <span className="text-gray-700">{search}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+        <RecentSearches searches={recentSearches} />
 
-        {/* Search Results */}
-        {searchQuery && (
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Search Results {searchResults.length > 0 && `(${searchResults.length})`}
-            </h2>
-            {showNoResults ? (
-              <div className="text-center py-8">
-                <p className="text-gray-600">No results found for "{searchQuery}"</p>
-                <p className="text-sm text-gray-500 mt-2">Try searching for different keywords or browse categories above</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-4">
-                {searchResults.map((post) => (
-                  <SearchResultCard
-                    key={post.id}
-                    post={post}
-                    onClick={() => setSelectedPost(post)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <SearchResults
+          searchQuery={searchQuery}
+          searchResults={searchResults}
+          showNoResults={showNoResults}
+          onPostSelect={setSelectedPost}
+        />
 
-        {/* Category Results */}
-        {!searchQuery && (
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              {selectedCategory === 'all' ? 'All Species' : categories.find(c => c.id === selectedCategory)?.label} ({searchResults.length})
-            </h2>
-            <div className="grid grid-cols-1 gap-4">
-              {searchResults.map((post) => (
-                <SearchResultCard
-                  key={post.id}
-                  post={post}
-                  onClick={() => setSelectedPost(post)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
+        <CategoryResults
+          searchQuery={searchQuery}
+          selectedCategory={selectedCategory}
+          categories={categories}
+          searchResults={searchResults}
+          onPostSelect={setSelectedPost}
+        />
 
-        {/* Trending */}
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Trending Species</h2>
-          <div className="space-y-3">
-            {trendingSpecies.map((species, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-4 glass-card rounded-lg hover:bg-white/80 transition-colors duration-200 cursor-pointer"
-              >
-                <div>
-                  <h3 className="font-medium text-gray-900">{species.name}</h3>
-                  <p className="text-sm text-gray-600">{species.count}</p>
-                </div>
-                <div className="w-8 h-8 bg-nature-green/20 rounded-full flex items-center justify-center">
-                  <span className="text-nature-green font-bold text-sm">#{index + 1}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <TrendingSpecies species={trendingSpecies} />
       </div>
 
       <SearchResultDetailModal
