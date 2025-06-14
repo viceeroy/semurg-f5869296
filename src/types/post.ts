@@ -6,6 +6,15 @@ export interface Post {
   caption?: string;
   image_url: string;
   created_at: string;
+  scientific_name?: string;
+  category?: string;
+  confidence?: string;
+  habitat?: string;
+  diet?: string;
+  behavior?: string;
+  conservation_status?: string;
+  interesting_facts?: string;
+  identification_notes?: string;
   profiles: {
     username: string;
     avatar_url: string;

@@ -122,7 +122,16 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
           location_name: '',
           latitude: 0,
           longitude: 0,
-          is_private: false
+          is_private: false,
+          scientific_name: speciesInfo.scientific_name,
+          category: speciesInfo.category,
+          confidence: speciesInfo.confidence,
+          habitat: speciesInfo.habitat,
+          diet: speciesInfo.diet,
+          behavior: speciesInfo.behavior,
+          conservation_status: speciesInfo.conservation_status,
+          interesting_facts: speciesInfo.interesting_facts,
+          identification_notes: speciesInfo.identification_notes
         });
 
       if (error) {
@@ -160,7 +169,16 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
           location_name: '',
           latitude: 0,
           longitude: 0,
-          is_private: true
+          is_private: true,
+          scientific_name: speciesInfo.scientific_name,
+          category: speciesInfo.category,
+          confidence: speciesInfo.confidence,
+          habitat: speciesInfo.habitat,
+          diet: speciesInfo.diet,
+          behavior: speciesInfo.behavior,
+          conservation_status: speciesInfo.conservation_status,
+          interesting_facts: speciesInfo.interesting_facts,
+          identification_notes: speciesInfo.identification_notes
         })
         .select()
         .single();

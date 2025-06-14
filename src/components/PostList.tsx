@@ -26,14 +26,16 @@ const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick, onEd
             id: post.id,
             image: post.image_url,
             speciesName: post.title,
-            aiInfo: post.description || '',
+            aiInfo: (post.description || '').length > 120 ? 
+              (post.description || '').substring(0, 120) + '...' : 
+              (post.description || ''), // Show abbreviated description in feed
             userNotes: post.caption || '', // Use caption field for user notes
             userName: post.profiles?.username || 'Anonymous',
             userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
             likes: post.likes.length,
             isLiked: post.likes.some(like => like.user_id === user?.id),
             isSaved: false, // This will be updated when we fetch saved posts
-            tags: [`#${post.title.replace(/\s+/g, '')}`, '#Wildlife'],
+            tags: [`#${post.title.replace(/\s+/g, '')}`, post.category ? `#${post.category}` : '#Wildlife'],
             comments: post.comments || []
           }}
           onLike={onLike}

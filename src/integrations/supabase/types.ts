@@ -158,43 +158,70 @@ export type Database = {
       }
       posts: {
         Row: {
+          behavior: string | null
           caption: string | null
+          category: string | null
+          confidence: string | null
+          conservation_status: string | null
           created_at: string
           description: string | null
+          diet: string | null
+          habitat: string | null
           id: string
+          identification_notes: string | null
           image_url: string
+          interesting_facts: string | null
           is_private: boolean
           latitude: number
           location_name: string | null
           longitude: number
+          scientific_name: string | null
           species_id: string | null
           title: string
           user_id: string
         }
         Insert: {
+          behavior?: string | null
           caption?: string | null
+          category?: string | null
+          confidence?: string | null
+          conservation_status?: string | null
           created_at?: string
           description?: string | null
+          diet?: string | null
+          habitat?: string | null
           id?: string
+          identification_notes?: string | null
           image_url: string
+          interesting_facts?: string | null
           is_private?: boolean
           latitude: number
           location_name?: string | null
           longitude: number
+          scientific_name?: string | null
           species_id?: string | null
           title: string
           user_id: string
         }
         Update: {
+          behavior?: string | null
           caption?: string | null
+          category?: string | null
+          confidence?: string | null
+          conservation_status?: string | null
           created_at?: string
           description?: string | null
+          diet?: string | null
+          habitat?: string | null
           id?: string
+          identification_notes?: string | null
           image_url?: string
+          interesting_facts?: string | null
           is_private?: boolean
           latitude?: number
           location_name?: string | null
           longitude?: number
+          scientific_name?: string | null
           species_id?: string | null
           title?: string
           user_id?: string

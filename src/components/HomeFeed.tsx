@@ -166,6 +166,7 @@ const HomeFeed = () => {
           id: selectedPost.id,
           image: selectedPost.image_url,
           speciesName: selectedPost.title,
+          scientificName: selectedPost.scientific_name,
           aiInfo: selectedPost.description || '',
           userNotes: selectedPost.caption || '', // Use caption field for user notes
           userName: selectedPost.profiles?.username || 'Anonymous',
@@ -173,9 +174,15 @@ const HomeFeed = () => {
           likes: selectedPost.likes.length,
           isLiked: selectedPost.likes.some(like => like.user_id === user?.id),
           isSaved: savedPostIds.has(selectedPost.id),
-          tags: [`#${selectedPost.title.replace(/\s+/g, '')}`, '#Wildlife'],
+          tags: [`#${selectedPost.title.replace(/\s+/g, '')}`, selectedPost.category ? `#${selectedPost.category}` : '#Wildlife'],
           comments: selectedPost.comments || [],
-          uploadDate: selectedPost.created_at
+          uploadDate: selectedPost.created_at,
+          characteristics: selectedPost.identification_notes ? [selectedPost.identification_notes] : undefined,
+          habitat: selectedPost.habitat,
+          diet: selectedPost.diet,
+          behavior: selectedPost.behavior,
+          conservationStatus: selectedPost.conservation_status,
+          badge: selectedPost.confidence ? `${selectedPost.confidence.charAt(0).toUpperCase() + selectedPost.confidence.slice(1)} Confidence` : undefined
         }}
         onClose={() => setSelectedPostId(null)}
         onLike={handleLike}
