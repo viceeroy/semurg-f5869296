@@ -10,9 +10,10 @@ import NotificationPanel from "./NotificationPanel";
 interface AppHeaderProps {
   onRefresh?: () => Promise<void>;
   refreshing?: boolean;
+  onProfileClick?: () => void;
 }
 
-const AppHeader = ({ onRefresh, refreshing = false }: AppHeaderProps) => {
+const AppHeader = ({ onRefresh, refreshing = false, onProfileClick }: AppHeaderProps) => {
   const { user } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -114,13 +115,16 @@ const AppHeader = ({ onRefresh, refreshing = false }: AppHeaderProps) => {
             
             {/* User Profile Picture */}
             {user && (
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
+              <button
+                onClick={onProfileClick}
+                className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 hover:ring-2 hover:ring-emerald-500 transition-all"
+              >
                 <img 
                   src={user.user_metadata?.avatar_url || '/placeholder.svg'} 
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
-              </div>
+              </button>
             )}
           </div>
         </div>

@@ -25,7 +25,7 @@ const MainApp = () => {
 
     switch (activeTab) {
       case "home":
-        return <HomeFeed />;
+        return <HomeFeed onProfileClick={() => setActiveTab("profile")} />;
       case "search":
         return <SearchPage />;
       case "collections":
@@ -33,7 +33,7 @@ const MainApp = () => {
       case "profile":
         return <ProfilePage onEditProfile={() => setShowProfileEdit(true)} />;
       default:
-        return <HomeFeed />;
+        return <HomeFeed onProfileClick={() => setActiveTab("profile")} />;
     }
   };
 

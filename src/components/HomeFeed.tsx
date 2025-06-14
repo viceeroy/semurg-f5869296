@@ -12,7 +12,11 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const HomeFeed = () => {
+interface HomeFeedProps {
+  onProfileClick?: () => void;
+}
+
+const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
   const { user } = useAuth();
   const { t } = useLanguage();
   const { posts, loading, refreshing, refreshPosts, handleLike, handleSave, handleComment, handleEditPost, handleDeletePost } = usePosts();
@@ -161,7 +165,7 @@ const HomeFeed = () => {
   if (selectedPost) {
     return (
       <div className="min-h-screen bg-gray-100">
-        <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} />
+        <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} onProfileClick={onProfileClick} />
         <DetailedPostView
         post={{
           id: selectedPost.id,
@@ -201,7 +205,7 @@ const HomeFeed = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} />
+      <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} onProfileClick={onProfileClick} />
       
       {/* Pull to refresh indicator */}
       {isPulling && (
