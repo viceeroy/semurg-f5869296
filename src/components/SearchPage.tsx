@@ -61,13 +61,13 @@ const SearchPage = () => {
       
       <div className="relative mb-6">
         <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-        <Input type="text" placeholder="Search for animals, plants, or interesting facts..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSpeciesSearch()} className="pl-10 pr-12 py-3 bg-white/80 backdrop-blur-sm border-gray-200 focus:ring-2 focus:ring-nature-green/20 focus:border-nature-green rounded-xl mx-0" />
+        <Input type="text" placeholder="Search for animals, plants, or interesting facts..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSpeciesSearch()} className="pl-10 pr-14 py-3 bg-white/80 backdrop-blur-sm border-gray-200 focus:ring-2 focus:ring-nature-green/20 focus:border-nature-green rounded-xl mx-0" />
         {searchQuery.trim() && (
           <Button
             onClick={handleSpeciesSearch}
             disabled={searchingSpecies}
             size="icon"
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 h-10 w-10 bg-white border border-gray-200 hover:bg-emerald-50 shadow-sm z-10 rounded-lg"
+            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-10 w-10 bg-white border border-gray-200 hover:bg-emerald-50 shadow-sm z-10 rounded-lg"
           >
             {searchingSpecies ? (
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600" />
