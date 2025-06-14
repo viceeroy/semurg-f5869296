@@ -137,10 +137,10 @@ const SearchPage = () => {
               <button
                 key={category.id}
                 onClick={() => handleCategoryChange(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:shadow-md ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:bg-white/50 hover:backdrop-blur-sm ${
                   selectedCategory === category.id
-                    ? "bg-nature-green text-white shadow-md"
-                    : `${category.color} hover:opacity-80`
+                    ? `${category.color} scale-110 shadow-lg`
+                    : category.color
                 }`}
               >
                 {category.label}
