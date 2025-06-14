@@ -145,12 +145,12 @@ const ProfileEditPage = ({
             <form onSubmit={handleSave} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
-                <Input id="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Enter your username" required />
+                <Input id="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Enter your username" required className="rounded" />
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="bio">Bio</Label>
-                <Textarea id="bio" value={bio} onChange={e => setBio(e.target.value)} placeholder="Tell us about yourself..." className="min-h-[80px] rounded-sm" />
+                <Textarea id="bio" value={bio} onChange={e => setBio(e.target.value)} placeholder="Tell us about yourself..." className="min-h-[80px] rounded" />
               </div>
               
               {/* Language Preference Switcher */}
@@ -186,7 +186,7 @@ const ProfileEditPage = ({
                   </div>
                   <div className="flex-1">
                     <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
-                    <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-full">
+                    <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-full text-base font-normal rounded">
                       <Upload className="w-4 h-4 mr-2" />
                       {uploading ? 'Uploading...' : 'Upload Photo'}
                     </Button>
@@ -197,7 +197,7 @@ const ProfileEditPage = ({
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
+              <Button type="submit" disabled={loading} className="w-full bg-green-600 hover:bg-green-500 rounded">
                 <Save className="w-4 h-4 mr-2" />
                 {loading ? 'Saving...' : 'Save Changes'}
               </Button>
