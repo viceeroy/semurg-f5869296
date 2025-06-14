@@ -3,10 +3,16 @@ import { Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { mockSearchPosts, categorizedPosts, SearchPost } from "@/data/mockSearchPosts";
+import SearchResultCard from "./SearchResultCard";
+import SearchResultDetailModal from "./SearchResultDetailModal";
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchResults, setSearchResults] = useState<SearchPost[]>(mockSearchPosts);
+  const [selectedPost, setSelectedPost] = useState<SearchPost | null>(null);
+  const [showNoResults, setShowNoResults] = useState(false);
 
   const categories = [
     { id: "all", label: "All", color: "bg-gray-100 text-gray-700" },
@@ -41,6 +47,30 @@ const SearchPage = () => {
     { name: "Purple Coneflower", count: "489 posts" }
   ];
 
+  const handleSearch = () => {
+    if (!searchQuery.trim()) {
+      setSearchResults(categorizedPosts[selectedCategory as keyof typeof categorizedPosts]);
+      setShowNoResults(false);
+      return;
+    }
+
+    const filtered = categorizedPosts[selectedCategory as keyof typeof categorizedPosts].filter(post =>
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.scientific_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    setSearchResults(filtered);
+    setShowNoResults(filtered.length === 0);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setSearchQuery("");
+    setSearchResults(categorizedPosts[category as keyof typeof categorizedPosts]);
+    setShowNoResults(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       {/* Header */}
@@ -58,8 +88,13 @@ const SearchPage = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 pr-12 glass-card border-gray-200 focus:border-nature-green"
             />
-            <Button variant="ghost" size="sm" className="absolute right-2 top-1/2 transform -translate-y-1/2">
-              <Filter className="w-4 h-4 text-gray-400" />
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              onClick={handleSearch}
+            >
+              <Search className="w-4 h-4 text-gray-400" />
             </Button>
           </div>
         </div>
@@ -73,7 +108,7 @@ const SearchPage = () => {
             {categories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => handleCategoryChange(category.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   selectedCategory === category.id
                     ? "bg-nature-green text-white shadow-md"
@@ -102,6 +137,49 @@ const SearchPage = () => {
           </div>
         </div>
 
+        {/* Search Results */}
+        {searchQuery && (
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Search Results {searchResults.length > 0 && `(${searchResults.length})`}
+            </h2>
+            {showNoResults ? (
+              <div className="text-center py-8">
+                <p className="text-gray-600">No results found for "{searchQuery}"</p>
+                <p className="text-sm text-gray-500 mt-2">Try searching for different keywords or browse categories above</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {searchResults.map((post) => (
+                  <SearchResultCard
+                    key={post.id}
+                    post={post}
+                    onClick={() => setSelectedPost(post)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Category Results */}
+        {!searchQuery && (
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              {selectedCategory === 'all' ? 'All Species' : categories.find(c => c.id === selectedCategory)?.label} ({searchResults.length})
+            </h2>
+            <div className="grid grid-cols-1 gap-4">
+              {searchResults.map((post) => (
+                <SearchResultCard
+                  key={post.id}
+                  post={post}
+                  onClick={() => setSelectedPost(post)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Trending */}
         <div>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Trending Species</h2>
@@ -123,6 +201,12 @@ const SearchPage = () => {
           </div>
         </div>
       </div>
+
+      <SearchResultDetailModal
+        post={selectedPost}
+        isOpen={!!selectedPost}
+        onClose={() => setSelectedPost(null)}
+      />
     </div>
   );
 };
