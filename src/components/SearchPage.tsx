@@ -14,11 +14,39 @@ const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [generatingPost, setGeneratingPost] = useState(false);
+  const [searchingSpecies, setSearchingSpecies] = useState(false);
   const { posts, loading, loadPosts, handleLike, handleComment, handleShare } = useEducationalPosts();
 
   useEffect(() => {
     loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
   }, [searchQuery, selectedCategory]);
+
+  const handleSpeciesSearch = async () => {
+    if (!searchQuery.trim()) return;
+    
+    setSearchingSpecies(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-species-info', {
+        body: { speciesName: searchQuery }
+      });
+      
+      if (error) {
+        console.error('Error searching species:', error);
+        toast.error('Failed to find species information');
+      } else if (data?.success) {
+        toast.success('Species information found!');
+        // Reload posts to show the new species info
+        loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
+      } else {
+        toast.error('No information found for this species');
+      }
+    } catch (error) {
+      console.error('Error searching species:', error);
+      toast.error('Failed to search species');
+    } finally {
+      setSearchingSpecies(false);
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto px-4 py-6 pb-32">
@@ -34,8 +62,18 @@ const SearchPage = () => {
           placeholder="Search for animals, plants, or interesting facts..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && handleSpeciesSearch()}
           className="pl-10 py-3 bg-white/80 backdrop-blur-sm border-gray-200 rounded-lg focus:ring-2 focus:ring-nature-green/20 focus:border-nature-green"
         />
+        {searchQuery.trim() && (
+          <Button
+            onClick={handleSpeciesSearch}
+            disabled={searchingSpecies}
+            className="absolute right-2 top-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-sm"
+          >
+            {searchingSpecies ? 'Searching...' : 'Find Species'}
+          </Button>
+        )}
       </div>
 
       <div className="mb-8">
