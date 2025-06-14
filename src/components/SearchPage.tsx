@@ -8,6 +8,7 @@ import LoadingSpinner from "./LoadingSpinner";
 import { categories } from "./search/searchData";
 import { useEducationalPosts } from "@/hooks/useEducationalPosts";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,16 +65,12 @@ const SearchPage = () => {
           onClick={async () => {
             try {
               setGeneratingPost(true);
-              const response = await fetch(`https://mpmweyfstejwjesvgguh.supabase.co/functions/v1/generate-educational-post`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              });
+              const { data, error } = await supabase.functions.invoke('generate-educational-post');
               
-              const data = await response.json();
-              
-              if (data.success) {
+              if (error) {
+                console.error('Error generating post:', error);
+                toast.error('Failed to generate new post');
+              } else if (data?.success) {
                 toast.success(data.message);
                 // Reload posts to show the new one
                 loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
