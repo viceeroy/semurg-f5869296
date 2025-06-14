@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import AppHeader from "./AppHeader";
 import PostList from "./PostList";
@@ -8,18 +8,25 @@ import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import PostInfoModal from "./PostInfoModal";
 import { usePosts } from "@/hooks/usePosts";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const HomeFeed = () => {
   const { user } = useAuth();
-  const { posts, loading, handleLike, handleSave, handleComment, handleEditPost, handleDeletePost } = usePosts();
+  const { t } = useLanguage();
+  const { posts, loading, refreshing, refreshPosts, handleLike, handleSave, handleComment, handleEditPost, handleDeletePost } = usePosts();
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set());
+  const [isPulling, setIsPulling] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const startY = useRef(0);
+  const currentY = useRef(0);
 
   const editingPost = editingPostId ? posts.find(p => p.id === editingPostId) : null;
 
@@ -74,6 +81,36 @@ const HomeFeed = () => {
     }
   };
 
+  // Pull to refresh functionality
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (scrollContainerRef.current?.scrollTop === 0) {
+      startY.current = e.touches[0].clientY;
+      setIsPulling(true);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isPulling || scrollContainerRef.current?.scrollTop !== 0) return;
+    
+    currentY.current = e.touches[0].clientY;
+    const distance = Math.max(0, currentY.current - startY.current);
+    setPullDistance(Math.min(distance, 100)); // Max pull distance of 100px
+  };
+
+  const handleTouchEnd = async () => {
+    if (isPulling && pullDistance > 60) { // Trigger refresh if pulled more than 60px
+      await refreshPosts(true);
+      toast.success(t.feed.refreshFeed);
+    }
+    setIsPulling(false);
+    setPullDistance(0);
+  };
+
+  const handleRefreshClick = async () => {
+    await refreshPosts(true);
+    toast.success(t.feed.refreshFeed);
+  };
+
   const handleSaveEdit = async (caption: string, hashtags: string) => {
     if (editingPost) {
       await handleEditPost(editingPost.id, caption, hashtags);
@@ -107,13 +144,13 @@ const HomeFeed = () => {
   const selectedPost = selectedPostId ? posts.find(p => p.id === selectedPostId) : null;
 
   if (loading) {
-    return <LoadingSpinner text="Loading posts..." />;
+    return <LoadingSpinner text={t.feed.loadingFeed} />;
   }
 
   if (selectedPost) {
     return (
       <div className="min-h-screen bg-gray-100">
-        <AppHeader />
+        <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} />
         <DetailedPostView
         post={{
           id: selectedPost.id,
@@ -145,8 +182,31 @@ const HomeFeed = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <AppHeader />
-      <PostList
+      <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} />
+      
+      {/* Pull to refresh indicator */}
+      {isPulling && (
+        <div 
+          className="fixed top-16 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-4 py-2 rounded-full text-sm z-30 transition-all duration-200"
+          style={{ transform: `translate(-50%, ${Math.min(pullDistance - 20, 40)}px)` }}
+        >
+          {pullDistance > 60 ? t.common.loading : t.feed.pullToRefresh}
+        </div>
+      )}
+      
+      <div 
+        ref={scrollContainerRef}
+        className="overflow-auto"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{ 
+          height: '100vh', 
+          paddingTop: isPulling ? `${Math.min(pullDistance * 0.5, 50)}px` : '0',
+          transition: isPulling ? 'none' : 'padding-top 0.3s ease-out'
+        }}
+      >
+        <PostList
         posts={posts.map(post => ({
           ...post,
           isSaved: savedPostIds.has(post.id)
@@ -160,6 +220,7 @@ const HomeFeed = () => {
         onDelete={handleDelete}
         onInfo={handleInfo}
       />
+      </div>
       
       {/* Edit Caption Modal */}
       <EditCaptionModal

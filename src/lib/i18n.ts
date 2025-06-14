@@ -127,6 +127,7 @@ export interface Translations {
     startSharing: string;
     refreshFeed: string;
     loadingFeed: string;
+    pullToRefresh: string;
   };
 
   // Search
@@ -320,7 +321,8 @@ export const translations: Record<'en' | 'uz', Translations> = {
       noPostsYet: "No posts yet",
       startSharing: "Start sharing your wildlife discoveries!",
       refreshFeed: "Refresh Feed",
-      loadingFeed: "Loading feed..."
+      loadingFeed: "Loading feed...",
+      pullToRefresh: "Pull to refresh"
     },
     search: {
       searchWildlife: "Search Wildlife",
@@ -500,7 +502,8 @@ export const translations: Record<'en' | 'uz', Translations> = {
       noPostsYet: "Hali postlar yo'q",
       startSharing: "Yovvoyi tabiat kashfiyotlaringizni bo'lishishni boshlang!",
       refreshFeed: "Lentani yangilash",
-      loadingFeed: "Lenta yuklanmoqda..."
+      loadingFeed: "Lenta yuklanmoqda...",
+      pullToRefresh: "Yangilash uchun torting"
     },
     search: {
       searchWildlife: "Yovvoyi tabiatni qidirish",

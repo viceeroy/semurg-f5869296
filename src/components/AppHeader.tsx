@@ -1,11 +1,18 @@
-import { Bell } from "lucide-react";
+import { Bell, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from "react";
 import NotificationPanel from "./NotificationPanel";
 
-const AppHeader = () => {
+interface AppHeaderProps {
+  onRefresh?: () => Promise<void>;
+  refreshing?: boolean;
+}
+
+const AppHeader = ({ onRefresh, refreshing = false }: AppHeaderProps) => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [showNotifications, setShowNotifications] = useState(false);
 
   return (
@@ -15,8 +22,22 @@ const AppHeader = () => {
           {/* Semurg Brand */}
           <h1 className="text-xl font-bold text-gray-900">Semurg</h1>
           
-          {/* Right side - Notification and Profile */}
-          <div className="flex items-center space-x-3">
+          {/* Right side - Discovery, Notification and Profile */}
+          <div className="flex items-center space-x-2">
+            {/* Discovery/Refresh Button */}
+            {onRefresh && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onRefresh}
+                disabled={refreshing}
+                className="relative p-2"
+                title={t.feed.refreshFeed}
+              >
+                <RotateCcw className={`w-5 h-5 text-emerald-600 ${refreshing ? 'animate-spin' : ''}`} />
+              </Button>
+            )}
+            
             {/* Notification Icon */}
             <Button
               variant="ghost"

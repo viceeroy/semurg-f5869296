@@ -9,10 +9,20 @@ export const usePosts = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const refreshPosts = async () => {
-    const data = await fetchPostsService();
-    setPosts(data);
+  const refreshPosts = async (showRefreshing = false) => {
+    if (showRefreshing) {
+      setRefreshing(true);
+    }
+    try {
+      const data = await fetchPostsService();
+      setPosts(data);
+    } finally {
+      if (showRefreshing) {
+        setRefreshing(false);
+      }
+    }
   };
 
   const fetchPosts = async () => {
@@ -34,6 +44,8 @@ export const usePosts = () => {
   return {
     posts,
     loading,
+    refreshing,
+    refreshPosts,
     handleLike,
     handleSave,
     handleComment,
