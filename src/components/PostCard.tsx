@@ -1,11 +1,9 @@
-
 import { useState } from "react";
 import PostCardHeader from "./PostCardHeader";
 import PostCardImage from "./PostCardImage";
 import PostCardContent from "./PostCardContent";
 import PostCardActions from "./PostCardActions";
 import PostCardComments from "./PostCardComments";
-
 interface Comment {
   id: string;
   user_id: string;
@@ -15,7 +13,6 @@ interface Comment {
     username: string;
   };
 }
-
 interface PostCardProps {
   post: {
     id: string;
@@ -41,17 +38,25 @@ interface PostCardProps {
   onDelete?: (postId: string) => void;
   onInfo?: (postId: string) => void;
 }
-
-const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick, onEdit, onDelete, onInfo }: PostCardProps) => {
+const PostCard = ({
+  post,
+  onLike,
+  onSave,
+  onComment,
+  onShare,
+  onPostClick,
+  onEdit,
+  onDelete,
+  onInfo
+}: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
-
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
         title: `Check out this ${post.speciesName}`,
         text: post.aiInfo,
-        url: window.location.href,
+        url: window.location.href
       });
     } else {
       // Fallback for browsers without native sharing
@@ -60,56 +65,16 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick, onEdi
     }
     onShare(post.id);
   };
+  return <div onClick={() => onPostClick?.(post.id)} className="mb-6 shadow-lg border border-gray-200 cursor-pointer overflow-hidden relative rounded-xl bg-slate-200">
+      <PostCardHeader userName={post.userName} userAvatar={post.userAvatar} speciesName={post.speciesName} postId={post.id} onEdit={onEdit} onDelete={onDelete} onInfo={onInfo} />
 
-  return (
-    <div 
-      className="bg-white rounded-2xl mb-6 shadow-lg border border-gray-200 cursor-pointer overflow-hidden relative"
-      onClick={() => onPostClick?.(post.id)}
-    >
-      <PostCardHeader
-        userName={post.userName}
-        userAvatar={post.userAvatar}
-        speciesName={post.speciesName}
-        postId={post.id}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        onInfo={onInfo}
-      />
+      <PostCardImage image={post.image} speciesName={post.speciesName} />
 
-      <PostCardImage
-        image={post.image}
-        speciesName={post.speciesName}
-      />
+      <PostCardContent aiInfo={post.aiInfo} tags={post.tags} userNotes={post.userNotes} userName={post.userName} />
 
-      <PostCardContent
-        aiInfo={post.aiInfo}
-        tags={post.tags}
-        userNotes={post.userNotes}
-        userName={post.userName}
-      />
+      <PostCardActions postId={post.id} likes={post.likes} isLiked={post.isLiked} isSaved={post.isSaved} commentsCount={post.comments.length} onLike={onLike} onSave={onSave} onShare={handleShare} onToggleComments={() => setShowComments(!showComments)} />
 
-      <PostCardActions
-        postId={post.id}
-        likes={post.likes}
-        isLiked={post.isLiked}
-        isSaved={post.isSaved}
-        commentsCount={post.comments.length}
-        onLike={onLike}
-        onSave={onSave}
-        onShare={handleShare}
-        onToggleComments={() => setShowComments(!showComments)}
-      />
-
-      <PostCardComments
-        postId={post.id}
-        comments={post.comments}
-        showComments={showComments}
-        newComment={newComment}
-        onNewCommentChange={setNewComment}
-        onComment={onComment}
-      />
-    </div>
-  );
+      <PostCardComments postId={post.id} comments={post.comments} showComments={showComments} newComment={newComment} onNewCommentChange={setNewComment} onComment={onComment} />
+    </div>;
 };
-
 export default PostCard;
