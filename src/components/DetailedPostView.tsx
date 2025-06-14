@@ -67,19 +67,19 @@ const DetailedPostView = ({
           showComments={showComments}
           onComment={onComment}
         />
-      </div>
 
-      <PostEngagement
-        postId={post.id}
-        likes={post.likes}
-        isLiked={post.isLiked}
-        isSaved={post.isSaved}
-        commentsCount={post.comments.length}
-        onLike={onLike}
-        onSave={onSave}
-        onShare={handleShareClick}
-        onToggleComments={() => setShowComments(!showComments)}
-      />
+        <PostEngagement
+          postId={post.id}
+          likes={post.likes}
+          isLiked={post.isLiked}
+          isSaved={post.isSaved}
+          commentsCount={post.comments.length}
+          onLike={onLike}
+          onSave={onSave}
+          onShare={handleShareClick}
+          onToggleComments={() => setShowComments(!showComments)}
+        />
+      </div>
     </div>
   );
 };
