@@ -31,8 +31,9 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 z-50">
-      <div className="flex items-center justify-around px-4 py-2 max-w-md mx-auto">
+    <div className="fixed bottom-6 left-4 right-4 z-50">
+      <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 max-w-md mx-auto">
+        <div className="flex items-center justify-around px-4 py-3">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -42,10 +43,10 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
               <Button
                 key={tab.id}
                 onClick={onUploadClick}
-                className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                className="w-14 h-14 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
                 size="sm"
               >
-                <Icon className="w-6 h-6" />
+                <Icon className="w-7 h-7" />
               </Button>
             );
           }
@@ -54,8 +55,8 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center py-2 px-3 transition-colors duration-200 ${
-                isActive ? 'text-emerald-600' : 'text-gray-500 hover:text-gray-700'
+              className={`flex flex-col items-center py-3 px-4 rounded-xl transition-all duration-200 ${
+                isActive ? 'text-emerald-600 bg-emerald-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
               }`}
             >
               <Icon className={`w-6 h-6 ${isActive ? 'stroke-2' : 'stroke-1.5'}`} />
@@ -63,6 +64,7 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
             </button>
           );
         })}
+        </div>
       </div>
     </div>
   );

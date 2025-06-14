@@ -61,11 +61,16 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick, onEdi
 
   return (
     <div 
-      className="bg-emerald-50/80 rounded-2xl p-4 mb-6 shadow-lg border border-emerald-100 cursor-pointer"
+      className="bg-white rounded-2xl mb-6 shadow-lg border border-gray-200 cursor-pointer overflow-hidden relative"
       onClick={() => onPostClick?.(post.id)}
     >
+      {/* Semurg Brand */}
+      <div className="absolute top-4 left-4 z-10">
+        <h1 className="text-lg font-bold text-gray-900">Semurg</h1>
+      </div>
+
       {/* User Info Row */}
-      <div className="flex items-center mb-4">
+      <div className="flex items-center mb-4 px-4 pt-4">
         <img 
           src={post.userAvatar} 
           alt={post.userName}
@@ -109,16 +114,16 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick, onEdi
       </div>
 
       {/* Image Section */}
-      <div className="bg-blue-50 rounded-xl p-4 mb-4">
+      <div className="mb-4 -mx-0">
         <img
           src={post.image}
           alt={post.speciesName}
-          className="w-full h-64 object-cover rounded-lg"
+          className="w-full h-80 object-cover"
         />
       </div>
 
       {/* Description Section */}
-      <div className="mb-4">
+      <div className="mb-4 px-4">
         <h4 className="font-bold text-foreground mb-2">AI Identification</h4>
         <p className="text-sm text-muted-foreground leading-relaxed mb-3">
           {post.aiInfo}
@@ -140,7 +145,7 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick, onEdi
 
         {/* User Caption */}
         {post.userNotes && (
-          <div className="mt-3 p-3 bg-white/50 rounded-lg border border-emerald-200">
+          <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
             <p className="text-sm text-foreground">
               <span className="font-semibold mr-2">{post.userName}:</span>
               {post.userNotes}
@@ -149,66 +154,70 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick, onEdi
         )}
       </div>
 
-      {/* Interaction Row */}
-      <div className="flex items-center justify-between pt-3 border-t border-emerald-100">
-        <div className="flex items-center space-x-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onLike(post.id);
-            }}
-            className={`p-2 ${post.isLiked ? 'text-red-500' : 'text-muted-foreground'} hover:text-red-500`}
-          >
-            <Heart className={`w-5 h-5 ${post.isLiked ? 'fill-current' : ''}`} />
-            <span className="ml-1 text-sm">{post.likes}</span>
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowComments(!showComments);
-            }}
-            className="p-2 text-muted-foreground hover:text-foreground"
-          >
-            <MessageCircle className="w-5 h-5" />
-            <span className="ml-1 text-sm">{post.comments.length}</span>
-          </Button>
-        </div>
-        
-        <div className="flex items-center space-x-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onSave(post.id);
-            }}
-            className={`p-2 ${post.isSaved ? 'text-emerald-600' : 'text-muted-foreground'} hover:text-emerald-600`}
-          >
-            <Bookmark className={`w-5 h-5 ${post.isSaved ? 'fill-current' : ''}`} />
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleShare();
-            }}
-            className="p-2 text-muted-foreground hover:text-emerald-600"
-          >
-            <Share2 className="w-5 h-5" />
-          </Button>
+      {/* Floating Interaction Row */}
+      <div className="absolute bottom-4 left-4 right-4">
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-3 shadow-lg border border-white/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onLike(post.id);
+                }}
+                className={`p-2 rounded-full ${post.isLiked ? 'text-red-500 bg-red-50' : 'text-gray-600'} hover:text-red-500 hover:bg-red-50`}
+              >
+                <Heart className={`w-5 h-5 ${post.isLiked ? 'fill-current' : ''}`} />
+              </Button>
+              <span className="text-sm font-medium text-gray-600">{post.likes}</span>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowComments(!showComments);
+                }}
+                className="p-2 rounded-full text-gray-600 hover:text-emerald-600 hover:bg-emerald-50"
+              >
+                <MessageCircle className="w-5 h-5" />
+              </Button>
+              <span className="text-sm font-medium text-gray-600">{post.comments.length}</span>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleShare();
+                }}
+                className="p-2 rounded-full text-gray-600 hover:text-emerald-600 hover:bg-emerald-50"
+              >
+                <Share2 className="w-5 h-5" />
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSave(post.id);
+                }}
+                className={`p-2 rounded-full ${post.isSaved ? 'text-emerald-600 bg-emerald-50' : 'text-gray-600'} hover:text-emerald-600 hover:bg-emerald-50`}
+              >
+                <Bookmark className={`w-5 h-5 ${post.isSaved ? 'fill-current' : ''}`} />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Comments Section */}
       {showComments && (
-        <div className="mt-4 pt-3 border-t border-emerald-100">
+        <div className="mt-4 pt-3 border-t border-gray-200 px-4 pb-20">
           <div className="space-y-2 mb-3">
             {post.comments.map((comment) => (
               <div key={comment.id} className="text-sm">
@@ -224,7 +233,7 @@ const PostCard = ({ post, onLike, onSave, onComment, onShare, onPostClick, onEdi
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Add a comment..."
-              className="flex-1 px-3 py-2 text-sm bg-white border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="flex-1 px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
               onKeyPress={(e) => {
                 if (e.key === 'Enter' && newComment.trim()) {
                   onComment(post.id, newComment.trim());

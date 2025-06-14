@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import LoadingSpinner from "./LoadingSpinner";
-import FeedHeader from "./FeedHeader";
+
 import PostList from "./PostList";
 import DetailedPostView from "./DetailedPostView";
 import EditCaptionModal from "./EditCaptionModal";
@@ -141,8 +141,7 @@ const HomeFeed = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
-      <FeedHeader />
+    <div className="min-h-screen bg-gray-100">
       <PostList
         posts={posts.map(post => ({
           ...post,

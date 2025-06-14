@@ -18,7 +18,7 @@ const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick, onEd
   const { user } = useAuth();
 
   return (
-    <div className="max-w-md mx-auto px-4 py-6 pb-24">
+    <div className="max-w-md mx-auto px-4 py-6 pb-32">
       {posts.map((post) => (
         <PostCard
           key={post.id}
