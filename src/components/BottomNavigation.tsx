@@ -1,4 +1,4 @@
-import { User, Search, FolderOpen } from "lucide-react";
+import { User, Search, FolderOpen, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -16,19 +16,12 @@ const DiscoverIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const IdentifySpeciesIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-    <polyline points="7.5,10 12,15 16.5,10"/>
-  </svg>
-);
-
 const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavigationProps) => {
   const { t } = useLanguage();
   const tabs = [
     { id: 'home', icon: DiscoverIcon, label: t.nav.home },
     { id: 'search', icon: Search, label: 'Search' },
-    { id: 'upload', icon: IdentifySpeciesIcon, label: t.upload.identifyWildlife, isSpecial: true },
+    { id: 'upload', icon: Sparkles, label: t.upload.identifyWildlife, isSpecial: true },
     { id: 'collections', icon: FolderOpen, label: 'Collections' },
     { id: 'profile', icon: User, label: t.nav.profile },
   ];
