@@ -1,4 +1,4 @@
-import { Heart, MessageCircle, Bookmark, Share2 } from "lucide-react";
+import { Heart, MessageCircle, Bookmark, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface PostEngagementProps {
@@ -27,56 +27,61 @@ const PostEngagement = ({
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border p-4">
       <div className="flex items-center justify-between max-w-md mx-auto">
-        <div className="flex items-center space-x-6">
-          <div className="flex flex-col items-center">
+        {/* Left side actions */}
+        <div className="flex items-center">
+          {/* Like button */}
+          <div className="flex items-center mr-12">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onLike(postId)}
-              className={`p-2 ${isLiked ? 'text-red-500' : 'text-muted-foreground'} hover:text-red-500`}
+              className={`group p-2 rounded-full transition-all duration-200 hover:scale-105 hover:bg-red-50 ${
+                isLiked ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'
+              }`}
             >
-              <Heart className={`w-6 h-6 ${isLiked ? 'fill-current' : ''}`} />
+              <Heart className={`w-5 h-5 stroke-[1.5] ${isLiked ? 'fill-current' : ''}`} />
             </Button>
-            <span className="text-xs font-medium text-muted-foreground mt-1">{likes}</span>
+            <span className="text-sm font-medium text-muted-foreground ml-1">{likes}</span>
           </div>
           
-          <div className="flex flex-col items-center">
+          {/* Comment button */}
+          <div className="flex items-center mr-12">
             <Button
               variant="ghost"
               size="sm"
               onClick={onToggleComments}
-              className="p-2 text-muted-foreground hover:text-foreground"
+              className="group p-2 rounded-full transition-all duration-200 hover:scale-105 hover:bg-blue-50 text-muted-foreground hover:text-blue-500"
             >
-              <MessageCircle className="w-6 h-6" />
+              <MessageCircle className="w-5 h-5 stroke-[1.5]" />
             </Button>
-            <span className="text-xs font-medium text-muted-foreground mt-1">{commentsCount}</span>
-          </div>
-        </div>
-        
-        <div className="flex items-center space-x-6">
-          <div className="flex flex-col items-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onSave(postId)}
-              className={`p-2 ${isSaved ? 'text-primary' : 'text-muted-foreground'} hover:text-primary`}
-            >
-              <Bookmark className={`w-6 h-6 ${isSaved ? 'fill-current' : ''}`} />
-            </Button>
-            <span className="text-xs font-medium text-muted-foreground mt-1">Save</span>
+            <span className="text-sm font-medium text-muted-foreground ml-1">{commentsCount}</span>
           </div>
           
-          <div className="flex flex-col items-center">
+          {/* Share button */}
+          <div className="flex items-center">
             <Button
               variant="ghost"
               size="sm"
               onClick={onShare}
-              className="p-2 text-muted-foreground hover:text-primary"
+              className="group p-2 rounded-full transition-all duration-200 hover:scale-105 hover:bg-green-50 text-muted-foreground hover:text-green-500"
             >
-              <Share2 className="w-6 h-6" />
+              <Send className="w-5 h-5 stroke-[1.5]" />
             </Button>
-            <span className="text-xs font-medium text-muted-foreground mt-1">0</span>
           </div>
+        </div>
+        
+        {/* Right side save button */}
+        <div className="flex items-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onSave(postId)}
+            className={`group p-2 rounded-full transition-all duration-200 hover:scale-105 hover:bg-blue-50 ${
+              isSaved ? 'text-blue-500' : 'text-muted-foreground hover:text-blue-500'
+            }`}
+          >
+            <Bookmark className={`w-5 h-5 stroke-[1.5] ${isSaved ? 'fill-current' : ''}`} />
+          </Button>
         </div>
       </div>
     </div>
