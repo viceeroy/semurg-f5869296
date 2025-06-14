@@ -62,9 +62,20 @@ const SearchPage = () => {
       <div className="relative mb-6">
         <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
         <Input type="text" placeholder="Search for animals, plants, or interesting facts..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSpeciesSearch()} className="pl-10 pr-12 py-3 bg-white/80 backdrop-blur-sm border-gray-200 focus:ring-2 focus:ring-nature-green/20 focus:border-nature-green rounded-xl mx-0" />
-        {searchQuery.trim() && <Button onClick={handleSpeciesSearch} disabled={searchingSpecies} variant="ghost" size="icon" className="absolute right-2 top-2 h-8 w-8 hover:bg-emerald-50">
-            {searchingSpecies ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600" /> : <Sparkles className="h-4 w-4 text-emerald-600 hover:scale-110 transition-transform duration-200" />}
-          </Button>}
+        {searchQuery.trim() && (
+          <Button
+            onClick={handleSpeciesSearch}
+            disabled={searchingSpecies}
+            size="icon"
+            className="absolute right-2 top-2 h-8 w-8 bg-white border border-gray-200 hover:bg-emerald-50 shadow-sm z-10"
+          >
+            {searchingSpecies ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600" />
+            ) : (
+              <Sparkles className="h-4 w-4 text-emerald-600 hover:scale-110 transition-transform duration-200" />
+            )}
+          </Button>
+        )}
       </div>
 
       <div className="mb-8">
