@@ -24,6 +24,8 @@ const HomeFeed = () => {
   const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set());
   const [isPulling, setIsPulling] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const startY = useRef(0);
   const currentY = useRef(0);
@@ -90,6 +92,33 @@ const HomeFeed = () => {
       }
     }
   };
+
+  // Header scroll detection
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const currentScrollY = container.scrollTop;
+      const scrollingDown = currentScrollY > lastScrollY;
+      const scrollingUp = currentScrollY < lastScrollY;
+
+      console.log('Scroll:', { currentScrollY, lastScrollY, scrollingDown, scrollingUp, headerVisible });
+
+      if (scrollingDown && currentScrollY > 100) {
+        setHeaderVisible(false);
+        console.log('Hiding header');
+      } else if (scrollingUp || currentScrollY <= 50) {
+        setHeaderVisible(true);
+        console.log('Showing header');
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   // Pull to refresh functionality
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -199,8 +228,8 @@ const HomeFeed = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} />
+    <div className="min-h-screen bg-gray-100 relative">
+      <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} isVisible={headerVisible} />
       
       {/* Pull to refresh indicator */}
       {isPulling && (
@@ -214,13 +243,15 @@ const HomeFeed = () => {
       
       <div 
         ref={scrollContainerRef}
-        className="overflow-auto"
+        className="overflow-auto pt-16"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         style={{ 
           height: '100vh', 
-          paddingTop: isPulling ? `${Math.min(pullDistance * 0.5, 50)}px` : '0',
+          paddingTop: headerVisible ? 
+            (isPulling ? `${64 + Math.min(pullDistance * 0.5, 50)}px` : '64px') : 
+            (isPulling ? `${Math.min(pullDistance * 0.5, 50)}px` : '0px'),
           transition: isPulling ? 'none' : 'padding-top 0.3s ease-out'
         }}
       >

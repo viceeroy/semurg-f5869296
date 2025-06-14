@@ -50,10 +50,14 @@ const DetailedPostView = ({
       const scrollingDown = currentScrollY > lastScrollY;
       const scrollingUp = currentScrollY < lastScrollY;
 
+      console.log('DetailedView Scroll:', { currentScrollY, lastScrollY, scrollingDown, scrollingUp, headerVisible });
+
       if (scrollingDown && currentScrollY > 100) {
         setHeaderVisible(false);
+        console.log('DetailedView: Hiding header');
       } else if (scrollingUp || currentScrollY <= 50) {
         setHeaderVisible(true);
+        console.log('DetailedView: Showing header');
       }
 
       setLastScrollY(currentScrollY);
