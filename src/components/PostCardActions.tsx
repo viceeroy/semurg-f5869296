@@ -1,4 +1,4 @@
-import { Heart, MessageCircle, Bookmark, Share2 } from "lucide-react";
+import { Heart, MessageCircle, Bookmark, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface PostCardActionsProps {
@@ -64,7 +64,7 @@ const PostCardActions = ({
               }}
               className="p-1 rounded-full text-gray-600 hover:text-gray-800"
             >
-              <Share2 className="w-5 h-5" />
+              <Send className="w-5 h-5" />
             </Button>
             <span className="text-sm font-medium text-gray-600">5</span>
           </div>
