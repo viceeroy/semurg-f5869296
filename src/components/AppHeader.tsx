@@ -19,10 +19,23 @@ const AppHeader = ({ onRefresh, refreshing = false, onProfileClick }: AppHeaderP
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   // Fetch unread notifications count
   useEffect(() => {
     if (!user) return;
+
+    const fetchUserProfile = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('avatar_url, username')
+        .eq('id', user.id)
+        .single();
+
+      if (!error && data) {
+        setUserProfile(data);
+      }
+    };
 
     const fetchUnreadCount = async () => {
       const { data, error } = await supabase
@@ -36,6 +49,7 @@ const AppHeader = ({ onRefresh, refreshing = false, onProfileClick }: AppHeaderP
       }
     };
 
+    fetchUserProfile();
     fetchUnreadCount();
 
     // Set up realtime subscription for new notifications
@@ -120,7 +134,7 @@ const AppHeader = ({ onRefresh, refreshing = false, onProfileClick }: AppHeaderP
                 className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 hover:ring-2 hover:ring-emerald-500 transition-all"
               >
                 <img 
-                  src={user.user_metadata?.avatar_url || '/placeholder.svg'} 
+                  src={userProfile?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100'} 
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
