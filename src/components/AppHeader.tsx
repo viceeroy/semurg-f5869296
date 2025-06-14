@@ -8,20 +8,15 @@ import NotificationPanel from "./NotificationPanel";
 interface AppHeaderProps {
   onRefresh?: () => Promise<void>;
   refreshing?: boolean;
-  isVisible?: boolean;
 }
 
-const AppHeader = ({ onRefresh, refreshing = false, isVisible = true }: AppHeaderProps) => {
+const AppHeader = ({ onRefresh, refreshing = false }: AppHeaderProps) => {
   const { user } = useAuth();
   const { t } = useLanguage();
   const [showNotifications, setShowNotifications] = useState(false);
 
-  console.log('AppHeader isVisible:', isVisible);
-
   return (
-    <div className={`bg-white/90 backdrop-blur-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out ${
-      isVisible ? 'translate-y-0' : '-translate-y-full'
-    }`}>
+    <div className="bg-white/90 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-20">
       <div className="max-w-md mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Semurg Brand */}
