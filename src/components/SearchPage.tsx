@@ -50,7 +50,11 @@ const SearchPage = () => {
   ];
 
   const handleSearch = () => {
+    console.log('Search triggered with query:', searchQuery);
+    console.log('Selected category:', selectedCategory);
+    
     if (!searchQuery.trim()) {
+      console.log('Empty search query, showing category results');
       setSearchResults(categorizedPosts[selectedCategory as keyof typeof categorizedPosts]);
       setShowNoResults(false);
       return;
@@ -58,6 +62,7 @@ const SearchPage = () => {
 
     // Search across all categories if "all" is selected, otherwise search within selected category
     const searchData = selectedCategory === 'all' ? mockSearchPosts : categorizedPosts[selectedCategory as keyof typeof categorizedPosts];
+    console.log('Search data source:', searchData.length, 'posts');
     
     const filtered = searchData.filter(post =>
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -65,6 +70,9 @@ const SearchPage = () => {
       post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.category.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    console.log('Filtered results:', filtered.length, 'posts found');
+    console.log('First few results:', filtered.slice(0, 3).map(p => p.title));
 
     setSearchResults(filtered);
     setShowNoResults(filtered.length === 0);
