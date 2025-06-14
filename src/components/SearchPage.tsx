@@ -67,7 +67,8 @@ const SearchPage = () => {
             onClick={handleSpeciesSearch}
             disabled={searchingSpecies}
             size="icon"
-            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-10 w-10 bg-white border border-gray-200 hover:bg-emerald-50 shadow-sm z-10 rounded-lg"
+            variant="ghost"
+            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-10 w-10 z-10 rounded-lg"
           >
             {searchingSpecies ? (
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600" />
