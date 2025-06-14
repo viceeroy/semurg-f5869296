@@ -199,7 +199,7 @@ const ProfilePage = ({
 
         {/* Content Tabs */}
         <Tabs defaultValue="posts" className="w-full" onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-sm">
+          <TabsList className="grid w-full grid-cols-2 backdrop-blur-sm bg-white rounded-2xl">
             <TabsTrigger value="posts" className="flex items-center text-green-600 text-left">
               <Grid3X3 className="w-4 h-4 mr-2 bg-transparent" />
               Posts
