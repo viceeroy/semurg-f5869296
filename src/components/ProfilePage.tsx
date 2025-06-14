@@ -25,6 +25,7 @@ const ProfilePage = ({
   const [userPosts, setUserPosts] = useState<any[]>([]);
   const [savedPosts, setSavedPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [savedLoading, setSavedLoading] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("posts");
   useEffect(() => {
@@ -83,7 +84,7 @@ const ProfilePage = ({
     }
   };
   const fetchSavedPosts = async () => {
-    setLoading(true);
+    setSavedLoading(true);
     try {
       const {
         data,
@@ -115,7 +116,7 @@ const ProfilePage = ({
     } catch (error) {
       console.error('Error:', error);
     } finally {
-      setLoading(false);
+      setSavedLoading(false);
     }
   };
   const handleSignOut = async () => {
@@ -231,17 +232,27 @@ const ProfilePage = ({
           </TabsContent>
 
           <TabsContent value="saved" className="mt-4">
-            {savedPosts.length === 0 ? <div className="text-center py-12">
+            {savedLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto"></div>
+              </div>
+            ) : savedPosts.length === 0 ? (
+              <div className="text-center py-12">
                 <Bookmark className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">No saved posts yet</h3>
                 <p className="text-sm text-gray-600">
                   Posts you save will appear here
                 </p>
-              </div> : <div className="grid grid-cols-3 gap-1">
-                {savedPosts.map(post => <div key={post.id} className="aspect-square bg-white rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setSelectedPostId(post.id)}>
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-1">
+                {savedPosts.map(post => (
+                  <div key={post.id} className="aspect-square bg-white rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setSelectedPostId(post.id)}>
                     <img src={post.image_url} alt={post.title} className="w-full h-full object-cover" />
-                  </div>)}
-              </div>}
+                  </div>
+                ))}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
