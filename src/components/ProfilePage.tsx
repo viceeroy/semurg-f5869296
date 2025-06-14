@@ -199,12 +199,18 @@ const ProfilePage = ({
 
         {/* Content Tabs */}
         <Tabs defaultValue="posts" className="w-full" onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 backdrop-blur-sm bg-white rounded-2xl">
-            <TabsTrigger value="posts" className="flex items-center text-left text-green-600">
-              <Grid3X3 className="w-4 h-4 mr-2 bg-transparent" />
+          <TabsList className="grid w-full grid-cols-2 backdrop-blur-sm bg-white/70 rounded-2xl p-1">
+            <TabsTrigger 
+              value="posts" 
+              className="flex items-center justify-center text-gray-600 hover:text-emerald-600 hover:bg-white/50 data-[state=active]:bg-white data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm transition-all duration-200"
+            >
+              <Grid3X3 className="w-4 h-4 mr-2" />
               Posts
             </TabsTrigger>
-            <TabsTrigger value="saved" className="flex items-center text-green-600 bg-slate-50 rounded">
+            <TabsTrigger 
+              value="saved" 
+              className="flex items-center justify-center text-gray-600 hover:text-emerald-600 hover:bg-white/50 data-[state=active]:bg-white data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm transition-all duration-200"
+            >
               <Bookmark className="w-4 h-4 mr-2" />
               Saved
             </TabsTrigger>
