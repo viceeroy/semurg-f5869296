@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import LoadingSpinner from "./LoadingSpinner";
-
+import AppHeader from "./AppHeader";
 import PostList from "./PostList";
 import DetailedPostView from "./DetailedPostView";
 import EditCaptionModal from "./EditCaptionModal";
@@ -112,7 +112,9 @@ const HomeFeed = () => {
 
   if (selectedPost) {
     return (
-      <DetailedPostView
+      <div className="min-h-screen bg-gray-100">
+        <AppHeader />
+        <DetailedPostView
         post={{
           id: selectedPost.id,
           image: selectedPost.image_url,
@@ -136,12 +138,14 @@ const HomeFeed = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onInfo={handleInfo}
-      />
+        />
+      </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <AppHeader />
       <PostList
         posts={posts.map(post => ({
           ...post,

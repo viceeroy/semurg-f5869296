@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Post } from "@/types/post";
+import { createNotification } from "@/services/notificationService";
 
 export const usePostActions = (
   user: any,
@@ -40,6 +41,18 @@ export const usePostActions = (
         if (error) {
           toast.error('Error liking post');
           return;
+        }
+
+        // Create notification for the post owner
+        if (!isLiked && post.user_id !== user.id) {
+          await createNotification(
+            post.user_id,
+            'like',
+            'New Like',
+            `Someone liked your post`,
+            postId,
+            user.id
+          );
         }
       }
 
@@ -113,6 +126,19 @@ export const usePostActions = (
       if (error) {
         toast.error('Error adding comment');
         return;
+      }
+
+      // Create notification for the post owner
+      const post = posts.find(p => p.id === postId);
+      if (post && post.user_id !== user.id) {
+        await createNotification(
+          post.user_id,
+          'comment',
+          'New Comment',
+          `Someone commented on your post: "${content.substring(0, 50)}${content.length > 50 ? '...' : ''}"`,
+          postId,
+          user.id
+        );
       }
 
       // Refresh posts to show new comment
