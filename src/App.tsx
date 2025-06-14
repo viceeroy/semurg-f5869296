@@ -15,7 +15,20 @@ const App = () => (
     <AuthProvider>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
+        <Sonner 
+          position="top-center"
+          expand={true}
+          richColors={true}
+          closeButton={true}
+          toastOptions={{
+            style: {
+              background: 'white',
+              border: '1px solid #e2e8f0',
+              color: '#1e293b',
+            },
+            className: 'shadow-lg',
+          }}
+        />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
