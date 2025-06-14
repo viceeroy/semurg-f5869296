@@ -208,6 +208,21 @@ const CollectionsPage = () => {
     console.log('Save post:', postId);
   };
 
+  const handleEdit = (postId: string) => {
+    // Handle edit logic
+    console.log('Edit post:', postId);
+  };
+
+  const handleDelete = (postId: string) => {
+    // Handle delete logic
+    console.log('Delete post:', postId);
+  };
+
+  const handleInfo = (postId: string) => {
+    // Handle info logic
+    console.log('Info for post:', postId);
+  };
+
   const filteredPosts = activeFilter === "all" 
     ? savedPosts 
     : savedPosts.filter(post => post.category === activeFilter.slice(0, -1)); // Remove 's' from 'birds' etc
@@ -293,6 +308,9 @@ const CollectionsPage = () => {
                     onSave={handleSave}
                     onComment={() => {}}
                     onShare={() => {}}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onInfo={handleInfo}
                   />
                 ) : (
                   <div className="glass-card rounded-xl overflow-hidden">

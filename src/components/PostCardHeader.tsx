@@ -41,20 +41,20 @@ const PostCardHeader = ({ userName, userAvatar, speciesName, postId, postUserId,
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               align="end" 
-              className="bg-background border border-border rounded-xl shadow-lg z-[60] min-w-[150px]"
+              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 min-w-[140px] backdrop-blur-sm"
               sideOffset={5}
             >
               {isOwner && (
                 <>
                   <DropdownMenuItem 
                     onClick={(e) => { e.stopPropagation(); onEdit?.(postId); }}
-                    className="cursor-pointer hover:bg-accent px-3 py-2"
+                    className="text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer px-3 py-2"
                   >
                     Edit Post
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={(e) => { e.stopPropagation(); onDelete?.(postId); }}
-                    className="cursor-pointer hover:bg-accent px-3 py-2 text-red-600"
+                    className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer px-3 py-2"
                   >
                     Delete Post
                   </DropdownMenuItem>
@@ -62,7 +62,7 @@ const PostCardHeader = ({ userName, userAvatar, speciesName, postId, postUserId,
               )}
               <DropdownMenuItem 
                 onClick={(e) => { e.stopPropagation(); onInfo?.(postId); }}
-                className="cursor-pointer hover:bg-accent px-3 py-2"
+                className="text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer px-3 py-2"
               >
                 Info
               </DropdownMenuItem>
