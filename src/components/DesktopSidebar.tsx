@@ -71,14 +71,9 @@ const DesktopSidebar = ({
 
         {/* Navigation Menu */}
         <nav className="space-y-2">
-          {menuItems.map((item) => {
+          {menuItems.slice(0, 2).map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
-            
-            // Skip rendering the upload item in the regular menu since it's special
-            if (item.isSpecial) {
-              return null;
-            }
             
             return (
               <Button
@@ -108,6 +103,30 @@ const DesktopSidebar = ({
             <Sparkles className="w-6 h-6" />
             <span className="text-base">{t.upload.identifyWildlife}</span>
           </Button>
+          
+          {menuItems.slice(3).map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            
+            return (
+              <Button
+                key={item.id}
+                variant="ghost"
+                className={`w-full justify-start gap-4 px-3 py-3 h-auto text-left ${
+                  isActive 
+                    ? 'bg-gray-100 text-black font-semibold' 
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+                onClick={item.onClick}
+              >
+                <Icon 
+                  className={`w-6 h-6 ${isActive ? 'fill-current' : ''}`} 
+                  strokeWidth={isActive ? 0 : 1.5}
+                />
+                <span className="text-base">{item.label}</span>
+              </Button>
+            );
+          })}
         </nav>
       </div>
     </div>
