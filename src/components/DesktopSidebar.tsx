@@ -41,6 +41,13 @@ const DesktopSidebar = ({
       onClick: () => onTabChange('search')
     },
     {
+      id: 'upload',
+      icon: Sparkles,
+      label: t.upload.identifyWildlife,
+      onClick: onUploadClick,
+      isSpecial: true
+    },
+    {
       id: 'collections',
       icon: FolderOpen,
       label: 'Collections',
@@ -68,6 +75,11 @@ const DesktopSidebar = ({
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             
+            // Skip rendering the upload item in the regular menu since it's special
+            if (item.isSpecial) {
+              return null;
+            }
+            
             return (
               <Button
                 key={item.id}
@@ -87,16 +99,16 @@ const DesktopSidebar = ({
               </Button>
             );
           })}
+          
+          {/* Special upload button in the middle of navigation */}
+          <Button
+            onClick={onUploadClick}
+            className="w-full justify-start gap-4 px-3 py-3 h-auto text-left bg-emerald-600 hover:bg-emerald-700 text-white"
+          >
+            <Sparkles className="w-6 h-6" />
+            <span className="text-base">{t.upload.identifyWildlife}</span>
+          </Button>
         </nav>
-
-        {/* Create Post Button */}
-        <Button
-          onClick={onUploadClick}
-          className="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
-        >
-          <Sparkles className="w-5 h-5" />
-          {t.upload.identifyWildlife}
-        </Button>
       </div>
     </div>
   );

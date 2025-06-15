@@ -33,14 +33,14 @@ const BottomNavigation = ({
     icon: Search,
     label: 'Search'
   }, {
-    id: 'collections',
-    icon: FolderOpen,
-    label: 'Collections'
-  }, {
     id: 'upload',
     icon: Sparkles,
     label: t.upload.identifyWildlife,
     isSpecial: true
+  }, {
+    id: 'collections',
+    icon: FolderOpen,
+    label: 'Collections'
   }, {
     id: 'profile',
     icon: User,
