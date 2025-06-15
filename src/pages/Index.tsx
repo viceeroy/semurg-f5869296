@@ -2,7 +2,10 @@
 import { useState } from "react";
 import { useAuth, AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
+import { useIsMobile } from "@/hooks/use-mobile";
 import BottomNavigation from "@/components/BottomNavigation";
+import DesktopSidebar from "@/components/DesktopSidebar";
+import RightSidebar from "@/components/RightSidebar";
 import HomeFeed from "@/components/HomeFeed";
 import SearchPage from "@/components/SearchPage";
 import CollectionsPage from "@/components/CollectionsPage";
@@ -14,9 +17,14 @@ import ProfileEditPage from "@/components/ProfileEditPage";
 const MainApp = () => {
   const { user, loading } = useAuth();
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState("home");
   const [showUploadFlow, setShowUploadFlow] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Pass search query to right sidebar when on search page
+  const currentSearchQuery = activeTab === 'search' ? searchQuery : '';
 
   const renderContent = () => {
     if (showProfileEdit) {
@@ -57,18 +65,53 @@ const MainApp = () => {
     return <AuthPage />;
   }
 
+  // Mobile layout (unchanged)
+  if (isMobile) {
+    return (
+      <div className="min-h-screen bg-gray-50 relative">
+        {!showProfileEdit && renderContent()}
+        {showProfileEdit && renderContent()}
+        
+        {!showProfileEdit && (
+          <BottomNavigation
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            onUploadClick={() => setShowUploadFlow(true)}
+          />
+        )}
+
+        {showUploadFlow && (
+          <UploadFlow 
+            onClose={() => setShowUploadFlow(false)} 
+            onPostCreated={handlePostCreated}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // Desktop layout (3-column)
   return (
-    <div className="min-h-screen bg-gray-50 relative">
-      {!showProfileEdit && renderContent()}
-      {showProfileEdit && renderContent()}
-      
-      {!showProfileEdit && (
-        <BottomNavigation
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          onUploadClick={() => setShowUploadFlow(true)}
-        />
-      )}
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Left Sidebar */}
+      <DesktopSidebar
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onUploadClick={() => setShowUploadFlow(true)}
+      />
+
+      {/* Main Content */}
+      <div className="flex-1 ml-64 mr-80">
+        <div className="max-w-2xl mx-auto">
+          {!showProfileEdit && renderContent()}
+          {showProfileEdit && renderContent()}
+        </div>
+      </div>
+
+      {/* Right Sidebar */}
+      <RightSidebar 
+        searchQuery={currentSearchQuery}
+      />
 
       {showUploadFlow && (
         <UploadFlow 
