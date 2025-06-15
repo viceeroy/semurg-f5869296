@@ -90,39 +90,39 @@ const SearchPage = () => {
 
       {loading && <LoadingSpinner />}
 
-      {/* More Facts Button */}
-      <div className="mb-6 text-center">
-        <Button onClick={async () => {
-        try {
-          setGeneratingPost(true);
-          const {
-            data,
-            error
-          } = await supabase.functions.invoke('generate-educational-post');
-          if (error) {
-            console.error('Error generating post:', error);
-            toast.error('Failed to generate new post');
-          } else if (data?.success) {
-            toast.success(data.message);
-            // Reload posts to show the new one
-            loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
-          } else {
-            toast.error('Failed to generate new post');
-          }
-        } catch (error) {
-          console.error('Error generating post:', error);
-          toast.error('Failed to generate new post');
-        } finally {
-          setGeneratingPost(false);
-        }
-      }} disabled={generatingPost} className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-          <Sparkles className="w-4 h-4 mr-2" />
-          {generatingPost ? 'Generating...' : 'More interesting facts'}
-        </Button>
-      </div>
-
       {!loading && <div className="space-y-4">
           {posts.map(post => <EducationalPostCard key={post.id} post={post} onLike={handleLike} onComment={handleComment} onShare={handleShare} />)}
+          
+          {/* More Facts Button - placed after all posts */}
+          <div className="pt-6 text-center">
+            <Button onClick={async () => {
+            try {
+              setGeneratingPost(true);
+              const {
+                data,
+                error
+              } = await supabase.functions.invoke('generate-educational-post');
+              if (error) {
+                console.error('Error generating post:', error);
+                toast.error('Failed to generate new post');
+              } else if (data?.success) {
+                toast.success(data.message);
+                // Reload posts to show the new one
+                loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
+              } else {
+                toast.error('Failed to generate new post');
+              }
+            } catch (error) {
+              console.error('Error generating post:', error);
+              toast.error('Failed to generate new post');
+            } finally {
+              setGeneratingPost(false);
+            }
+          }} disabled={generatingPost} className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Search className="w-4 h-4 mr-2" />
+              {generatingPost ? 'Generating...' : 'More interesting facts'}
+            </Button>
+          </div>
         </div>}
     </div>;
 };
