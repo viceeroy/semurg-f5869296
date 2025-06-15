@@ -3,7 +3,7 @@ import PostCardHeader from "./PostCardHeader";
 import PostCardImage from "./PostCardImage";
 import PostCardContent from "./PostCardContent";
 import PostCardActions from "./PostCardActions";
-import PostCardComments from "./PostCardComments";
+import EducationalPostComments from "./EducationalPostComments";
 interface Comment {
   id: string;
   user_id: string;
@@ -51,7 +51,6 @@ const PostCard = ({
   onInfo
 }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
-  const [newComment, setNewComment] = useState('');
   const handleShare = async () => {
     const shareData = {
       title: `Check out this ${post.speciesName} on Semurg`,
@@ -94,7 +93,11 @@ const PostCard = ({
 
       <PostCardActions postId={post.id} likes={post.likes} isLiked={post.isLiked} isSaved={post.isSaved} commentsCount={post.comments.length} onLike={onLike} onSave={onSave} onShare={handleShare} onToggleComments={() => setShowComments(!showComments)} />
 
-      <PostCardComments postId={post.id} comments={post.comments} showComments={showComments} newComment={newComment} onNewCommentChange={setNewComment} onComment={onComment} />
+      <EducationalPostComments
+        postId={post.id}
+        isOpen={showComments}
+        onClose={() => setShowComments(false)}
+      />
     </div>;
 };
 export default PostCard;
