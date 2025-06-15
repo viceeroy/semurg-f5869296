@@ -108,23 +108,27 @@ const RightSidebar = ({ searchQuery, searchResults }: RightSidebarProps) => {
   };
 
   const renderDefaultFacts = () => {
-    const currentFact = defaultFacts[currentFactIndex];
+    const factsToShow = defaultFacts.slice(currentFactIndex, currentFactIndex + 6);
     
     return (
-      <Card className="border-emerald-200">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            {currentFact.icon}
-            Did You Know?
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <h3 className="font-semibold text-emerald-700 mb-2">
-            {currentFact.title}
-          </h3>
-          <p className="text-gray-600">{currentFact.fact}</p>
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        {factsToShow.map((fact, index) => (
+          <Card key={currentFactIndex + index} className="border-emerald-200">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                {fact.icon}
+                Did You Know?
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <h3 className="font-semibold text-emerald-700 mb-2">
+                {fact.title}
+              </h3>
+              <p className="text-gray-600">{fact.fact}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     );
   };
 
