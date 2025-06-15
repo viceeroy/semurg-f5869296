@@ -1,12 +1,4 @@
-import { 
-  Home, 
-  Search, 
-  Compass, 
-  Bell, 
-  FolderOpen, 
-  User,
-  Sparkles 
-} from "lucide-react";
+import { User, Search, FolderOpen, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
@@ -16,6 +8,16 @@ interface DesktopSidebarProps {
   onTabChange: (tab: string) => void;
   onUploadClick: () => void;
 }
+
+// Custom icons based on the design (same as BottomNavigation)
+const DiscoverIcon = ({
+  className
+}: {
+  className?: string;
+}) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 6v6l4 2" />
+  </svg>;
 
 const DesktopSidebar = ({ 
   activeTab, 
@@ -28,7 +30,7 @@ const DesktopSidebar = ({
   const menuItems = [
     {
       id: 'home',
-      icon: Home,
+      icon: DiscoverIcon,
       label: t.nav.home,
       onClick: () => onTabChange('home')
     },
@@ -37,18 +39,6 @@ const DesktopSidebar = ({
       icon: Search,
       label: 'Search',
       onClick: () => onTabChange('search')
-    },
-    {
-      id: 'discoveries',
-      icon: Compass,
-      label: 'Discoveries',
-      onClick: onUploadClick
-    },
-    {
-      id: 'notifications',
-      icon: Bell,
-      label: 'Notifications',
-      onClick: () => onTabChange('notifications')
     },
     {
       id: 'collections',
