@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Lightbulb, Leaf, Globe, RefreshCw } from "lucide-react";
+import { Lightbulb, Leaf, Globe } from "lucide-react";
 
 interface RightSidebarProps {
   searchQuery?: string;
@@ -65,9 +64,15 @@ const defaultFacts = [
 const RightSidebar = ({ searchQuery, searchResults }: RightSidebarProps) => {
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
 
-  const handleMoreFacts = () => {
-    setCurrentFactIndex((prev) => (prev + 1) % defaultFacts.length);
-  };
+  // Rotate facts every 10 seconds
+  useEffect(() => {
+    if (!searchQuery) {
+      const interval = setInterval(() => {
+        setCurrentFactIndex((prev) => (prev + 1) % defaultFacts.length);
+      }, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [searchQuery]);
 
   const renderSearchFacts = () => {
     if (!searchQuery) return null;
@@ -167,17 +172,6 @@ const RightSidebar = ({ searchQuery, searchResults }: RightSidebarProps) => {
         </h2>
         
         {searchQuery ? renderSearchFacts() : renderDefaultFacts()}
-        
-        {!searchQuery && (
-          <Button 
-            onClick={handleMoreFacts}
-            variant="outline"
-            className="w-full mt-4 gap-2"
-          >
-            <RefreshCw className="w-4 h-4" />
-            More facts
-          </Button>
-        )}
       </div>
     </div>
   );
