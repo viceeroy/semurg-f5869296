@@ -111,51 +111,20 @@ const RightSidebar = ({ searchQuery, searchResults }: RightSidebarProps) => {
     const currentFact = defaultFacts[currentFactIndex];
     
     return (
-      <div className="space-y-4">
-        <Card className="border-emerald-200">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              {currentFact.icon}
-              Did You Know?
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <h3 className="font-semibold text-emerald-700 mb-2">
-              {currentFact.title}
-            </h3>
-            <p className="text-gray-600">{currentFact.fact}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Leaf className="w-5 h-5 text-green-500" />
-              Conservation Corner
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600">
-              Every species identification helps contribute to wildlife conservation efforts. 
-              Your discoveries help scientists track biodiversity and ecosystem health.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Globe className="w-5 h-5 text-blue-500" />
-              Nature's Wonders
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600">
-              The natural world is full of incredible adaptations and behaviors. From the Arctic tundra to tropical rainforests, every ecosystem holds unique secrets waiting to be discovered.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="border-emerald-200">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            {currentFact.icon}
+            Did You Know?
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <h3 className="font-semibold text-emerald-700 mb-2">
+            {currentFact.title}
+          </h3>
+          <p className="text-gray-600">{currentFact.fact}</p>
+        </CardContent>
+      </Card>
     );
   };
 
