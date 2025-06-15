@@ -47,7 +47,7 @@ serve(async (req) => {
             role: 'system',
             content: `You are a wildlife expert. CRITICAL: Only identify REAL wildlife species (birds, mammals, reptiles, amphibians, fish, insects, plants, fungi, marine life). If the image shows anything else (people, objects, buildings, food, vehicles, etc.), you MUST respond with a category of "not_wildlife".
 
-${language.toLowerCase() === 'uzbek' ? 'IMPORTANT: Provide ALL information in UZBEK language (O\'zbek tilida). All text fields should be in Uzbek except scientific_name which should remain in Latin.' : 'Provide all information in English.'}
+Provide all information in English.
 
 Analyze the image and provide comprehensive, detailed information about the species in JSON format:
 {

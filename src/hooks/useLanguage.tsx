@@ -25,53 +25,14 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   const [language, setLanguageState] = useState<LanguageCode>('en');
   const [loading, setLoading] = useState(true);
 
-  // Fetch user's language preference
+  // Set loading to false immediately since we're not fetching language preference
   useEffect(() => {
-    const fetchLanguagePreference = async () => {
-      if (!user?.id) {
-        setLoading(false);
-        return;
-      }
+    setLoading(false);
+  }, []);
 
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('language_preference')
-          .eq('id', user.id)
-          .single();
-
-        if (data && !error) {
-          setLanguageState(data.language_preference === 'uzbek' ? 'uz' : 'en');
-        }
-      } catch (error) {
-        console.log('Error fetching language preference:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLanguagePreference();
-  }, [user?.id]);
-
-  // Update language preference in database
+  // Simplified setLanguage function (kept for compatibility)
   const setLanguage = async (newLanguage: LanguageCode) => {
-    if (!user?.id) return;
-
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          language_preference: newLanguage === 'uz' ? 'uzbek' : 'english',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', user.id);
-
-      if (!error) {
-        setLanguageState(newLanguage);
-      }
-    } catch (error) {
-      console.error('Error updating language preference:', error);
-    }
+    setLanguageState(newLanguage);
   };
 
   const translations = getTranslations(language);

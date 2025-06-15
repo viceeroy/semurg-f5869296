@@ -153,28 +153,6 @@ const ProfileEditPage = ({
                 <Textarea id="bio" value={bio} onChange={e => setBio(e.target.value)} placeholder="Tell us about yourself..." className="min-h-[80px] rounded" />
               </div>
               
-              {/* Language Preference Switcher */}
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2">
-                  <Globe className="w-4 h-4" />
-                  Language Preference
-                </Label>
-                <div className="relative">
-                  <div className="flex p-1 transition-all duration-300 bg-green-400 rounded-xl">
-                    <button type="button" onClick={() => setLanguagePreference('english')} className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-300 relative ${languagePreference === 'english' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}>
-                      <span className="relative z-10 text-lg">English</span>
-                      {languagePreference === 'english' && <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-md opacity-50" />}
-                    </button>
-                    <button type="button" onClick={() => setLanguagePreference('uzbek')} className={`flex-1 px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-300 relative ${languagePreference === 'uzbek' ? 'bg-white text-emerald-700 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}>
-                      <span className="relative z-10 text-lg">O'zbek</span>
-                      {languagePreference === 'uzbek' && <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 to-emerald-100 opacity-50 bg-slate-50 rounded-sm" />}
-                    </button>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500">
-                  Choose your preferred language for wildlife species information
-                </p>
-              </div>
               
               <div className="space-y-2">
                 <Label>Profile Photo</Label>
