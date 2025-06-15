@@ -33,6 +33,31 @@ const defaultFacts = [
     title: "Hummingbird",
     fact: "Hummingbirds are the only birds that can fly backwards and upside down, beating their wings up to 80 times per second.",
     icon: <Lightbulb className="w-5 h-5 text-red-500" />
+  },
+  {
+    title: "Honey Bee",
+    fact: "A single bee colony can contain up to 60,000 bees, and they communicate through a complex dance language to share locations of flowers.",
+    icon: <Leaf className="w-5 h-5 text-yellow-500" />
+  },
+  {
+    title: "Emperor Penguin",
+    fact: "Male emperor penguins incubate eggs on their feet for 64 days in -40°C weather while females hunt for food in the ocean.",
+    icon: <Globe className="w-5 h-5 text-blue-600" />
+  },
+  {
+    title: "Chameleon",
+    fact: "Chameleons can move their eyes independently and have tongues that can extend twice their body length to catch prey.",
+    icon: <Lightbulb className="w-5 h-5 text-green-600" />
+  },
+  {
+    title: "Dolphin",
+    fact: "Dolphins have names for each other - unique whistle signatures that they use to identify and call to specific individuals.",
+    icon: <Globe className="w-5 h-5 text-cyan-500" />
+  },
+  {
+    title: "Owl",
+    fact: "Owls have asymmetrical ear openings that allow them to pinpoint the exact location of sounds in complete darkness.",
+    icon: <Lightbulb className="w-5 h-5 text-amber-600" />
   }
 ];
 
@@ -124,38 +149,15 @@ const RightSidebar = ({ searchQuery, searchResults }: RightSidebarProps) => {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Popular Discoveries</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Globe className="w-5 h-5 text-blue-500" />
+              Nature's Wonders
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                  🦅
-                </div>
-                <div>
-                  <p className="font-medium">Golden Eagle</p>
-                  <p className="text-sm text-gray-500">127 identifications</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  🐋
-                </div>
-                <div>
-                  <p className="font-medium">Humpback Whale</p>
-                  <p className="text-sm text-gray-500">89 identifications</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                  🦋
-                </div>
-                <div>
-                  <p className="font-medium">Monarch Butterfly</p>
-                  <p className="text-sm text-gray-500">156 identifications</p>
-                </div>
-              </div>
-            </div>
+            <p className="text-gray-600">
+              The natural world is full of incredible adaptations and behaviors. From the Arctic tundra to tropical rainforests, every ecosystem holds unique secrets waiting to be discovered.
+            </p>
           </CardContent>
         </Card>
       </div>
