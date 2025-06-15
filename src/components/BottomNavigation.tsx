@@ -27,23 +27,21 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
   ];
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50">
-      <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 max-w-xs mx-auto">
-        <div className="flex items-center justify-around px-2 py-2">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border">
+      <div className="flex items-center justify-around px-4 py-3 max-w-md mx-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           
           if (tab.isSpecial) {
             return (
-              <Button
+              <button
                 key={tab.id}
                 onClick={onUploadClick}
-                className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-                size="sm"
+                className="p-2 transition-all duration-200 hover:scale-105"
               >
-                <Icon className="w-5 h-5" />
-              </Button>
+                <Icon className="w-6 h-6 text-foreground" />
+              </button>
             );
           }
 
@@ -51,15 +49,18 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center py-2 px-3 rounded-xl transition-all duration-200 ${
-                isActive ? 'text-[#22C55E]' : 'text-gray-500 hover:text-gray-700'
-              }`}
+              className="p-2 transition-all duration-200"
             >
-              <Icon className={`w-5 h-5 ${isActive ? 'stroke-2' : 'stroke-1.5'}`} />
+              <Icon 
+                className={`w-6 h-6 transition-colors ${
+                  isActive ? 'text-foreground' : 'text-muted-foreground'
+                }`} 
+                fill={isActive ? 'currentColor' : 'none'}
+                strokeWidth={isActive ? 0 : 1.5}
+              />
             </button>
           );
         })}
-        </div>
       </div>
     </div>
   );
