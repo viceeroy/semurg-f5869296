@@ -38,7 +38,7 @@ const DetailedPostView = ({
   };
 
   return (
-    <div className="mb-6 shadow-lg border border-gray-200 overflow-hidden relative rounded-xl bg-slate-200">
+    <div className="fixed inset-0 bg-background z-50 flex flex-col">
       <PostHeader
         onClose={onClose}
         onEdit={onEdit}
@@ -48,35 +48,38 @@ const DetailedPostView = ({
         postUserId={post.userId}
       />
 
-      {/* Post Image */}
-      <div className="w-full">
-        <img
-          src={post.image}
-          alt={post.speciesName}
-          className="w-full h-64 object-cover"
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto">
+        {/* Dominant Image */}
+        <div className="w-full">
+          <img
+            src={post.image}
+            alt={post.speciesName}
+            className="w-full h-80 sm:h-96 object-cover"
+          />
+        </div>
+
+        <PostContent post={post} />
+
+        <PostComments
+          postId={post.id}
+          comments={post.comments}
+          showComments={showComments}
+          onComment={onComment}
+        />
+
+        <PostEngagement
+          postId={post.id}
+          likes={post.likes}
+          isLiked={post.isLiked}
+          isSaved={post.isSaved}
+          commentsCount={post.comments.length}
+          onLike={onLike}
+          onSave={onSave}
+          onShare={handleShareClick}
+          onToggleComments={() => setShowComments(!showComments)}
         />
       </div>
-
-      <PostContent post={post} />
-
-      <PostEngagement
-        postId={post.id}
-        likes={post.likes}
-        isLiked={post.isLiked}
-        isSaved={post.isSaved}
-        commentsCount={post.comments.length}
-        onLike={onLike}
-        onSave={onSave}
-        onShare={handleShareClick}
-        onToggleComments={() => setShowComments(!showComments)}
-      />
-
-      <PostComments
-        postId={post.id}
-        comments={post.comments}
-        showComments={showComments}
-        onComment={onComment}
-      />
     </div>
   );
 };
