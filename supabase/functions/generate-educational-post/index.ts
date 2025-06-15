@@ -25,15 +25,15 @@ serve(async (req) => {
 
     // Generate a random educational post using OpenAI
     const topics = [
-      'hayvonlar', 'qushlar', 'o\'simliklar', 'dengiz hayoti', 'hasharotlar', 'daraxtlar', 
-      'yovvoyi tabiat xatti-harakatlari', 'tabiatni muhofaza qilish', 'ekologiya', 'botanika'
+      'animals', 'birds', 'plants', 'marine life', 'insects', 'trees', 
+      'wildlife behavior', 'nature conservation', 'ecology', 'botany'
     ];
     
     const postTypes = [
-      { type: 'did-you-know', instruction: 'Siz buni bilarmidingiz faktini yarating' },
-      { type: 'interesting-fact', instruction: 'Qiziqarli faktni bo\'lishing' },
-      { type: 'how-to', instruction: 'Qanday qilib qo\'llanmasini yozing' },
-      { type: 'where-to-find', instruction: 'Tabiatda nimani qayerdan topish mumkinligini tushuntiring' }
+      { type: 'did-you-know', instruction: 'Create a "Did you know?" fact' },
+      { type: 'interesting-fact', instruction: 'Share an interesting fact' },
+      { type: 'how-to', instruction: 'Write a "How to" guide' },
+      { type: 'where-to-find', instruction: 'Explain where to find something in nature' }
     ];
 
     const randomTopic = topics[Math.floor(Math.random() * topics.length)];
@@ -67,7 +67,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Siz tabiat ta\'limi mutaxassisisiz, yovvoyi tabiat, o\'simliklar va tabiat haqida qiziqarli, faktga asoslangan kontent yaratasiz. Har doim yaroqli JSON bilan javob bering va barcha matnni o\'zbek tilida yozing.'
+            content: 'You are a nature education expert who creates engaging, factual content about wildlife, plants, and nature. Always respond with valid JSON.'
           },
           {
             role: 'user',
