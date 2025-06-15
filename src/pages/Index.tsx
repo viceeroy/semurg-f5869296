@@ -90,7 +90,7 @@ const MainApp = () => {
     );
   }
 
-  // Desktop layout (3-column)
+  // Desktop layout (3-column on large screens, 2-column on tablets)
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Left Sidebar */}
@@ -101,17 +101,19 @@ const MainApp = () => {
       />
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 mr-80">
+      <div className="flex-1 ml-64 xl:mr-80">
         <div className="max-w-2xl mx-auto">
           {!showProfileEdit && renderContent()}
           {showProfileEdit && renderContent()}
         </div>
       </div>
 
-      {/* Right Sidebar */}
-      <RightSidebar 
-        searchQuery={currentSearchQuery}
-      />
+      {/* Right Sidebar - Only visible on xl screens and above */}
+      <div className="hidden xl:block">
+        <RightSidebar 
+          searchQuery={currentSearchQuery}
+        />
+      </div>
 
       {showUploadFlow && (
         <UploadFlow 
