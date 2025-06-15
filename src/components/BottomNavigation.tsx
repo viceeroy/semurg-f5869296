@@ -27,40 +27,42 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border">
-      <div className="flex items-center justify-around px-4 py-3 max-w-md mx-auto">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          
-          if (tab.isSpecial) {
+    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center">
+      <div className="bg-white border-t border-gray-200 w-full max-w-md">
+        <div className="flex items-center justify-around px-4 py-3">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            
+            if (tab.isSpecial) {
+              return (
+                <button
+                  key={tab.id}
+                  onClick={onUploadClick}
+                  className="p-2 transition-all duration-200 hover:scale-105"
+                >
+                  <Icon className="w-6 h-6 text-black" />
+                </button>
+              );
+            }
+
             return (
               <button
                 key={tab.id}
-                onClick={onUploadClick}
-                className="p-2 transition-all duration-200 hover:scale-105"
+                onClick={() => onTabChange(tab.id)}
+                className="p-2 transition-all duration-200"
               >
-                <Icon className="w-6 h-6 text-foreground" />
+                <Icon 
+                  className={`w-6 h-6 transition-colors ${
+                    isActive ? 'text-black' : 'text-gray-500'
+                  }`} 
+                  fill={isActive ? 'currentColor' : 'none'}
+                  strokeWidth={isActive ? 0 : 1.5}
+                />
               </button>
             );
-          }
-
-          return (
-            <button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              className="p-2 transition-all duration-200"
-            >
-              <Icon 
-                className={`w-6 h-6 transition-colors ${
-                  isActive ? 'text-foreground' : 'text-muted-foreground'
-                }`} 
-                fill={isActive ? 'currentColor' : 'none'}
-                strokeWidth={isActive ? 0 : 1.5}
-              />
-            </button>
-          );
-        })}
+          })}
+        </div>
       </div>
     </div>
   );
