@@ -15,7 +15,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl, language = 'english' } = await req.json();
+    const { imageUrl, language = 'uzbek' } = await req.json();
 
     if (!imageUrl) {
       throw new Error('No image URL provided');
@@ -45,39 +45,39 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are a wildlife expert. CRITICAL: Only identify REAL wildlife species (birds, mammals, reptiles, amphibians, fish, insects, plants, fungi, marine life). If the image shows anything else (people, objects, buildings, food, vehicles, etc.), you MUST respond with a category of "not_wildlife".
+            content: `Siz yovvoyi tabiat mutaxassisisiz. MUHIM: Faqat HAQIQIY yovvoyi tabiat turlarini (qushlar, sutemizuvchilar, sudralib yuruvchilar, amfibiyalar, baliqlar, hasharotlar, o'simliklar, qo'ziqorinlar, dengiz hayoti) aniqlang. Agar rasmda boshqa narsa ko'rsatilgan bo'lsa (odamlar, narsalar, binolar, ovqat, transport vositalari va h.k.), siz ALBATTA "not_wildlife" kategoriyasi bilan javob berishingiz KERAK.
 
-${language.toLowerCase() === 'uzbek' ? 'IMPORTANT: Provide ALL information in UZBEK language (O\'zbek tilida). All text fields should be in Uzbek except scientific_name which should remain in Latin.' : 'Provide all information in English.'}
+MUHIM: BARCHA ma'lumotlarni O'ZBEK tilida taqdim eting. Barcha matn maydonlari o'zbek tilida bo'lishi kerak, faqat scientific_name latin tilida qoladi.
 
-Analyze the image and provide comprehensive, detailed information about the species in JSON format:
+Rasmni tahlil qiling va turlar haqida keng qamrovli, batafsil ma'lumotlarni JSON formatida taqdim eting:
 {
-  "species_name": "Common name of the species",
-  "scientific_name": "Scientific name", 
+  "species_name": "Turning umumiy nomi",
+  "scientific_name": "Ilmiy nomi", 
   "category": "bird/mammal/reptile/amphibian/fish/insect/plant/fungi/marine_life/not_wildlife",
   "confidence": "high/medium/low",
-  "description": "Comprehensive introduction to this species - include their significance in the ecosystem, general characteristics, what makes them unique, their role in nature, and why they're important. Write at least 50-60 words with engaging, educational content that captivates the reader",
-  "habitat": "Detailed description of typical environment and geographical range - include specific locations, climate preferences, elevation ranges, habitat requirements, seasonal movements, and how they adapt to their environment. Describe the ecosystem they live in and their relationship with it. Provide at least 45-55 words",
-  "diet": "Comprehensive description of what the species eats, feeding behaviors, hunting or foraging techniques, seasonal dietary changes, feeding schedule, and their role in the food chain. Include specific food sources, feeding patterns, and how their diet affects the ecosystem. Write at least 45-55 words", 
-  "behavior": "Detailed account of notable behaviors, social structures, mating rituals, territorial habits, daily activities, communication methods, migration patterns, parental care, and unique characteristics that define this species. Include seasonal behaviors and interactions with other species. Provide at least 45-55 words",
-  "conservation_status": "Current conservation status with detailed context about population trends, specific threats they face, ongoing conservation efforts, historical population changes, and what factors affect their survival. Include human impact and conservation success stories if applicable. Write at least 35-45 words",
-  "interesting_facts": "3-4 fascinating, specific facts about the species that highlight their unique abilities, record-breaking characteristics, historical significance, remarkable adaptations, or surprising behaviors. Make these engaging, educational, and memorable. Include specific numbers, comparisons, or unusual traits. Provide at least 50-60 words",
-  "identification_notes": "Detailed key features that helped identify this species - include physical characteristics, distinctive markings, size comparisons, coloration patterns, body shape, and distinguishing features from similar species. Mention age, gender, or seasonal variations if visible. Write at least 35-45 words"
+  "description": "Bu turga keng qamrovli kirish - ularning ekotizimda ahamiyati, umumiy xususiyatlari, ularni noyob qiladigan narsa, tabiatdagi roli va nima uchun muhimligi haqida yozing. Kamida 50-60 so'z bilan o'quvchini jalb qiladigan, ta'limiy mazmun yozing",
+  "habitat": "Odatiy muhit va geografik hududning batafsil tavsifi - aniq joylar, iqlim afzalliklari, balandlik oralig'i, yashash joyi talablari, mavsumiy ko'chishlar va ular o'z muhitiga qanday moslashishlari haqida. Ular yashaydigan ekotizim va u bilan aloqalarini tasvirlab bering. Kamida 45-55 so'z yozing",
+  "diet": "Turlar nima yeishi, oziqlanish xatti-harakatlari, ov qilish yoki oziq-ovqat qidirish usullari, mavsumiy oziq-ovqat o'zgarishlari, oziqlanish jadvali va oziq-ovqat zanjirida ularning roli haqida keng qamrovli tavsif. Aniq oziq-ovqat manbalari, oziqlanish shakllari va ularning oziq-ovqatining ekotizimga ta'sirini kiriting. Kamida 45-55 so'z yozing", 
+  "behavior": "Diqqatga sazovor xatti-harakatlar, ijtimoiy tuzilmalar, juftlashish marosimlari, hududiy odatlar, kundalik faoliyat, aloqa usullari, migratsiya shakllari, ota-ona g'amxo'rligi va bu turni belgilaydigan noyob xususiyatlarning batafsil hisoboti. Mavsumiy xatti-harakatlar va boshqa turlar bilan o'zaro ta'sirni kiriting. Kamida 45-55 so'z yozing",
+  "conservation_status": "Aholi tendensiyalari, ular duch keladigan aniq tahdidlar, davom etayotgan tabiatni muhofaza qilish sa'y-harakatlari, tarixiy aholi o'zgarishlari va ularning omon qolishiga ta'sir qiluvchi omillar haqida batafsil kontekst bilan joriy muhofaza holati. Inson ta'sirini va muhofaza muvaffaqiyat hikoyalarini mavjud bo'lsa kiriting. Kamida 35-45 so'z yozing",
+  "interesting_facts": "Turlarning noyob qobiliyatlari, rekord xususiyatlari, tarixiy ahamiyati, ajoyib moslashuvlari yoki hayratlanarli xatti-harakatlarini ko'rsatadigan 3-4 ta qiziqarli, aniq faktlar. Bularni qiziqarli, ta'limiy va esda qolarli qiling. Aniq raqamlar, taqqoslashlar yoki g'ayrioddiy xususiyatlarni kiriting. Kamida 50-60 so'z yozing",
+  "identification_notes": "Bu turni aniqlashga yordam bergan batafsil asosiy xususiyatlar - jismoniy xususiyatlar, ajralib turadigan belgilar, o'lcham taqqoslashlari, rang naqshlari, tana shakli va o'xshash turlardan farqlovchi xususiyatlar. Ko'rinadigan yosh, jins yoki mavsumiy o'zgarishlarni eslatib o'ting. Kamida 35-45 so'z yozing"
 }
 
-IMPORTANT RULES:
-1. If you see a person, object, building, food item, vehicle, or anything that is NOT a living wildlife species, set category to "not_wildlife"
-2. Only use wildlife categories if you can clearly see an actual living organism in its natural form
-3. Be very conservative - when in doubt, use "not_wildlife"
-4. Do not try to identify wildlife in logos, drawings, or artificial representations
+MUHIM QOIDALAR:
+1. Agar siz odam, narsa, bino, oziq-ovqat, transport vositasi yoki yovvoyi tabiat turi bo'lmagan boshqa narsalarni ko'rsangiz, kategoriyani "not_wildlife" qilib belgilang
+2. Faqat tabiiy shaklda aniq tirik organizmni ko'ra olsangiz, yovvoyi tabiat kategoriyalaridan foydalaning
+3. Juda ehtiyotkor bo'ling - shubha bo'lsa, "not_wildlife"dan foydalaning
+4. Logotip, chizma yoki sun'iy tasvirlarda yovvoyi tabiatni aniqlashga urinmang
 
-Always return valid JSON. Do not include any text before or after the JSON object.`
+Har doim yaroqli JSON qaytaring. JSON ob'ektidan oldin yoki keyin hech qanday matn kiritmang.`
           },
           {
             role: 'user',
             content: [
               {
                 type: 'text',
-                text: 'Please identify this wildlife species and provide detailed information.'
+                text: 'Iltimos, bu yovvoyi tabiat turini aniqlang va batafsil ma\'lumot bering.'
               },
               {
                 type: 'image_url',
@@ -141,7 +141,7 @@ Always return valid JSON. Do not include any text before or after the JSON objec
       if (!allowedCategories.includes(identifiedCategory) || identifiedCategory === 'not wildlife') {
         return new Response(JSON.stringify({ 
           success: false, 
-          error: "Please upload a picture of an animal, bird, or plant to analyze and help you discover wildlife species."
+          error: "Yovvoyi tabiat turlarini aniqlash va kashf qilishda yordam berish uchun hayvon, qush yoki o'simlik rasmini yuklang."
         }), {
           status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -167,28 +167,28 @@ Always return valid JSON. Do not include any text before or after the JSON objec
           messages: [
             {
               role: 'system',
-              content: `You are a wildlife expert. CRITICAL: Only identify REAL wildlife species. If the image shows anything else (people, objects, buildings, food, vehicles, etc.), you MUST respond with a category of "not_wildlife". Return ONLY a valid JSON object with species information. No other text.`
+            content: `Siz yovvoyi tabiat mutaxassisisiz. MUHIM: Faqat HAQIQIY yovvoyi tabiat turlarini aniqlang. Agar rasmda boshqa narsa ko'rsatilgan bo'lsa (odamlar, narsalar, binolar, ovqat, transport vositalari va h.k.), siz ALBATTA "not_wildlife" kategoriyasi bilan javob berishingiz KERAK. Faqat turlar ma'lumotlari bilan yaroqli JSON ob'ektini qaytaring. Boshqa matn yo'q.`
             },
             {
               role: 'user',
-              content: `Please identify this wildlife species and return ONLY valid JSON with this exact structure:
+              content: `Iltimos, bu yovvoyi tabiat turini aniqlang va faqat shu aniq tuzilish bilan yaroqli JSON qaytaring:
 {
-  "species_name": "Common name",
-  "scientific_name": "Scientific name", 
+  "species_name": "Umumiy nomi",
+  "scientific_name": "Ilmiy nomi", 
   "category": "bird/mammal/reptile/amphibian/fish/insect/plant/fungi/marine_life/not_wildlife",
   "confidence": "high/medium/low",
-  "description": "Comprehensive introduction to this species - include their significance in the ecosystem, general characteristics, what makes them unique, their role in nature, and why they're important. Write at least 50-60 words with engaging, educational content",
-  "habitat": "Detailed description of typical environment and geographical range - include specific locations, climate preferences, elevation ranges, habitat requirements, and how they adapt to their environment. Provide at least 45-55 words",
-  "diet": "Comprehensive description of what the species eats, feeding behaviors, hunting techniques, seasonal dietary changes, and their role in the food chain. Write at least 45-55 words", 
-  "behavior": "Detailed account of notable behaviors, social structures, mating rituals, territorial habits, daily activities, and unique characteristics. Provide at least 45-55 words",
-  "conservation_status": "Current conservation status with detailed context about population trends, threats, conservation efforts, and factors affecting survival. Write at least 35-45 words",
-  "interesting_facts": "3-4 fascinating, specific facts about the species that highlight their unique abilities, adaptations, or surprising behaviors. Provide at least 50-60 words",
-  "identification_notes": "Detailed key features that helped identify this species - include physical characteristics, distinctive markings, and distinguishing features. Write at least 35-45 words"
+  "description": "Bu turga keng qamrovli kirish - ekotizimda ahamiyati, umumiy xususiyatlari, noyob jihatlari, tabiatdagi roli va ahamiyati. Kamida 50-60 so'z bilan ta'limiy mazmun yozing",
+  "habitat": "Odatiy muhit va geografik hududning batafsil tavsifi - aniq joylar, iqlim afzalliklari, balandlik oralig'i, yashash joyi talablari va muhitga moslashishi. Kamida 45-55 so'z",
+  "diet": "Turlar nima yeishi, oziqlanish xatti-harakatlari, ov usullari, mavsumiy oziq-ovqat o'zgarishlari va oziq-ovqat zanjirida roli. Kamida 45-55 so'z", 
+  "behavior": "Diqqatga sazovor xatti-harakatlar, ijtimoiy tuzilmalar, juftlashish marosimlari, hududiy odatlar, kundalik faoliyat va noyob xususiyatlarning batafsil hisoboti. Kamida 45-55 so'z",
+  "conservation_status": "Aholi tendensiyalari, tahdidlar, muhofaza sa'y-harakatlari va omon qolishga ta'sir qiluvchi omillar haqida batafsil kontekst bilan joriy muhofaza holati. Kamida 35-45 so'z",
+  "interesting_facts": "Turlarning noyob qobiliyatlari, moslashuvlari yoki hayratlanarli xatti-harakatlarini ko'rsatadigan 3-4 ta qiziqarli, aniq faktlar. Kamida 50-60 so'z",
+  "identification_notes": "Bu turni aniqlashga yordam bergan batafsil asosiy xususiyatlar - jismoniy xususiyatlar, ajralib turadigan belgilar va farqlovchi xususiyatlar. Kamida 35-45 so'z"
 }
 
-IMPORTANT: If this is not a real wildlife species, set category to "not_wildlife"
+MUHIM: Agar bu haqiqiy yovvoyi tabiat turi bo'lmasa, kategoriyani "not_wildlife" qilib belgilang
 
-Image: ${imageUrl}`
+Rasm: ${imageUrl}`
             }
           ],
           max_tokens: 1200,
@@ -218,7 +218,7 @@ Image: ${imageUrl}`
           if (!allowedCategories.includes(retryCategory) || retryCategory === 'not wildlife') {
             return new Response(JSON.stringify({ 
               success: false, 
-              error: "Please upload a picture of an animal, bird, or plant to analyze and help you discover wildlife species."
+              error: "Yovvoyi tabiat turlarini aniqlash va kashf qilishda yordam berish uchun hayvon, qush yoki o'simlik rasmini yuklang."
             }), {
               status: 200,
               headers: { ...corsHeaders, 'Content-Type': 'application/json' },

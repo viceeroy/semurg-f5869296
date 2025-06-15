@@ -58,7 +58,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a wildlife and nature expert who provides accurate, educational information about species. Always respond with valid JSON.'
+            content: 'Siz yovvoyi tabiat va tabiat mutaxassisisiz, turlar haqida aniq, ta\'limiy ma\'lumot berasiz. Har doim yaroqli JSON bilan javob bering va barcha matnni o\'zbek tilida yozing.'
           },
           {
             role: 'user',
