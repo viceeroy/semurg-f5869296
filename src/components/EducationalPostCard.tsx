@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { EducationalPost } from "@/services/educationalPostService";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useState } from "react";
+import EducationalPostComments from "./EducationalPostComments";
 
 interface EducationalPostCardProps {
   post: EducationalPost;
@@ -13,6 +15,7 @@ interface EducationalPostCardProps {
 
 const EducationalPostCard = ({ post, onLike, onComment, onShare }: EducationalPostCardProps) => {
   const { user } = useAuth();
+  const [showComments, setShowComments] = useState(false);
 
   const handleLike = () => {
     if (!user) {
@@ -23,11 +26,7 @@ const EducationalPostCard = ({ post, onLike, onComment, onShare }: EducationalPo
   };
 
   const handleComment = () => {
-    if (!user) {
-      toast.error('Please sign in to comment');
-      return;
-    }
-    onComment(post.id);
+    setShowComments(true);
   };
 
   const handleShare = () => {
@@ -144,6 +143,13 @@ const EducationalPostCard = ({ post, onLike, onComment, onShare }: EducationalPo
           </div>
         </div>
       </div>
+
+      {/* Comments Modal */}
+      <EducationalPostComments
+        postId={post.id}
+        isOpen={showComments}
+        onClose={() => setShowComments(false)}
+      />
     </div>
   );
 };

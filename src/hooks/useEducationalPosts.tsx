@@ -80,22 +80,39 @@ export const useEducationalPosts = () => {
   };
 
   const handleComment = (postId: string) => {
-    // For now, just show a message - can be expanded later
-    toast.info('Comments feature coming soon!');
+    // Comments are now handled in the EducationalPostCard component
+    console.log('Opening comments for post:', postId);
   };
 
-  const handleShare = (postId: string) => {
+  const handleShare = async (postId: string) => {
     const post = posts.find(p => p.id === postId);
-    if (post && navigator.share) {
-      navigator.share({
-        title: post.title,
-        text: post.content.substring(0, 100) + '...',
-        url: window.location.href
-      });
-    } else {
-      // Fallback to copying to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      toast.success('Link copied to clipboard!');
+    if (!post) return;
+
+    const shareData = {
+      title: post.title,
+      text: `${post.content.substring(0, 100)}...`,
+      url: `${window.location.origin}/#/search?post=${postId}`
+    };
+
+    try {
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        toast.success('Shared successfully!');
+      } else {
+        // Fallback to copying to clipboard
+        const textToShare = `${post.title}\n\n${post.content.substring(0, 200)}...\n\nRead more: ${shareData.url}`;
+        await navigator.clipboard.writeText(textToShare);
+        toast.success('Link copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      // Final fallback
+      try {
+        await navigator.clipboard.writeText(shareData.url);
+        toast.success('Link copied to clipboard!');
+      } catch (clipboardError) {
+        toast.error('Unable to share');
+      }
     }
   };
 
