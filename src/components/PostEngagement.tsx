@@ -28,9 +28,9 @@ const PostEngagement = ({
     <div className="bg-background/95 backdrop-blur-sm border-t border-border p-4 pb-8">
       <div className="flex items-center justify-between max-w-md mx-auto">
         {/* Left side actions */}
-        <div className="flex items-center">
+        <div className="flex items-center gap-8">
           {/* Like button */}
-          <div className="flex items-center mr-12">
+          <div className="flex items-center">
             <Button
               variant="ghost"
               size="sm"
@@ -45,7 +45,7 @@ const PostEngagement = ({
           </div>
           
           {/* Comment button */}
-          <div className="flex items-center mr-12">
+          <div className="flex items-center">
             <Button
               variant="ghost"
               size="sm"
