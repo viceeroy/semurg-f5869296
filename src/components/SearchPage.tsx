@@ -13,6 +13,9 @@ const SearchPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [generatingPost, setGeneratingPost] = useState(false);
   const [searchingSpecies, setSearchingSpecies] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isGeneratingFromNoResults, setIsGeneratingFromNoResults] = useState(false);
+  
   const {
     posts,
     loading,
@@ -21,9 +24,58 @@ const SearchPage = () => {
     handleComment,
     handleShare
   } = useEducationalPosts();
+
   useEffect(() => {
-    loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
+    const performSearch = async () => {
+      if (searchQuery.trim()) {
+        await loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
+        setHasSearched(true);
+      } else {
+        await loadPosts(undefined, selectedCategory === 'all' ? undefined : selectedCategory);
+        setHasSearched(false);
+      }
+    };
+    
+    performSearch();
   }, [searchQuery, selectedCategory]);
+
+  // Auto-generate content when no results found
+  useEffect(() => {
+    const shouldAutoGenerate = hasSearched && 
+                               searchQuery.trim() && 
+                               !loading && 
+                               posts.length === 0 && 
+                               !isGeneratingFromNoResults;
+    
+    if (shouldAutoGenerate) {
+      handleAutoGenerateContent();
+    }
+  }, [hasSearched, searchQuery, loading, posts.length, isGeneratingFromNoResults]);
+
+  const handleAutoGenerateContent = async () => {
+    if (!searchQuery.trim()) return;
+    
+    setIsGeneratingFromNoResults(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-species-info', {
+        body: {
+          speciesName: searchQuery
+        }
+      });
+      
+      if (error) {
+        console.error('Error generating content:', error);
+      } else if (data?.success) {
+        toast.success(`Generated new content about ${searchQuery}!`);
+        // Reload posts to show the new content
+        await loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
+      }
+    } catch (error) {
+      console.error('Error generating content:', error);
+    } finally {
+      setIsGeneratingFromNoResults(false);
+    }
+  };
   const handleSpeciesSearch = async () => {
     if (!searchQuery.trim()) return;
     setSearchingSpecies(true);
@@ -88,9 +140,30 @@ const SearchPage = () => {
         </div>
       </div>
 
-      {loading && <LoadingSpinner />}
+      {(loading || isGeneratingFromNoResults) && <LoadingSpinner />}
 
-      {!loading && <div className="space-y-4">
+      {isGeneratingFromNoResults && !loading && (
+        <div className="text-center py-8">
+          <div className="animate-pulse">
+            <Sparkles className="w-8 h-8 mx-auto mb-3 text-emerald-600" />
+            <p className="text-gray-600 font-medium">Generating content about "{searchQuery}"...</p>
+            <p className="text-sm text-gray-500 mt-2">Creating educational information just for you!</p>
+          </div>
+        </div>
+      )}
+
+      {!loading && !isGeneratingFromNoResults && (
+        <div className="space-y-4">
+          {posts.length === 0 && hasSearched && searchQuery.trim() && (
+            <div className="text-center py-8">
+              <div className="animate-bounce">
+                <Search className="w-8 h-8 mx-auto mb-3 text-gray-400" />
+              </div>
+              <p className="text-gray-600 font-medium">No results found for "{searchQuery}"</p>
+              <p className="text-sm text-gray-500 mt-2">Don't worry - we're generating content for you!</p>
+            </div>
+          )}
+          
           {posts.map(post => <EducationalPostCard key={post.id} post={post} onLike={handleLike} onComment={handleComment} onShare={handleShare} />)}
           
           {/* More Facts Button - placed after all posts */}
@@ -123,7 +196,8 @@ const SearchPage = () => {
               {generatingPost ? 'Generating...' : 'More interesting facts'}
             </Button>
           </div>
-        </div>}
+        </div>
+      )}
     </div>;
 };
 export default SearchPage;
