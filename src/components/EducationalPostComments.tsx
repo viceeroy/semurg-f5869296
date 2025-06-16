@@ -142,7 +142,7 @@ const EducationalPostComments = ({ postId, isOpen, onClose }: EducationalPostCom
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/80 z-[100]"
           />
           
           {/* Bottom sheet */}
@@ -156,7 +156,7 @@ const EducationalPostComments = ({ postId, isOpen, onClose }: EducationalPostCom
               stiffness: 300,
               duration: 0.3
             }}
-            className="fixed bottom-0 left-0 right-0 z-50 max-w-md mx-auto"
+            className="fixed bottom-0 left-0 right-0 z-[101] max-w-md mx-auto"
           >
             <div className="bg-background rounded-t-3xl max-h-[75vh] flex flex-col shadow-2xl border-t border-l border-r border-border">
               {/* Drag handle */}
@@ -230,7 +230,7 @@ const EducationalPostComments = ({ postId, isOpen, onClose }: EducationalPostCom
               </div>
 
               {/* Comment Input */}
-              <div className="border-t border-border bg-background/95 backdrop-blur-sm">
+              <div className="border-t border-border bg-background">
                 {user ? (
                   <div className="p-4">
                     <div className="flex space-x-3">
