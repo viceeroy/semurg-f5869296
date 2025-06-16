@@ -1,4 +1,4 @@
-import { User, Search, FolderOpen, Sparkles } from "lucide-react";
+import { User, Search, FolderOpen, Sparkles, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/useLanguage";
 interface BottomNavigationProps {
@@ -7,15 +7,6 @@ interface BottomNavigationProps {
   onUploadClick: () => void;
 }
 
-// Custom icons based on the design
-const DiscoverIcon = ({
-  className
-}: {
-  className?: string;
-}) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 6v6l4 2" />
-  </svg>;
 const BottomNavigation = ({
   activeTab,
   onTabChange,
@@ -26,7 +17,7 @@ const BottomNavigation = ({
   } = useLanguage();
   const tabs = [{
     id: 'home',
-    icon: DiscoverIcon,
+    icon: Home,
     label: t.nav.home
   }, {
     id: 'search',
