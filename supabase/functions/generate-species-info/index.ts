@@ -75,7 +75,16 @@ serve(async (req) => {
     // Parse the JSON response
     let speciesData;
     try {
-      speciesData = JSON.parse(generatedContent);
+      // Clean the response in case it has markdown code blocks
+      let cleanedContent = generatedContent;
+      if (cleanedContent.includes('```json')) {
+        cleanedContent = cleanedContent.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+      }
+      if (cleanedContent.includes('```')) {
+        cleanedContent = cleanedContent.replace(/```/g, '');
+      }
+      
+      speciesData = JSON.parse(cleanedContent.trim());
     } catch (parseError) {
       console.error('Failed to parse AI response:', generatedContent);
       throw new Error('Invalid AI response format');

@@ -3,11 +3,13 @@ import { Search, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import EducationalPostCard from "./EducationalPostCard";
+import ExpandedPostView from "./ExpandedPostView";
 import LoadingSpinner from "./LoadingSpinner";
 import { categories } from "./search/searchData";
 import { useEducationalPosts } from "@/hooks/useEducationalPosts";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { EducationalPost } from "@/services/educationalPostService";
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -15,6 +17,7 @@ const SearchPage = () => {
   const [searchingSpecies, setSearchingSpecies] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [isGeneratingFromNoResults, setIsGeneratingFromNoResults] = useState(false);
+  const [expandedPost, setExpandedPost] = useState<EducationalPost | null>(null);
   
   const {
     posts,
@@ -24,6 +27,14 @@ const SearchPage = () => {
     handleComment,
     handleShare
   } = useEducationalPosts();
+
+  const handlePostClick = (post: EducationalPost) => {
+    setExpandedPost(post);
+  };
+
+  const handleCloseExpanded = () => {
+    setExpandedPost(null);
+  };
 
   useEffect(() => {
     const performSearch = async () => {
@@ -164,7 +175,16 @@ const SearchPage = () => {
             </div>
           )}
           
-          {posts.map(post => <EducationalPostCard key={post.id} post={post} onLike={handleLike} onComment={handleComment} onShare={handleShare} />)}
+           {posts.map(post => (
+             <EducationalPostCard 
+               key={post.id} 
+               post={post} 
+               onLike={handleLike} 
+               onComment={handleComment} 
+               onShare={handleShare}
+               onClick={() => handlePostClick(post)}
+             />
+           ))}
           
           {/* More Facts Button - placed after all posts */}
           <div className="pt-6 text-center">
@@ -197,6 +217,17 @@ const SearchPage = () => {
             </Button>
           </div>
         </div>
+      )}
+
+      {/* Expanded Post View */}
+      {expandedPost && (
+        <ExpandedPostView
+          post={expandedPost}
+          onClose={handleCloseExpanded}
+          onLike={handleLike}
+          onComment={handleComment}
+          onShare={handleShare}
+        />
       )}
     </div>;
 };

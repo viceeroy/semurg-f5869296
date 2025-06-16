@@ -11,13 +11,15 @@ interface EducationalPostCardProps {
   onLike: (postId: string) => void;
   onComment: (postId: string) => void;
   onShare: (postId: string) => void;
+  onClick?: () => void;
 }
 
-const EducationalPostCard = ({ post, onLike, onComment, onShare }: EducationalPostCardProps) => {
+const EducationalPostCard = ({ post, onLike, onComment, onShare, onClick }: EducationalPostCardProps) => {
   const { user } = useAuth();
   const [showComments, setShowComments] = useState(false);
 
-  const handleLike = () => {
+  const handleLike = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent post click when clicking action buttons
     if (!user) {
       toast.error('Please sign in to like posts');
       return;
@@ -25,11 +27,13 @@ const EducationalPostCard = ({ post, onLike, onComment, onShare }: EducationalPo
     onLike(post.id);
   };
 
-  const handleComment = () => {
+  const handleComment = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent post click when clicking action buttons
     setShowComments(true);
   };
 
-  const handleShare = () => {
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent post click when clicking action buttons
     onShare(post.id);
   };
 
@@ -64,7 +68,10 @@ const EducationalPostCard = ({ post, onLike, onComment, onShare }: EducationalPo
   return (
     <div className="bg-card rounded-lg border border-border mb-4 overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-border">
+      <div 
+        className={`p-4 border-b border-border ${onClick ? 'cursor-pointer hover:bg-secondary/30 transition-colors' : ''}`}
+        onClick={onClick}
+      >
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-medium text-muted-foreground bg-secondary px-2 py-1 rounded-full">
             {getCategoryEmoji(post.category)} {getPostTypeLabel(post.post_type)}
@@ -77,15 +84,18 @@ const EducationalPostCard = ({ post, onLike, onComment, onShare }: EducationalPo
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div 
+        className={`p-4 ${onClick ? 'cursor-pointer hover:bg-secondary/30 transition-colors' : ''}`}
+        onClick={onClick}
+      >
         <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-          {post.content}
+          {post.content.length > 200 ? `${post.content.substring(0, 200)}...` : post.content}
         </p>
 
         {/* Tags */}
         {post.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
-            {post.tags.map((tag, index) => (
+            {post.tags.slice(0, 3).map((tag, index) => (
               <Button
                 key={index}
                 variant="outline"
@@ -95,6 +105,17 @@ const EducationalPostCard = ({ post, onLike, onComment, onShare }: EducationalPo
                 #{tag}
               </Button>
             ))}
+            {post.tags.length > 3 && (
+              <span className="text-xs text-muted-foreground self-center">
+                +{post.tags.length - 3} more
+              </span>
+            )}
+          </div>
+        )}
+
+        {onClick && (
+          <div className="text-xs text-emerald-600 font-medium">
+            Click to read more →
           </div>
         )}
       </div>
