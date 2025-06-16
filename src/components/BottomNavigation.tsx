@@ -39,16 +39,16 @@ const BottomNavigation = ({
   }];
   return <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center">
       <div className="bg-white border-t border-gray-200 w-full max-w-md">
-        <div className="flex items-center justify-around px-[18px] mx-0 my-0 py-[10px] rounded">
+        <div className="flex items-center justify-around px-4 py-3 rounded">
           {tabs.map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           if (tab.isSpecial) {
-            return <button key={tab.id} onClick={onUploadClick} className="p-2 transition-all duration-200 hover:scale-105">
+            return <button key={tab.id} onClick={onUploadClick} className="p-3 transition-all duration-200 hover:scale-105">
                   <Icon className="w-6 h-6 text-black" />
                 </button>;
           }
-          return <button key={tab.id} onClick={() => onTabChange(tab.id)} className="p-2 transition-all duration-200">
+          return <button key={tab.id} onClick={() => onTabChange(tab.id)} className="p-3 transition-all duration-200">
                 <Icon className={`w-6 h-6 transition-colors ${isActive ? 'text-emerald-600' : 'text-gray-500'}`} fill={isActive ? 'currentColor' : 'none'} strokeWidth={isActive ? 0 : 1.5} />
               </button>;
         })}
