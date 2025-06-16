@@ -87,7 +87,7 @@ const DesktopSidebar = ({
                 onClick={item.onClick}
               >
                 <Icon 
-                  className={`w-6 h-6 ${isActive ? 'fill-current' : ''}`} 
+                  className={`w-6 h-6 transition-colors ${isActive ? 'text-emerald-600 fill-current' : ''}`} 
                   strokeWidth={isActive ? 0 : 1.5}
                 />
                 <span className="text-base">{item.label}</span>
@@ -95,10 +95,11 @@ const DesktopSidebar = ({
             );
           })}
           
-          {/* Special upload button in the middle of navigation */}
+          {/* Upload button */}
           <Button
             onClick={onUploadClick}
-            className="w-full justify-start gap-4 px-3 py-3 h-auto text-left bg-emerald-600 hover:bg-emerald-700 text-white"
+            variant="ghost"
+            className="w-full justify-start gap-4 px-3 py-3 h-auto text-left text-gray-700 hover:bg-gray-50"
           >
             <Sparkles className="w-6 h-6" />
             <span className="text-base">{t.upload.identifyWildlife}</span>
@@ -120,7 +121,7 @@ const DesktopSidebar = ({
                 onClick={item.onClick}
               >
                 <Icon 
-                  className={`w-6 h-6 ${isActive ? 'fill-current' : ''}`} 
+                  className={`w-6 h-6 transition-colors ${isActive ? 'text-emerald-600 fill-current' : ''}`} 
                   strokeWidth={isActive ? 0 : 1.5}
                 />
                 <span className="text-base">{item.label}</span>

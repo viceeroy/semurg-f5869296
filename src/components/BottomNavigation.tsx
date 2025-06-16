@@ -58,7 +58,7 @@ const BottomNavigation = ({
                 </button>;
           }
           return <button key={tab.id} onClick={() => onTabChange(tab.id)} className="p-2 transition-all duration-200">
-                <Icon className={`w-6 h-6 transition-colors ${isActive ? 'text-black' : 'text-gray-500'}`} fill={isActive ? 'currentColor' : 'none'} strokeWidth={isActive ? 0 : 1.5} />
+                <Icon className={`w-6 h-6 transition-colors ${isActive ? 'text-emerald-600' : 'text-gray-500'}`} fill={isActive ? 'currentColor' : 'none'} strokeWidth={isActive ? 0 : 1.5} />
               </button>;
         })}
         </div>
