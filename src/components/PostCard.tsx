@@ -84,12 +84,25 @@ const PostCard = ({
       }
     }
   };
-  return <div onClick={() => onPostClick?.(post.id)} className="mb-6 shadow-lg border border-gray-200 cursor-pointer overflow-hidden relative rounded-xl bg-slate-200">
+  return <div className="mb-6 shadow-lg border border-gray-200 overflow-hidden relative rounded-xl bg-slate-200">
       <PostCardHeader userName={post.userName} userAvatar={post.userAvatar} speciesName={post.speciesName} postId={post.id} postUserId={post.userId} onEdit={onEdit} onDelete={onDelete} onInfo={onInfo} />
 
-      <PostCardImage image={post.image} speciesName={post.speciesName} />
+      <div 
+        onClick={() => onPostClick?.(post.id)} 
+        className={`${onPostClick ? 'cursor-pointer hover:bg-secondary/30 transition-colors' : ''}`}
+      >
+        <PostCardImage image={post.image} speciesName={post.speciesName} />
 
-      <PostCardContent aiInfo={post.aiInfo} tags={post.tags} userNotes={post.userNotes} userName={post.userName} />
+        <PostCardContent aiInfo={post.aiInfo} tags={post.tags} userNotes={post.userNotes} userName={post.userName} />
+
+        {onPostClick && (
+          <div className="px-4 pb-2">
+            <div className="text-xs text-emerald-600 font-medium">
+              Click to read more →
+            </div>
+          </div>
+        )}
+      </div>
 
       <PostCardActions postId={post.id} likes={post.likes} isLiked={post.isLiked} isSaved={post.isSaved} commentsCount={post.comments.length} onLike={onLike} onSave={onSave} onShare={handleShare} onToggleComments={() => setShowComments(!showComments)} />
 
