@@ -1,22 +1,12 @@
 import { useState, useEffect } from "react";
-import { Heart, BookOpen, Grid, List, History, Trash2 } from "lucide-react";
+import { Heart, BookOpen, Grid, List, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PostCard from "./PostCard";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchUserHistory, clearUserHistory, HistoryItem } from "@/services/historyService";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-interface Comment {
-  id: string;
-  user_id: string;
-  content: string;
-  created_at: string;
-  profiles: {
-    username: string;
-  };
-}
-
-interface HistoryPost {
+interface SavedPost {
   id: string;
   image: string;
   speciesName: string;
@@ -29,106 +19,103 @@ interface HistoryPost {
   category: string;
   tags: string[];
   badge?: string;
-  comments: Comment[];
+  comments: any[];
   userId: string;
-  actionType: string;
   timestamp: string;
 }
 
-const HistoryPage = () => {
+const CollectionsPage = () => {
   const { user } = useAuth();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [activeFilter, setActiveFilter] = useState("all");
-  const [historyItems, setHistoryItems] = useState<HistoryPost[]>([]);
+  const [savedPosts, setSavedPosts] = useState<SavedPost[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Mock history data for demonstration
-  const mockHistoryData: HistoryPost[] = [];
 
   const filters = [
     {
       id: "all",
       label: "All",
-      count: historyItems.length
-    },
-    {
-      id: "identify", 
-      label: "Identified",
-      count: historyItems.filter(p => p.actionType === "identify").length
-    },
-    {
-      id: "view",
-      label: "Viewed", 
-      count: historyItems.filter(p => p.actionType === "view").length
+      count: savedPosts.length
     },
     {
       id: "birds",
       label: "Birds",
-      count: historyItems.filter(p => p.category === "birds").length
+      count: savedPosts.filter(p => p.category === "birds").length
     },
     {
       id: "mammals",
       label: "Mammals", 
-      count: historyItems.filter(p => p.category === "mammals").length
+      count: savedPosts.filter(p => p.category === "mammals").length
     },
     {
       id: "plants",
       label: "Plants",
-      count: historyItems.filter(p => p.category === "plants").length
+      count: savedPosts.filter(p => p.category === "plants").length
     }
   ];
 
   useEffect(() => {
-    fetchHistory();
+    fetchSavedPosts();
   }, []);
 
-  const fetchHistory = async () => {
+  const fetchSavedPosts = async () => {
     if (!user) {
       setLoading(false);
       return;
     }
 
     try {
-      const historyData = await fetchUserHistory(user.id);
-      
-      const formattedHistory = historyData.map(item => ({
-        id: item.id,
-        image: item.image_url || 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
-        speciesName: item.title,
-        aiInfo: item.description || `${item.action_type === 'identify' ? 'Identified' : 'Viewed'} ${item.title}`,
+      const { data, error } = await supabase
+        .from('saved_posts')
+        .select(`
+          id,
+          created_at,
+          posts (
+            id,
+            title,
+            description,
+            image_url,
+            category,
+            scientific_name,
+            profiles (
+              username,
+              avatar_url
+            )
+          )
+        `)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching saved posts:', error);
+        setSavedPosts([]);
+        return;
+      }
+
+      const formattedPosts = (data || []).map(item => ({
+        id: item.posts.id,
+        image: item.posts.image_url,
+        speciesName: item.posts.title,
+        aiInfo: item.posts.description || `Species: ${item.posts.title}`,
         userNotes: '',
-        userName: 'You',
-        userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+        userName: item.posts.profiles?.username || 'Unknown',
+        userAvatar: item.posts.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
         userId: user.id,
         likes: 0,
-        isLiked: false,
-        category: item.category || 'wildlife',
-        tags: [`#${item.title.replace(/\s+/g, '')}`, `#${item.action_type}`],
-        badge: item.action_type === 'identify' ? 'Identified' : 'Viewed',
+        isLiked: true,
+        category: item.posts.category || 'wildlife',
+        tags: [`#${item.posts.title.replace(/\s+/g, '')}`, `#saved`],
+        badge: 'Saved',
         comments: [],
-        actionType: item.action_type,
         timestamp: item.created_at
       }));
 
-      setHistoryItems(formattedHistory);
+      setSavedPosts(formattedPosts);
     } catch (error) {
-      console.error('Error fetching history:', error);
-      setHistoryItems([]);
+      console.error('Error fetching saved posts:', error);
+      setSavedPosts([]);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleClearHistory = async () => {
-    if (!user) return;
-    
-    try {
-      await clearUserHistory(user.id);
-      setHistoryItems([]);
-      toast.success('History cleared successfully');
-    } catch (error) {
-      console.error('Error clearing history:', error);
-      toast.error('Failed to clear history');
     }
   };
 
@@ -153,17 +140,15 @@ const HistoryPage = () => {
   };
 
   const filteredPosts = activeFilter === "all" 
-    ? historyItems 
-    : activeFilter === "identify" || activeFilter === "view"
-    ? historyItems.filter(post => post.actionType === activeFilter)
-    : historyItems.filter(post => post.category === activeFilter);
+    ? savedPosts 
+    : savedPosts.filter(post => post.category === activeFilter);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading your history...</p>
+          <p className="mt-2 text-gray-600">Loading your collection...</p>
         </div>
       </div>
     );
@@ -176,18 +161,10 @@ const HistoryPage = () => {
         <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">My History</h1>
-              <p className="text-sm text-gray-600">Wildlife you've identified & viewed</p>
+              <h1 className="text-2xl font-bold text-gray-900">My Collection</h1>
+              <p className="text-sm text-gray-600">Your saved wildlife discoveries</p>
             </div>
             <div className="flex items-center space-x-2">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleClearHistory}
-                className="text-red-600 hover:text-red-700"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
               <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")}>
                 <Grid className="w-4 h-4" />
               </Button>
@@ -221,11 +198,11 @@ const HistoryPage = () => {
         {filteredPosts.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <History className="w-8 h-8 text-emerald-600" />
+              <Bookmark className="w-8 h-8 text-emerald-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">No history yet</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">No saved posts yet</h3>
             <p className="text-sm text-gray-600">
-              Start identifying wildlife to build your history!
+              Start saving wildlife discoveries to build your collection!
             </p>
           </div>
         ) : (
@@ -253,4 +230,4 @@ const HistoryPage = () => {
   );
 };
 
-export default HistoryPage;
+export default CollectionsPage;

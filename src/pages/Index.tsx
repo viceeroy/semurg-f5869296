@@ -8,7 +8,7 @@ import DesktopSidebar from "@/components/DesktopSidebar";
 import RightSidebar from "@/components/RightSidebar";
 import HomeFeed from "@/components/HomeFeed";
 import SearchPage from "@/components/SearchPage";
-import HistoryPage from "@/components/HistoryPage";
+import CollectionsPage from "@/components/CollectionsPage";
 import ProfilePage from "@/components/ProfilePage";
 import UploadFlow from "@/components/UploadFlow";
 import AuthPage from "@/components/AuthPage";
@@ -36,8 +36,8 @@ const MainApp = () => {
         return <HomeFeed onProfileClick={() => setActiveTab("profile")} />;
       case "search":
         return <SearchPage />;
-      case "history":
-        return <HistoryPage />;
+      case "collections":
+        return <CollectionsPage />;
       case "profile":
         return <ProfilePage onEditProfile={() => setShowProfileEdit(true)} />;
       default:
