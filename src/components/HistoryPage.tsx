@@ -43,80 +43,7 @@ const HistoryPage = () => {
   const [loading, setLoading] = useState(true);
 
   // Mock history data for demonstration
-  const mockHistoryData = [
-    {
-      id: 'history-1',
-      image: 'https://images.unsplash.com/photo-1518373714866-3f1478910cc0?w=800',
-      speciesName: 'Northern Cardinal',
-      aiInfo: 'Identified as Northern Cardinal with 95% confidence. Males are brilliant red with black face mask.',
-      userNotes: 'Spotted this gorgeous male cardinal in my backyard this morning!',
-      userName: 'You',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
-      userId: user?.id || 'mock-user-id',
-      likes: 12,
-      isLiked: true,
-      category: 'birds',
-      tags: ['#NorthernCardinal', '#Identified'],
-      badge: 'Identified',
-      comments: [],
-      actionType: 'identify',
-      timestamp: new Date().toISOString()
-    },
-    {
-      id: 'history-2',
-      image: 'https://images.unsplash.com/photo-1558618066-fcd25c85cd64?w=800',
-      speciesName: 'Great Blue Heron',
-      aiInfo: 'Identified as Great Blue Heron. Large wading bird, excellent fishing skills.',
-      userNotes: 'Amazing patience watching this heron hunt for fish at the lake.',
-      userName: 'You',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
-      userId: user?.id || 'mock-user-id',
-      likes: 8,
-      isLiked: false,
-      category: 'birds',
-      tags: ['#GreatBlueHeron', '#Viewed'],
-      badge: 'Viewed',
-      comments: [],
-      actionType: 'view',
-      timestamp: new Date(Date.now() - 86400000).toISOString() // 1 day ago
-    },
-    {
-      id: 'history-3',
-      image: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800',
-      speciesName: 'White-tailed Deer',
-      aiInfo: 'Identified as White-tailed Deer. Medium-sized deer native to North America.',
-      userNotes: 'Family of deer spotted during early morning hike.',
-      userName: 'You',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
-      userId: user?.id || 'mock-user-id',
-      likes: 15,
-      isLiked: true,
-      category: 'mammals',
-      tags: ['#WhiteTailedDeer', '#Identified'],
-      badge: 'Identified',
-      comments: [],
-      actionType: 'identify',
-      timestamp: new Date(Date.now() - 172800000).toISOString() // 2 days ago
-    },
-    {
-      id: 'history-4',
-      image: 'https://images.unsplash.com/photo-1470509037663-253afd7f0f51?w=800',
-      speciesName: 'Wild Sunflower',
-      aiInfo: 'Identified as Wild Sunflower. Native wildflower, important for pollinators.',
-      userNotes: 'Beautiful field of sunflowers found during nature walk.',
-      userName: 'You',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
-      userId: user?.id || 'mock-user-id',
-      likes: 23,
-      isLiked: true,
-      category: 'plants',
-      tags: ['#Sunflower', '#Viewed'],
-      badge: 'Viewed',
-      comments: [],
-      actionType: 'view',
-      timestamp: new Date(Date.now() - 259200000).toISOString() // 3 days ago
-    }
-  ];
+  const mockHistoryData: HistoryPost[] = [];
 
   const filters = [
     {
@@ -183,10 +110,10 @@ const HistoryPage = () => {
         timestamp: item.created_at
       }));
 
-      setHistoryItems(formattedHistory.length > 0 ? formattedHistory : mockHistoryData);
+      setHistoryItems(formattedHistory);
     } catch (error) {
       console.error('Error fetching history:', error);
-      setHistoryItems(mockHistoryData);
+      setHistoryItems([]);
     } finally {
       setLoading(false);
     }
@@ -302,40 +229,21 @@ const HistoryPage = () => {
             </p>
           </div>
         ) : (
-          <div className={viewMode === "grid" ? "grid grid-cols-2 gap-4" : "space-y-4"}>
+          <div className="grid grid-cols-2 gap-4">
             {filteredPosts.map(post => (
-              <div key={post.id} className={viewMode === "grid" ? "break-inside-avoid" : ""}>
-                {viewMode === "list" ? (
-                  <PostCard 
-                    post={post} 
-                    onLike={handleLike} 
-                    onSave={handleSave} 
-                    onComment={() => {}} 
-                    onShare={() => {}} 
-                    onEdit={handleEdit} 
-                    onDelete={handleDelete} 
-                    onInfo={handleInfo} 
-                  />
-                ) : (
-                  <div className="glass-card rounded-xl overflow-hidden">
-                    <img src={post.image} alt={post.speciesName} className="w-full h-40 object-cover" />
-                    <div className="p-3">
-                      <h4 className="font-semibold text-sm text-gray-900 truncate">
-                        {post.speciesName}
-                      </h4>
-                      <p className="text-xs text-gray-500 mb-1">{post.badge}</p>
-                      <p className="text-xs text-gray-400">
-                        {new Date(post.timestamp).toLocaleDateString()}
-                      </p>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs text-gray-600">{post.actionType}</span>
-                        <Button variant="ghost" size="sm" onClick={() => handleLike(post.id)}>
-                          <Heart className={`w-4 h-4 ${post.isLiked ? 'text-red-500 fill-current' : 'text-gray-400'}`} />
-                        </Button>
-                      </div>
-                    </div>
+              <div key={post.id} className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                <img src={post.image} alt={post.speciesName} className="w-full h-32 object-cover" />
+                <div className="p-3">
+                  <h4 className="font-semibold text-sm text-gray-900 truncate mb-1">
+                    {post.speciesName}
+                  </h4>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">{post.likes} likes</span>
+                    <Button variant="ghost" size="sm" onClick={() => handleLike(post.id)} className="p-1">
+                      <Heart className={`w-4 h-4 ${post.isLiked ? 'text-red-500 fill-current' : 'text-gray-400'}`} />
+                    </Button>
                   </div>
-                )}
+                </div>
               </div>
             ))}
           </div>

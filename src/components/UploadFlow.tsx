@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
+import { addToHistory } from "@/services/historyService";
 
 interface UploadFlowProps {
   onClose: () => void;
@@ -140,6 +141,20 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
       if (data.success) {
         setSpeciesInfo(data.data);
         setCurrentStep("results");
+        
+        // Add to user history
+        if (user?.id) {
+          await addToHistory(
+            user.id,
+            'identify',
+            data.data.species_name,
+            {
+              description: data.data.description,
+              imageUrl: selectedImage,
+              category: data.data.category.toLowerCase()
+            }
+          );
+        }
       } else {
         setCurrentStep("failed");
       }
