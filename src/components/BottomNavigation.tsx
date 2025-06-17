@@ -1,4 +1,4 @@
-import { User, Search, FolderOpen, Sparkles, Home } from "lucide-react";
+import { User, Search, FolderOpen, Sparkles, Home, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/useLanguage";
 interface BottomNavigationProps {
@@ -29,9 +29,9 @@ const BottomNavigation = ({
     label: t.upload.identifyWildlife,
     isSpecial: true
   }, {
-    id: 'collections',
-    icon: FolderOpen,
-    label: 'Collections'
+    id: 'history',
+    icon: History,
+    label: 'History'
   }, {
     id: 'profile',
     icon: User,

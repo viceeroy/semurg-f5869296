@@ -477,6 +477,45 @@ export type Database = {
           },
         ]
       }
+      user_history: {
+        Row: {
+          action_type: string
+          category: string | null
+          created_at: string
+          description: string | null
+          educational_post_id: string | null
+          id: string
+          image_url: string | null
+          post_id: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          educational_post_id?: string | null
+          id?: string
+          image_url?: string | null
+          post_id?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          educational_post_id?: string | null
+          id?: string
+          image_url?: string | null
+          post_id?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
