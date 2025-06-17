@@ -8,6 +8,7 @@ export const useEducationalPosts = () => {
   const [posts, setPosts] = useState<EducationalPost[]>([]);
   const [loading, setLoading] = useState(false);
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
+  const [commentsOpen, setCommentsOpen] = useState<string | null>(null);
 
   const loadPosts = async (searchQuery?: string, category?: string) => {
     setLoading(true);
@@ -80,8 +81,11 @@ export const useEducationalPosts = () => {
   };
 
   const handleComment = (postId: string) => {
-    // Comments are now handled in the EducationalPostCard component
-    console.log('Opening comments for post:', postId);
+    setCommentsOpen(postId);
+  };
+
+  const handleCloseComments = () => {
+    setCommentsOpen(null);
   };
 
   const handleShare = async (postId: string) => {
@@ -122,6 +126,8 @@ export const useEducationalPosts = () => {
     loadPosts,
     handleLike,
     handleComment,
-    handleShare
+    handleShare,
+    commentsOpen,
+    handleCloseComments
   };
 };

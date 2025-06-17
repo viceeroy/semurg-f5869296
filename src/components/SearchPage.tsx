@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import EducationalPostCard from "./EducationalPostCard";
 import ExpandedPostView from "./ExpandedPostView";
 import LoadingSpinner from "./LoadingSpinner";
+import EducationalPostComments from "./EducationalPostComments";
 import { categories } from "./search/searchData";
 import { useEducationalPosts } from "@/hooks/useEducationalPosts";
 import { toast } from "sonner";
@@ -25,7 +26,9 @@ const SearchPage = () => {
     loadPosts,
     handleLike,
     handleComment,
-    handleShare
+    handleShare,
+    commentsOpen,
+    handleCloseComments
   } = useEducationalPosts();
 
   const handlePostClick = (post: EducationalPost) => {
@@ -227,6 +230,15 @@ const SearchPage = () => {
           onLike={handleLike}
           onComment={handleComment}
           onShare={handleShare}
+        />
+      )}
+
+      {/* Comments Modal */}
+      {commentsOpen && (
+        <EducationalPostComments
+          postId={commentsOpen}
+          isOpen={true}
+          onClose={handleCloseComments}
         />
       )}
     </div>;

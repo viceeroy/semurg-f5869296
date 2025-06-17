@@ -3,7 +3,7 @@ import PostCardHeader from "./PostCardHeader";
 import PostCardImage from "./PostCardImage";
 import PostCardContent from "./PostCardContent";
 import PostCardActions from "./PostCardActions";
-import EducationalPostComments from "./EducationalPostComments";
+import PostComments from "./PostComments";
 interface Comment {
   id: string;
   user_id: string;
@@ -93,10 +93,11 @@ const PostCard = ({
 
       <PostCardActions postId={post.id} likes={post.likes} isLiked={post.isLiked} isSaved={post.isSaved} commentsCount={post.comments.length} onLike={onLike} onSave={onSave} onShare={handleShare} onToggleComments={() => setShowComments(!showComments)} />
 
-      <EducationalPostComments
+      <PostComments
         postId={post.id}
-        isOpen={showComments}
-        onClose={() => setShowComments(false)}
+        comments={post.comments}
+        showComments={showComments}
+        onComment={onComment}
       />
     </div>;
 };
