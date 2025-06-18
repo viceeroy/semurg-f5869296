@@ -234,17 +234,21 @@ const SearchPage = () => {
 
       {/* Detailed Post View Modal */}
       {selectedPost && (
-        <DetailedPostView
-          post={selectedPost}
-          onClose={handleCloseDetails}
-          onLike={handleLike}
-          onSave={handleSave}
-          onComment={handleComment}
-          onShare={handleShare}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onInfo={handleInfo}
-        />
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-hidden">
+            <DetailedPostView
+              post={selectedPost}
+              onClose={handleCloseDetails}
+              onLike={handleLike}
+              onSave={handleSave}
+              onComment={handleComment}
+              onShare={handleShare}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onInfo={handleInfo}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
