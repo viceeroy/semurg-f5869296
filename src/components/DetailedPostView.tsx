@@ -73,9 +73,9 @@ const DetailedPostView = ({
 
       <PostComments
         postId={post.id}
-        comments={post.comments}
-        showComments={showComments}
-        onComment={onComment}
+        isOpen={showComments}
+        onClose={() => setShowComments(false)}
+        isEducationalPost={false}
       />
     </div>
   );
