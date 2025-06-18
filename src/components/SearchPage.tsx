@@ -59,6 +59,7 @@ const SearchPage = () => {
       id: post.id,
       image: post.image_url,
       speciesName: post.title,
+      scientificName: post.scientific_name,
       aiInfo: post.description,
       userNotes: post.caption || '',
       userName: post.profiles.username,
@@ -66,10 +67,16 @@ const SearchPage = () => {
       likes: post._count?.likes || 0,
       isLiked: user ? post.likes.some(like => like.user_id === user.id) : false,
       isSaved: false, // This would need to be computed from saved posts
-      tags: post.category ? [`#${post.category}`] : ['#wildlife'],
+      tags: [`#${post.title.replace(/\s+/g, '')}`, post.category ? `#${post.category}` : '#Wildlife'],
       comments: post.comments || [],
       userId: post.user_id,
-      uploadDate: post.created_at
+      uploadDate: post.created_at,
+      characteristics: post.identification_notes ? [post.identification_notes] : undefined,
+      habitat: post.habitat,
+      diet: post.diet,
+      behavior: post.behavior,
+      conservationStatus: post.conservation_status,
+      badge: post.confidence ? `${post.confidence.charAt(0).toUpperCase() + post.confidence.slice(1)} Confidence` : undefined
     };
     setSelectedPost(detailedPost);
   };
