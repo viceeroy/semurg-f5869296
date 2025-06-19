@@ -18,6 +18,9 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured');
     }
 
+    // Get language from request body
+    const { language = 'english' } = await req.json().catch(() => ({}));
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -39,7 +42,10 @@ serve(async (req) => {
     const randomTopic = topics[Math.floor(Math.random() * topics.length)];
     const randomPostType = postTypes[Math.floor(Math.random() * postTypes.length)];
 
-    const prompt = `${randomPostType.instruction} about ${randomTopic}. 
+    const isUzbek = language === 'uzbek' || language === 'uz';
+    const langInstruction = isUzbek ? 'O\'zbek tilida yozing.' : 'Write in English.';
+    
+    const prompt = `${randomPostType.instruction} about ${randomTopic}. ${langInstruction}
     
     Requirements:
     - Title should be engaging and start appropriately (like "Did you know...", "Interesting fact:", "How to...", "Where to find...")
@@ -47,11 +53,12 @@ serve(async (req) => {
     - Include fascinating, educational information that would interest nature lovers
     - Make it engaging and easy to understand
     - Focus on specific, memorable details
+    ${isUzbek ? '- Barcha matnni O\'zbek tilida yozing' : ''}
     
     Format your response as JSON:
     {
       "title": "Your engaging title here",
-      "content": "Your detailed content here",
+      "content": "Your detailed content here", 
       "category": "animals|birds|plants",
       "tags": ["tag1", "tag2", "tag3"]
     }`;
@@ -67,7 +74,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a nature education expert who creates engaging, factual content about wildlife, plants, and nature. Always respond with valid JSON.'
+            content: `You are a nature education expert who creates engaging, factual content about wildlife, plants, and nature. Always respond with valid JSON. ${isUzbek ? 'Barcha javoblarni O\'zbek tilida bering.' : 'Write all responses in English.'}`
           },
           {
             role: 'user',
@@ -98,7 +105,8 @@ serve(async (req) => {
         content: postData.content,
         category: postData.category,
         post_type: randomPostType.type,
-        tags: postData.tags || []
+        tags: postData.tags || [],
+        language: language
       })
       .select()
       .single();

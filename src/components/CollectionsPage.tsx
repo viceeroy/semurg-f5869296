@@ -219,7 +219,9 @@ const CollectionsPage = () => {
                   const {
                     data,
                     error
-                  } = await supabase.functions.invoke('generate-educational-post');
+                  } = await supabase.functions.invoke('generate-educational-post', {
+                    body: { language: language === 'uz' ? 'uzbek' : 'english' }
+                  });
                   if (error) {
                     console.error('Error generating post:', error);
                     toast.error('Failed to generate new post');
