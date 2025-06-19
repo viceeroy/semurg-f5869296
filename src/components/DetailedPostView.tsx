@@ -53,7 +53,7 @@ const DetailedPostView = ({
         <img
           src={post.image}
           alt={post.speciesName}
-          className="w-full h-64 object-cover"
+          className="w-full max-h-96 object-contain bg-gray-100"
         />
       </div>
 
