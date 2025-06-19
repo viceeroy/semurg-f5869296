@@ -4,6 +4,9 @@ import { useAuth, AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePosts } from "@/hooks/usePosts";
+import { useProfile } from "@/hooks/useProfile";
+import { useCollections } from "@/hooks/useCollections";
+import { useSearch } from "@/hooks/useSearch";
 import BottomNavigation from "@/components/BottomNavigation";
 import DesktopSidebar from "@/components/DesktopSidebar";
 import RightSidebar from "@/components/RightSidebar";
@@ -17,6 +20,9 @@ const MainApp = () => {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
   const postsData = usePosts();
+  const profileData = useProfile();
+  const collectionsData = useCollections();
+  const searchData = useSearch();
   const [activeTab, setActiveTab] = useState("home");
   const [showUploadFlow, setShowUploadFlow] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
@@ -34,11 +40,11 @@ const MainApp = () => {
       case "home":
         return <HomeFeed postsData={postsData} onProfileClick={() => setActiveTab("profile")} />;
       case "search":
-        return <LazySearchPage />;
+        return <LazySearchPage searchData={searchData} />;
       case "collections":
-        return <LazyCollectionsPage />;
+        return <LazyCollectionsPage collectionsData={collectionsData} />;
       case "profile":
-        return <LazyProfilePage onEditProfile={() => setShowProfileEdit(true)} />;
+        return <LazyProfilePage profileData={profileData} onEditProfile={() => setShowProfileEdit(true)} />;
       default:
         return <HomeFeed postsData={postsData} onProfileClick={() => setActiveTab("profile")} />;
     }

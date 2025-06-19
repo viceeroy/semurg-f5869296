@@ -10,21 +10,21 @@ const DetailedPostView = lazy(() => import('./DetailedPostView'));
 const ExpandedPostView = lazy(() => import('./ExpandedPostView'));
 
 // Wrapper components with suspense
-export const LazyCollectionsPage = () => (
+export const LazyCollectionsPage = ({ collectionsData }: { collectionsData: any }) => (
   <Suspense fallback={<div className="p-4 space-y-4">{Array.from({length: 3}).map((_, i) => <LoadingSkeleton key={i} variant="card" />)}</div>}>
-    <CollectionsPage />
+    <CollectionsPage collectionsData={collectionsData} />
   </Suspense>
 );
 
-export const LazySearchPage = () => (
+export const LazySearchPage = ({ searchData }: { searchData: any }) => (
   <Suspense fallback={<div className="p-4 space-y-4">{Array.from({length: 5}).map((_, i) => <LoadingSkeleton key={i} variant="post" />)}</div>}>
-    <SearchPage />
+    <SearchPage searchData={searchData} />
   </Suspense>
 );
 
-export const LazyProfilePage = ({ onEditProfile }: { onEditProfile: () => void }) => (
+export const LazyProfilePage = ({ profileData, onEditProfile }: { profileData: any; onEditProfile: () => void }) => (
   <Suspense fallback={<div className="p-4"><LoadingSkeleton variant="card" lines={6} /></div>}>
-    <ProfilePage onEditProfile={onEditProfile} />
+    <ProfilePage profileData={profileData} onEditProfile={onEditProfile} />
   </Suspense>
 );
 

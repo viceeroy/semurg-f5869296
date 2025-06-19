@@ -6,119 +6,26 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import DetailedPostView from "./DetailedPostView";
 import { usePosts } from "@/hooks/usePosts";
+import { useProfile } from "@/hooks/useProfile";
 interface ProfilePageProps {
+  profileData: ReturnType<typeof useProfile>;
   onEditProfile: () => void;
 }
-const ProfilePage = ({
-  onEditProfile
-}: ProfilePageProps) => {
-  const {
-    user,
-    signOut
-  } = useAuth();
-  const {
-    handleLike,
-    handleSave,
-    handleComment
-  } = usePosts();
-  const [profile, setProfile] = useState<any>(null);
-  const [userPosts, setUserPosts] = useState<any[]>([]);
-  const [savedPosts, setSavedPosts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [savedLoading, setSavedLoading] = useState(false);
-  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("posts");
-  useEffect(() => {
-    if (user) {
-      fetchProfile();
-      if (activeTab === "posts") {
-        fetchUserPosts();
-      } else if (activeTab === "saved") {
-        fetchSavedPosts();
-      }
-    }
-  }, [user, activeTab]);
-  const fetchProfile = async () => {
-    try {
-      const {
-        data,
-        error
-      } = await supabase.from('profiles').select('*').eq('id', user?.id).single();
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching profile:', error);
-        return;
-      }
-      setProfile(data);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-  const fetchUserPosts = async () => {
-    try {
-      const {
-        data,
-        error
-      } = await supabase.from('posts').select(`
-          *,
-          profiles (username, avatar_url),
-          likes (user_id),
-          comments (
-            id,
-            user_id,
-            content,
-            created_at,
-            profiles (username)
-          )
-        `).eq('user_id', user?.id).eq('is_private', false).order('created_at', {
-        ascending: false
-      });
-      if (error) {
-        console.error('Error fetching posts:', error);
-        return;
-      }
-      setUserPosts(data || []);
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const fetchSavedPosts = async () => {
-    setSavedLoading(true);
-    try {
-      const {
-        data,
-        error
-      } = await supabase.from('saved_posts').select(`
-          posts (
-            *,
-            profiles (username, avatar_url),
-            likes (user_id),
-            comments (
-              id,
-              user_id,
-              content,
-              created_at,
-              profiles (username)
-            )
-          )
-        `).eq('user_id', user?.id).order('created_at', {
-        ascending: false
-      });
-      if (error) {
-        console.error('Error fetching saved posts:', error);
-        return;
-      }
 
-      // Extract posts from the nested structure
-      const posts = data?.map(item => item.posts).filter(Boolean) || [];
-      setSavedPosts(posts);
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setSavedLoading(false);
-    }
-  };
+const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
+  const { user, signOut } = useAuth();
+  const { handleLike, handleSave, handleComment } = usePosts();
+  const { 
+    profile, 
+    userPosts, 
+    savedPosts, 
+    loading, 
+    savedLoading, 
+    activeTab, 
+    setActiveTab 
+  } = profileData;
+  
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const handleSignOut = async () => {
     await signOut();
   };
