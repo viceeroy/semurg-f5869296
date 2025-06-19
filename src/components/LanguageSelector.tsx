@@ -13,8 +13,8 @@ const LanguageSelector = () => {
   const { language, setLanguage } = useLanguage();
 
   const languages = [
-    { code: 'en' as const, label: 'English', flag: '🇺🇸' },
-    { code: 'uz' as const, label: 'O\'zbekcha', flag: '🇺🇿' }
+    { code: 'en' as const, label: 'English', flag: '🇺🇸', shortLabel: 'ENG' },
+    { code: 'uz' as const, label: 'O\'zbekcha', flag: '🇺🇿', shortLabel: 'UZ' }
   ];
 
   const currentLanguage = languages.find(lang => lang.code === language) || languages[0];
@@ -24,11 +24,8 @@ const LanguageSelector = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="flex items-center gap-2 h-8 px-3">
           <Languages className="w-4 h-4" />
-          <span className="hidden sm:inline text-sm font-medium">
-            {currentLanguage.label}
-          </span>
-          <span className="sm:hidden text-sm">
-            {currentLanguage.flag}
+          <span className="text-sm font-medium">
+            {currentLanguage.shortLabel}
           </span>
           <ChevronDown className="w-3 h-3" />
         </Button>

@@ -14,7 +14,7 @@ export interface EducationalPost {
   is_liked?: boolean;
 }
 
-export const fetchEducationalPosts = async (searchQuery?: string, category?: string): Promise<EducationalPost[]> => {
+export const fetchEducationalPosts = async (searchQuery?: string, category?: string, language?: string): Promise<EducationalPost[]> => {
   try {
     let query = supabase
       .from('educational_posts')
@@ -29,6 +29,12 @@ export const fetchEducationalPosts = async (searchQuery?: string, category?: str
     // Filter by category
     if (category && category !== 'all') {
       query = query.eq('category', category);
+    }
+
+    // Filter by language
+    if (language) {
+      const langFilter = language === 'uz' ? 'uzbek' : 'english';
+      query = query.eq('language', langFilter);
     }
 
     const { data, error } = await query;

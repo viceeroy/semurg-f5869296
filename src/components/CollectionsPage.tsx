@@ -8,11 +8,13 @@ import LoadingSpinner from "./LoadingSpinner";
 import EducationalPostComments from "./EducationalPostComments";
 import { categories } from "./search/searchData";
 import { useEducationalPosts } from "@/hooks/useEducationalPosts";
+import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { EducationalPost } from "@/services/educationalPostService";
 
 const CollectionsPage = () => {
+  const { language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [generatingPost, setGeneratingPost] = useState(false);
@@ -43,16 +45,16 @@ const CollectionsPage = () => {
   useEffect(() => {
     const performSearch = async () => {
       if (searchQuery.trim()) {
-        await loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
+        await loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory, language);
         setHasSearched(true);
       } else {
-        await loadPosts(undefined, selectedCategory === 'all' ? undefined : selectedCategory);
+        await loadPosts(undefined, selectedCategory === 'all' ? undefined : selectedCategory, language);
         setHasSearched(false);
       }
     };
     
     performSearch();
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, language]);
 
   // Auto-generate content when no results found
   useEffect(() => {
@@ -83,7 +85,7 @@ const CollectionsPage = () => {
       } else if (data?.success) {
         toast.success(`Generated new content about ${searchQuery}!`);
         // Reload posts to show the new content
-        await loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
+        await loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory, language);
       }
     } catch (error) {
       console.error('Error generating content:', error);
@@ -110,7 +112,7 @@ const CollectionsPage = () => {
       } else if (data?.success) {
         toast.success('Species information found!');
         // Reload posts to show the new species info
-        loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
+        loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory, language);
       } else {
         toast.error('No information found for this species');
       }
@@ -224,7 +226,7 @@ const CollectionsPage = () => {
                   } else if (data?.success) {
                     toast.success(data.message);
                     // Reload posts to show the new one
-                    loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory);
+                    loadPosts(searchQuery, selectedCategory === 'all' ? undefined : selectedCategory, language);
                   } else {
                     toast.error('Failed to generate new post');
                   }

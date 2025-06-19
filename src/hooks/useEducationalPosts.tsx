@@ -10,10 +10,10 @@ export const useEducationalPosts = () => {
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
   const [commentsOpen, setCommentsOpen] = useState<string | null>(null);
 
-  const loadPosts = async (searchQuery?: string, category?: string) => {
+  const loadPosts = async (searchQuery?: string, category?: string, language?: string) => {
     setLoading(true);
     try {
-      const data = await fetchEducationalPosts(searchQuery, category);
+      const data = await fetchEducationalPosts(searchQuery, category, language);
       
       // Get user's liked posts if logged in
       let userLikes: string[] = [];
