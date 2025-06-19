@@ -97,9 +97,17 @@ const PostCard = ({
         
         {/* Profile Info - Top Left */}
         <div className="absolute top-3 left-3 flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-emerald-500 flex items-center justify-center text-white font-semibold text-sm shadow-lg">
-            {post.userName.charAt(0).toUpperCase()}
-          </div>
+          {post.userAvatar ? (
+            <img 
+              src={post.userAvatar} 
+              alt={post.userName}
+              className="w-8 h-8 rounded-full object-cover shadow-lg border-2 border-white"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-emerald-500 flex items-center justify-center text-white font-semibold text-sm shadow-lg border-2 border-white">
+              {post.userName.charAt(0).toUpperCase()}
+            </div>
+          )}
           <div>
             <h3 className="text-white font-medium text-sm drop-shadow-sm">{post.userName}</h3>
             <p className="text-white/90 text-xs drop-shadow-sm">{post.speciesName}</p>

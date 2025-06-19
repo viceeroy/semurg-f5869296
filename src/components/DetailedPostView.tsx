@@ -39,24 +39,45 @@ const DetailedPostView = ({
 
   return (
     <div className="w-full max-w-sm mx-auto mb-6 bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.15)] border border-gray-200 overflow-hidden">
-      {/* Header with Background Image */}
-      <div 
-        className="relative h-[300px] bg-cover bg-center"
-        style={{ backgroundImage: `url(${post.image})` }}
-      >
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
-        
-        {/* Keep existing header with username placement */}
-        <div className="absolute top-0 left-0 right-0">
-          <PostHeader
-            onClose={onClose}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onInfo={onInfo}
-            postId={post.id}
-            postUserId={post.userId}
-          />
+      {/* Header */}
+      <div className="relative">
+        <PostHeader
+          onClose={onClose}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onInfo={onInfo}
+          postId={post.id}
+          postUserId={post.userId}
+        />
+      </div>
+
+      {/* Post Image */}
+      <div className="w-full">
+        <img
+          src={post.image}
+          alt={post.speciesName}
+          className="w-full max-h-96 object-contain bg-gray-100"
+        />
+      </div>
+
+      {/* Profile Section */}
+      <div className="px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center space-x-3">
+          {post.userAvatar ? (
+            <img 
+              src={post.userAvatar} 
+              alt={post.userName}
+              className="w-10 h-10 rounded-full object-cover shadow-lg"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-emerald-500 flex items-center justify-center text-white font-semibold text-sm shadow-lg">
+              {post.userName.charAt(0).toUpperCase()}
+            </div>
+          )}
+          <div>
+            <h3 className="font-semibold text-foreground">{post.userName}</h3>
+            <p className="text-sm text-emerald-600 font-medium">{post.speciesName}</p>
+          </div>
         </div>
       </div>
 
