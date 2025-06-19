@@ -38,26 +38,32 @@ const DetailedPostView = ({
   };
 
   return (
-    <div className="mb-6 shadow-lg border border-gray-200 overflow-hidden relative rounded-xl bg-slate-200">
-      <PostHeader
-        onClose={onClose}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        onInfo={onInfo}
-        postId={post.id}
-        postUserId={post.userId}
-      />
-
-      {/* Post Image */}
-      <div className="w-full">
-        <img
-          src={post.image}
-          alt={post.speciesName}
-          className="w-full max-h-96 object-contain bg-gray-100"
-        />
+    <div className="w-full max-w-sm mx-auto mb-6 bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.15)] border border-gray-200 overflow-hidden">
+      {/* Header with Background Image */}
+      <div 
+        className="relative h-[300px] bg-cover bg-center"
+        style={{ backgroundImage: `url(${post.image})` }}
+      >
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
+        
+        {/* Keep existing header with username placement */}
+        <div className="absolute top-0 left-0 right-0">
+          <PostHeader
+            onClose={onClose}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onInfo={onInfo}
+            postId={post.id}
+            postUserId={post.userId}
+          />
+        </div>
       </div>
 
-      <PostContent post={post} />
+      {/* Content Section */}
+      <div className="py-4 bg-white">
+        <PostContent post={post} />
+      </div>
 
       <PostEngagement
         postId={post.id}

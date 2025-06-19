@@ -8,20 +8,7 @@ interface PostContentProps {
 
 const PostContent = ({ post }: PostContentProps) => {
   return (
-    <div className="p-6 space-y-6">
-      {/* User Header */}
-      <div className="flex items-center space-x-3">
-        <img 
-          src={post.userAvatar} 
-          alt={post.userName}
-          className="w-12 h-12 rounded-full object-cover"
-        />
-        <div>
-          <h3 className="font-semibold text-foreground">{post.userName}</h3>
-          <p className="text-sm text-muted-foreground">{formatDate(post.uploadDate)}</p>
-        </div>
-      </div>
-
+    <div className="px-6 space-y-4">
       {/* AI Identification Section */}
       <div className="space-y-4">
         <div>
@@ -81,13 +68,13 @@ const PostContent = ({ post }: PostContentProps) => {
 
       {/* Tags */}
       {post.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-3">
           {post.tags.map((tag, index) => (
             <Button
               key={index}
               variant="outline"
               size="sm"
-              className="bg-secondary/50 border-border text-secondary-foreground hover:bg-secondary rounded-full px-3 py-1 text-xs"
+              className="bg-blue-100 border-blue-200 text-blue-700 hover:bg-blue-200 rounded-full px-3 py-1 text-xs"
             >
               {tag}
             </Button>
@@ -97,9 +84,11 @@ const PostContent = ({ post }: PostContentProps) => {
 
       {/* User Caption */}
       {post.userNotes && (
-        <div>
-          <h4 className="font-semibold text-foreground mb-2">Caption</h4>
-          <p className="text-sm text-foreground">{post.userNotes}</p>
+        <div className="mt-3 p-3 bg-gray-50 border border-gray-200 rounded">
+          <p className="text-sm text-foreground">
+            <span className="font-semibold mr-2">{post.userName}:</span>
+            {post.userNotes}
+          </p>
         </div>
       )}
     </div>
