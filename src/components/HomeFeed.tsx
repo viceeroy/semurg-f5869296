@@ -31,8 +31,51 @@ const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const startY = useRef(0);
   const currentY = useRef(0);
+  
+  // Scroll position management
+  const savedScrollPosition = useRef<number>(0);
+  const isRestoringScroll = useRef(false);
 
   const editingPost = editingPostId ? posts.find(p => p.id === editingPostId) : null;
+
+  // Save scroll position before navigation
+  const saveScrollPosition = () => {
+    if (scrollContainerRef.current) {
+      savedScrollPosition.current = scrollContainerRef.current.scrollTop;
+      sessionStorage.setItem('feedScrollPosition', savedScrollPosition.current.toString());
+    }
+  };
+
+  // Restore scroll position
+  const restoreScrollPosition = () => {
+    const savedPosition = sessionStorage.getItem('feedScrollPosition');
+    if (savedPosition && scrollContainerRef.current && !isRestoringScroll.current) {
+      isRestoringScroll.current = true;
+      requestAnimationFrame(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = parseInt(savedPosition);
+          setTimeout(() => {
+            isRestoringScroll.current = false;
+          }, 100);
+        }
+      });
+    }
+  };
+
+  // Handle post click with scroll position saving
+  const handlePostClick = (postId: string) => {
+    saveScrollPosition();
+    setSelectedPostId(postId);
+  };
+
+  // Handle close with scroll position restoration
+  const handlePostClose = () => {
+    setSelectedPostId(null);
+    // Restore scroll position after component re-renders
+    setTimeout(() => {
+      restoreScrollPosition();
+    }, 50);
+  };
 
   // Fetch saved posts for current user
   useEffect(() => {
@@ -59,6 +102,33 @@ const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
 
     fetchSavedPosts();
   }, [user, posts]); // Re-fetch when posts change
+
+  // Restore scroll position when returning to feed
+  useEffect(() => {
+    if (!selectedPostId && !loading) {
+      // Small delay to ensure DOM is ready
+      const timer = setTimeout(() => {
+        restoreScrollPosition();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedPostId, loading]);
+
+  // Save scroll position on scroll for other interactions
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!selectedPostId && scrollContainerRef.current && !isRestoringScroll.current) {
+        savedScrollPosition.current = scrollContainerRef.current.scrollTop;
+        sessionStorage.setItem('feedScrollPosition', savedScrollPosition.current.toString());
+      }
+    };
+
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [selectedPostId]);
 
   // Listen for share fallback events
   useEffect(() => {
@@ -190,7 +260,7 @@ const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
           conservationStatus: selectedPost.conservation_status,
           badge: selectedPost.confidence ? `${selectedPost.confidence.charAt(0).toUpperCase() + selectedPost.confidence.slice(1)} Confidence` : undefined
         }}
-        onClose={() => setSelectedPostId(null)}
+        onClose={handlePostClose}
         onLike={handleLike}
         onSave={handleSaveWithRefresh}
         onComment={handleComment}
@@ -238,7 +308,7 @@ const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
         onSave={handleSaveWithRefresh}
         onComment={handleComment}
         onShare={() => {}}
-        onPostClick={setSelectedPostId}
+        onPostClick={handlePostClick}
         onEdit={handleEdit}
         onDelete={handleDelete}
         onInfo={handleInfo}

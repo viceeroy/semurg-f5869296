@@ -2,8 +2,12 @@ import PostCard from "./PostCard";
 import { useAuth } from "@/hooks/useAuth";
 import { Post } from "@/types/post";
 
+interface PostWithSaved extends Post {
+  isSaved?: boolean;
+}
+
 interface PostListProps {
-  posts: Post[];
+  posts: PostWithSaved[];
   onLike: (postId: string) => void;
   onSave: (postId: string) => void;
   onComment: (postId: string, content: string) => void;
@@ -34,7 +38,7 @@ const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick, onEd
             userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
             likes: post.likes.length,
             isLiked: post.likes.some(like => like.user_id === user?.id),
-            isSaved: false, // This will be updated when we fetch saved posts
+            isSaved: post.isSaved || false, // Use the passed isSaved value or default to false
             tags: [`#${post.title.replace(/\s+/g, '')}`, post.category ? `#${post.category}` : '#Wildlife'],
             comments: post.comments || [],
             userId: post.user_id // Pass the actual user_id
