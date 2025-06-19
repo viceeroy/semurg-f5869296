@@ -22,7 +22,7 @@ const MainApp = () => {
   const postsData = usePosts();
   const profileData = useProfile();
   const collectionsData = useCollections();
-  const searchData = useSearch();
+  const searchData = useSearch(postsData.posts);
   const [activeTab, setActiveTab] = useState("home");
   const [showUploadFlow, setShowUploadFlow] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);

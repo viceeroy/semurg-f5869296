@@ -4,6 +4,7 @@ import PostCardImage from "./PostCardImage";
 import PostCardContent from "./PostCardContent";
 import PostCardActions from "./PostCardActions";
 import PostComments from "./PostComments";
+import OptimizedPostImage from "./OptimizedPostImage";
 interface Comment {
   id: string;
   user_id: string;
@@ -86,12 +87,19 @@ const PostCard = ({
   };
   return (
     <div className="w-full max-w-sm mx-auto mb-6 bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.15)] border border-gray-200 overflow-hidden">
-      {/* Header with Background Image and Profile Overlay */}
+      {/* Header with Optimized Image and Profile Overlay */}
       <div 
-        className="relative h-[300px] bg-cover bg-center cursor-pointer"
-        style={{ backgroundImage: `url(${post.image})` }}
+        className="relative h-[300px] cursor-pointer overflow-hidden"
         onClick={() => onPostClick?.(post.id)}
       >
+        <OptimizedPostImage 
+          src={post.image}
+          alt={post.speciesName}
+          className="w-full h-full"
+          width={400}
+          priority={false}
+        />
+        
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
         

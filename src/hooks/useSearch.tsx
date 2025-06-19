@@ -1,45 +1,52 @@
-import { useState } from "react";
-import { mockSearchPosts, SearchPost } from "@/data/mockSearchPosts";
+import { useState, useMemo } from "react";
+import { Post } from "@/types/post";
 import { DetailedPost } from "@/types/detailedPost";
 import { useAuth } from "@/hooks/useAuth";
 
-export const useSearch = () => {
+interface UseSearchProps {
+  posts?: Post[];
+}
+
+export const useSearch = (homePosts: Post[] = []) => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedPost, setSelectedPost] = useState<DetailedPost | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Filter posts based on search and category using mockSearchPosts
-  const filteredPosts = mockSearchPosts.filter(post => {
-    const matchesSearch = !searchQuery.trim() || 
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.scientific_name?.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCategory = selectedCategory === "all" || 
-      post.category?.toLowerCase() === selectedCategory.toLowerCase();
-    
-    return matchesSearch && matchesCategory;
-  });
+  // Convert home posts to search format and filter based on search and category
+  const filteredPosts = useMemo(() => {
+    return homePosts.filter(post => {
+      const matchesSearch = !searchQuery.trim() || 
+        post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.scientific_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.caption?.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesCategory = selectedCategory === "all" || 
+        post.category?.toLowerCase() === selectedCategory.toLowerCase();
+      
+      return matchesSearch && matchesCategory;
+    });
+  }, [homePosts, searchQuery, selectedCategory]);
 
-  const handlePostClick = (post: SearchPost) => {
-    // Convert SearchPost to DetailedPost format
+  const handlePostClick = (post: Post) => {
+    // Convert Post to DetailedPost format
     const detailedPost: DetailedPost = {
       id: post.id,
       image: post.image_url,
       speciesName: post.title,
-      scientificName: post.scientific_name,
-      aiInfo: post.description,
-      userNotes: '', // SearchPost doesn't have caption
-      userName: post.profiles.username,
-      userAvatar: post.profiles.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
-      likes: 0, // Mock data doesn't have likes count
-      isLiked: false,
+      scientificName: post.scientific_name || '',
+      aiInfo: post.description || '',
+      userNotes: post.caption || '',
+      userName: post.profiles?.username || 'Anonymous',
+      userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      likes: post.likes?.length || 0,
+      isLiked: post.likes?.some(like => like.user_id === user?.id) || false,
       isSaved: false,
-      tags: [`#${post.title.replace(/\s+/g, '')}`, `#${post.category}`],
-      comments: [],
-      userId: 'mock-user',
+      tags: [`#${post.title?.replace(/\s+/g, '')}`, `#${post.category || 'Wildlife'}`],
+      comments: post.comments || [],
+      userId: post.user_id,
       uploadDate: post.created_at,
       characteristics: post.identification_notes ? [post.identification_notes] : undefined,
       habitat: post.habitat,

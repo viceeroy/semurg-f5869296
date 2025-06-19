@@ -1,3 +1,5 @@
+import OptimizedPostImage from "./OptimizedPostImage";
+
 interface PostCardImageProps {
   image: string;
   speciesName: string;
@@ -6,10 +8,11 @@ interface PostCardImageProps {
 const PostCardImage = ({ image, speciesName }: PostCardImageProps) => {
   return (
     <div className="mb-4 -mx-0">
-      <img
+      <OptimizedPostImage
         src={image}
         alt={speciesName}
-        className="w-full h-80 object-cover"
+        className="w-full h-80"
+        width={400}
       />
     </div>
   );
