@@ -26,9 +26,11 @@ export const usePosts = () => {
   };
 
   const fetchPosts = async () => {
+    console.log('fetchPosts called');
     setLoading(true);
     try {
       await refreshPosts();
+      console.log('fetchPosts completed');
     } finally {
       setLoading(false);
     }

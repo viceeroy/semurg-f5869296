@@ -3,6 +3,7 @@ import { Post } from "@/types/post";
 import { mockPosts } from "@/data/mockPosts";
 
 export const fetchPosts = async (): Promise<Post[]> => {
+  console.log('postService fetchPosts called');
   try {
     const { data, error } = await supabase
       .from('posts')
