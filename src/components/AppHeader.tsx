@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import NotificationPanel from "./NotificationPanel";
+import LanguageSelector from "./LanguageSelector";
 interface AppHeaderProps {
   onRefresh?: () => Promise<void>;
   refreshing?: boolean;
@@ -81,6 +82,9 @@ const AppHeader = ({
         <div className="flex items-center justify-between">
           {/* Semurg Brand */}
           <h1 className="text-xl font-bold text-gray-900 text-left">Semurg</h1>
+          
+          {/* Language Selector */}
+          <LanguageSelector />
           
           {/* Right side - Discovery, Notification and Profile */}
           <div className="flex items-center space-x-2 px-[12px]">

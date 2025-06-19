@@ -47,21 +47,37 @@ serve(async (req) => {
             role: 'system',
             content: `You are a wildlife expert. CRITICAL: Only identify REAL wildlife species (birds, mammals, reptiles, amphibians, fish, insects, plants, fungi, marine life). If the image shows anything else (people, objects, buildings, food, vehicles, etc.), you MUST respond with a category of "not_wildlife".
 
-Provide all information in English.
+${language === 'uzbek' || language === 'uz' ? 
+  'Barcha ma\'lumotlarni O\'zbek tilida bering.' : 
+  'Provide all information in English.'}
 
 Analyze the image and provide comprehensive, detailed information about the species in JSON format:
 {
-  "species_name": "Common name of the species",
-  "scientific_name": "Scientific name", 
+  "species_name": "${language === 'uzbek' || language === 'uz' ? 'Turning umumiy nomi' : 'Common name of the species'}",
+  "scientific_name": "${language === 'uzbek' || language === 'uz' ? 'Ilmiy nomi' : 'Scientific name'}", 
   "category": "bird/mammal/reptile/amphibian/fish/insect/plant/fungi/marine_life/not_wildlife",
   "confidence": "high/medium/low",
-  "description": "Comprehensive introduction to this species - include their significance in the ecosystem, general characteristics, what makes them unique, their role in nature, and why they're important. Write at least 50-60 words with engaging, educational content that captivates the reader",
-  "habitat": "Detailed description of typical environment and geographical range - include specific locations, climate preferences, elevation ranges, habitat requirements, seasonal movements, and how they adapt to their environment. Describe the ecosystem they live in and their relationship with it. Provide at least 45-55 words",
-  "diet": "Comprehensive description of what the species eats, feeding behaviors, hunting or foraging techniques, seasonal dietary changes, feeding schedule, and their role in the food chain. Include specific food sources, feeding patterns, and how their diet affects the ecosystem. Write at least 45-55 words", 
-  "behavior": "Detailed account of notable behaviors, social structures, mating rituals, territorial habits, daily activities, communication methods, migration patterns, parental care, and unique characteristics that define this species. Include seasonal behaviors and interactions with other species. Provide at least 45-55 words",
-  "conservation_status": "Current conservation status with detailed context about population trends, specific threats they face, ongoing conservation efforts, historical population changes, and what factors affect their survival. Include human impact and conservation success stories if applicable. Write at least 35-45 words",
-  "interesting_facts": "3-4 fascinating, specific facts about the species that highlight their unique abilities, record-breaking characteristics, historical significance, remarkable adaptations, or surprising behaviors. Make these engaging, educational, and memorable. Include specific numbers, comparisons, or unusual traits. Provide at least 50-60 words",
-  "identification_notes": "Detailed key features that helped identify this species - include physical characteristics, distinctive markings, size comparisons, coloration patterns, body shape, and distinguishing features from similar species. Mention age, gender, or seasonal variations if visible. Write at least 35-45 words"
+  "description": "${language === 'uzbek' || language === 'uz' ? 
+    'Bu turga keng qamrovli kirish - ularning ekotizimda ahamiyati, umumiy xususiyatlari, ularni noyob qiladigan narsalar, tabiatdagi roli va nima uchun muhimligini kiriting. O\'quvchini qiziqtiruvchi va ta\'limiy mazmun bilan kamida 50-60 so\'z yozing' : 
+    'Comprehensive introduction to this species - include their significance in the ecosystem, general characteristics, what makes them unique, their role in nature, and why they are important. Write at least 50-60 words with engaging, educational content that captivates the reader'}",
+  "habitat": "${language === 'uzbek' || language === 'uz' ? 
+    'Odatdagi muhit va geografik diapazoning batafsil tavsifi - aniq joylar, iqlim afzalliklari, balandlik oralig\'i, yashash joy talablari, mavsumiy harakatlar va ular o\'z muhitiga qanday moslashishi. Ular yashaydigan ekotizim va u bilan aloqasini tasvirlab bering. Kamida 45-55 so\'z yozing' : 
+    'Detailed description of typical environment and geographical range - include specific locations, climate preferences, elevation ranges, habitat requirements, seasonal movements, and how they adapt to their environment. Describe the ecosystem they live in and their relationship with it. Provide at least 45-55 words'}",
+  "diet": "${language === 'uzbek' || language === 'uz' ? 
+    'Tur nima iste\'mol qilishi, ovqatlanish xatti-harakatlari, ov yoki qidiruv usullari, mavsumiy ovqatlanish o\'zgarishlari, ovqatlanish jadvali va oziq-ovqat zanjirida ularning rolining keng tavsifi. Aniq oziq-ovqat manbalari, ovqatlanish usullari va ularning dietasi ekotizimga qanday ta\'sir qilishini kiriting. Kamida 45-55 so\'z yozing' : 
+    'Comprehensive description of what the species eats, feeding behaviors, hunting or foraging techniques, seasonal dietary changes, feeding schedule, and their role in the food chain. Include specific food sources, feeding patterns, and how their diet affects the ecosystem. Write at least 45-55 words'}",
+  "behavior": "${language === 'uzbek' || language === 'uz' ? 
+    'Diqqatga sazovor xatti-harakatlar, ijtimoiy tuzilmalar, juftlashish marosimlari, hududiy odatlar, kundalik faoliyat, aloqa usullari, migratsiya namunalari, ota-ona g\'amxo\'rligi va bu turni belgilaydigan noyob xususiyatlarning batafsil hisobi. Mavsumiy xatti-harakatlar va boshqa turlar bilan o\'zaro ta\'sirni kiriting. Kamida 45-55 so\'z bering' : 
+    'Detailed account of notable behaviors, social structures, mating rituals, territorial habits, daily activities, communication methods, migration patterns, parental care, and unique characteristics that define this species. Include seasonal behaviors and interactions with other species. Provide at least 45-55 words'}",
+  "conservation_status": "${language === 'uzbek' || language === 'uz' ? 
+    'Populyatsiya tendentsiyalari, ular duch keladigan aniq tahdidlar, davom etayotgan tabiatni muhofaza qilish sa\'y-harakatlari, populyatsiya tarixiy o\'zgarishlari va ularning omon qolishiga ta\'sir qiluvchi omillar haqida batafsil kontekst bilan hozirgi muhofaza holati. Inson ta\'siri va tabiatni muhofaza qilishning muvaffaqiyat hikoyalarini kiriting. Kamida 35-45 so\'z yozing' : 
+    'Current conservation status with detailed context about population trends, specific threats they face, ongoing conservation efforts, historical population changes, and what factors affect their survival. Include human impact and conservation success stories if applicable. Write at least 35-45 words'}",
+  "interesting_facts": "${language === 'uzbek' || language === 'uz' ? 
+    'Turning noyob qobiliyatlari, rekord qiyadigan xususiyatlari, tarixiy ahamiyati, ajoyib moslashuvlari yoki hayratlanarli xatti-harakatlarini ta\'kidlaydigan 3-4 ta ajoyib, aniq fakt. Bularni qiziqarli, ta\'limiy va esda qolarli qiling. Aniq raqamlar, taqqoslashlar yoki g\'ayrioddiy xususiyatlarni kiriting. Kamida 50-60 so\'z bering' : 
+    '3-4 fascinating, specific facts about the species that highlight their unique abilities, record-breaking characteristics, historical significance, remarkable adaptations, or surprising behaviors. Make these engaging, educational, and memorable. Include specific numbers, comparisons, or unusual traits. Provide at least 50-60 words'}",
+  "identification_notes": "${language === 'uzbek' || language === 'uz' ? 
+    'Bu turni aniqlashga yordam bergan batafsil asosiy xususiyatlar - jismoniy xususiyatlar, o\'ziga xos belgilar, o\'lcham taqqoslashlari, rang naqshlari, tana shakli va o\'xshash turlardan ajralib turadigan xususiyatlar. Agar ko\'rinadigan bo\'lsa, yosh, jins yoki mavsumiy o\'zgarishlarni eslatib o\'ting. Kamida 35-45 so\'z yozing' : 
+    'Detailed key features that helped identify this species - include physical characteristics, distinctive markings, size comparisons, coloration patterns, body shape, and distinguishing features from similar species. Mention age, gender, or seasonal variations if visible. Write at least 35-45 words'}"
 }
 
 IMPORTANT RULES:
@@ -77,7 +93,9 @@ Always return valid JSON. Do not include any text before or after the JSON objec
             content: [
               {
                 type: 'text',
-                text: 'Please identify this wildlife species and provide detailed information.'
+                text: language === 'uzbek' || language === 'uz' ? 
+                  'Iltimos, bu yovvoyi tabiat turini aniqlang va batafsil ma\'lumot bering.' :
+                  'Please identify this wildlife species and provide detailed information.'
               },
               {
                 type: 'image_url',

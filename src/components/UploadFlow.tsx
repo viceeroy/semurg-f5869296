@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Camera, Upload, X, Loader2, Sparkles, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
@@ -30,34 +31,11 @@ interface SpeciesInfo {
 
 const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
   const { user } = useAuth();
+  const { language } = useLanguage();
   const [currentStep, setCurrentStep] = useState<"upload" | "confirm" | "identifying" | "results" | "failed" | "publishing">("upload");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [speciesInfo, setSpeciesInfo] = useState<SpeciesInfo | null>(null);
-  const [userLanguage, setUserLanguage] = useState<'english' | 'uzbek'>('english');
-
-  // Fetch user's language preference
-  useEffect(() => {
-    const fetchUserLanguage = async () => {
-      if (!user?.id) return;
-      
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('language_preference')
-          .eq('id', user.id)
-          .single();
-        
-        if (data && !error) {
-          setUserLanguage(data.language_preference === 'uzbek' ? 'uzbek' : 'english');
-        }
-      } catch (error) {
-        console.log('Error fetching language preference:', error);
-      }
-    };
-
-    fetchUserLanguage();
-  }, [user?.id]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -130,7 +108,7 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
     
     try {
       const { data, error } = await supabase.functions.invoke('identify-species', {
-        body: { imageUrl: selectedImage, language: userLanguage }
+        body: { imageUrl: selectedImage, language: language === 'uz' ? 'uzbek' : 'english' }
       });
 
       if (error) {

@@ -25,14 +25,44 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   const [language, setLanguageState] = useState<LanguageCode>('en');
   const [loading, setLoading] = useState(true);
 
-  // Set loading to false immediately since we're not fetching language preference
+  // Load user's language preference from profile
   useEffect(() => {
-    setLoading(false);
-  }, []);
+    const loadLanguagePreference = async () => {
+      if (user) {
+        try {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('language_preference')
+            .eq('id', user.id)
+            .single();
+          
+          if (!error && data?.language_preference) {
+            setLanguageState(data.language_preference as LanguageCode);
+          }
+        } catch (error) {
+          console.error('Error loading language preference:', error);
+        }
+      }
+      setLoading(false);
+    };
 
-  // Simplified setLanguage function (kept for compatibility)
+    loadLanguagePreference();
+  }, [user]);
+
+  // Save language preference to profile
   const setLanguage = async (newLanguage: LanguageCode) => {
     setLanguageState(newLanguage);
+    
+    if (user) {
+      try {
+        await supabase
+          .from('profiles')
+          .update({ language_preference: newLanguage })
+          .eq('id', user.id);
+      } catch (error) {
+        console.error('Error saving language preference:', error);
+      }
+    }
   };
 
   const translations = getTranslations(language);
