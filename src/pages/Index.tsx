@@ -7,10 +7,7 @@ import BottomNavigation from "@/components/BottomNavigation";
 import DesktopSidebar from "@/components/DesktopSidebar";
 import RightSidebar from "@/components/RightSidebar";
 import HomeFeed from "@/components/HomeFeed";
-import SearchPage from "@/components/SearchPage";
-import CollectionsPage from "@/components/CollectionsPage";
-import ProfilePage from "@/components/ProfilePage";
-import UploadFlow from "@/components/UploadFlow";
+import { LazySearchPage, LazyCollectionsPage, LazyProfilePage, LazyUploadFlow } from "@/components/LazyComponents";
 import AuthPage from "@/components/AuthPage";
 import ProfileEditPage from "@/components/ProfileEditPage";
 
@@ -35,11 +32,11 @@ const MainApp = () => {
       case "home":
         return <HomeFeed onProfileClick={() => setActiveTab("profile")} />;
       case "search":
-        return <SearchPage />;
+        return <LazySearchPage />;
       case "collections":
-        return <CollectionsPage />;
+        return <LazyCollectionsPage />;
       case "profile":
-        return <ProfilePage onEditProfile={() => setShowProfileEdit(true)} />;
+        return <LazyProfilePage onEditProfile={() => setShowProfileEdit(true)} />;
       default:
         return <HomeFeed onProfileClick={() => setActiveTab("profile")} />;
     }
@@ -81,7 +78,7 @@ const MainApp = () => {
         )}
 
         {showUploadFlow && (
-          <UploadFlow 
+          <LazyUploadFlow 
             onClose={() => setShowUploadFlow(false)} 
             onPostCreated={handlePostCreated}
           />
@@ -116,7 +113,7 @@ const MainApp = () => {
       </div>
 
       {showUploadFlow && (
-        <UploadFlow 
+        <LazyUploadFlow 
           onClose={() => setShowUploadFlow(false)} 
           onPostCreated={handlePostCreated}
         />

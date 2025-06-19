@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
+import { useImageOptimization } from "@/hooks/useImageOptimization";
+import { usePerformance } from "@/hooks/usePerformance";
 
 
 interface UploadFlowProps {
@@ -32,15 +34,20 @@ interface SpeciesInfo {
 const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
   const { user } = useAuth();
   const { language } = useLanguage();
+  const { optimizeImage, isCompressing } = useImageOptimization();
+  const { markStart, markEnd } = usePerformance();
   const [currentStep, setCurrentStep] = useState<"upload" | "confirm" | "identifying" | "results" | "failed" | "publishing">("upload");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [speciesInfo, setSpeciesInfo] = useState<SpeciesInfo | null>(null);
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      processImage(file);
+      markStart('image_upload');
+      const optimizedFile = await optimizeImage(file);
+      processImage(optimizedFile);
+      markEnd('image_upload');
     }
   };
 

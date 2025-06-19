@@ -41,7 +41,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini', // Faster, cheaper model
         messages: [
           {
             role: 'system',
@@ -106,8 +106,8 @@ Always return valid JSON. Do not include any text before or after the JSON objec
             ]
           }
         ],
-        max_tokens: 1500,
-        temperature: 0.3
+        max_tokens: 1200, // Reduced from 1500
+        temperature: 0.1 // Reduced for faster, more consistent responses
       }),
     });
 
@@ -180,8 +180,8 @@ Always return valid JSON. Do not include any text before or after the JSON objec
           'Authorization': `Bearer ${openAIApiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          model: 'gpt-4o',
+          body: JSON.stringify({
+            model: 'gpt-4o-mini', // Use faster model for retry too
           messages: [
             {
               role: 'system',
@@ -209,7 +209,7 @@ IMPORTANT: If this is not a real wildlife species, set category to "not_wildlife
 Image: ${imageUrl}`
             }
           ],
-          max_tokens: 1200,
+          max_tokens: 1000, // Reduced for retry
           temperature: 0.1
         }),
       });
