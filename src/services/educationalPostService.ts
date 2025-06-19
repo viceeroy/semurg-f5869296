@@ -33,8 +33,7 @@ export const fetchEducationalPosts = async (searchQuery?: string, category?: str
 
     // Filter by language
     if (language) {
-      const langFilter = language === 'uz' ? 'uzbek' : 'english';
-      query = query.eq('language', langFilter);
+      query = query.eq('language', language === 'uz' ? 'uzbek' : 'english');
     }
 
     const { data, error } = await query;

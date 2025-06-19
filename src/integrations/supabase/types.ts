@@ -152,6 +152,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          language: string | null
           likes_count: number | null
           post_type: string
           tags: string[] | null
@@ -164,6 +165,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          language?: string | null
           likes_count?: number | null
           post_type: string
           tags?: string[] | null
@@ -176,6 +178,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          language?: string | null
           likes_count?: number | null
           post_type?: string
           tags?: string[] | null
