@@ -7,6 +7,7 @@ import { usePosts } from "@/hooks/usePosts";
 import { useProfile } from "@/hooks/useProfile";
 import { useCollections } from "@/hooks/useCollections";
 import { useSearch } from "@/hooks/useSearch";
+import { useBackgroundPreload } from "@/hooks/useBackgroundPreload";
 import BottomNavigation from "@/components/BottomNavigation";
 import DesktopSidebar from "@/components/DesktopSidebar";
 import RightSidebar from "@/components/RightSidebar";
@@ -19,10 +20,19 @@ const MainApp = () => {
   const { user, loading } = useAuth();
   const { t } = useLanguage();
   const isMobile = useIsMobile();
+  
+  // Always load home data immediately for fast initial render
   const postsData = usePosts();
-  const profileData = useProfile();
-  const collectionsData = useCollections();
-  const searchData = useSearch();
+  
+  // Background preloading - start after home page loads
+  const shouldPreload = user && !postsData.loading;
+  const { shouldLoadProfile, shouldLoadCollections, shouldLoadSearch, isPreloaded } = useBackgroundPreload(shouldPreload);
+  
+  // Conditionally load other sections when preloading starts
+  const profileData = shouldLoadProfile ? useProfile() : null;
+  const collectionsData = shouldLoadCollections ? useCollections() : null;
+  const searchData = shouldLoadSearch ? useSearch() : null;
+  
   const [activeTab, setActiveTab] = useState("home");
   const [showUploadFlow, setShowUploadFlow] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
@@ -40,11 +50,23 @@ const MainApp = () => {
       case "home":
         return <HomeFeed postsData={postsData} onProfileClick={() => setActiveTab("profile")} />;
       case "search":
-        return <LazySearchPage searchData={searchData} />;
+        return searchData ? <LazySearchPage searchData={searchData} /> : (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+          </div>
+        );
       case "collections":
-        return <LazyCollectionsPage collectionsData={collectionsData} />;
+        return collectionsData ? <LazyCollectionsPage collectionsData={collectionsData} /> : (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+          </div>
+        );
       case "profile":
-        return <LazyProfilePage profileData={profileData} onEditProfile={() => setShowProfileEdit(true)} />;
+        return profileData ? <LazyProfilePage profileData={profileData} onEditProfile={() => setShowProfileEdit(true)} /> : (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+          </div>
+        );
       default:
         return <HomeFeed postsData={postsData} onProfileClick={() => setActiveTab("profile")} />;
     }
