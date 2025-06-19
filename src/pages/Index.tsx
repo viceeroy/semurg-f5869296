@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAuth, AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePosts } from "@/hooks/usePosts";
 import BottomNavigation from "@/components/BottomNavigation";
 import DesktopSidebar from "@/components/DesktopSidebar";
 import RightSidebar from "@/components/RightSidebar";
@@ -15,6 +16,7 @@ const MainApp = () => {
   const { user, loading } = useAuth();
   const { t } = useLanguage();
   const isMobile = useIsMobile();
+  const postsData = usePosts();
   const [activeTab, setActiveTab] = useState("home");
   const [showUploadFlow, setShowUploadFlow] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
@@ -30,7 +32,7 @@ const MainApp = () => {
 
     switch (activeTab) {
       case "home":
-        return <HomeFeed onProfileClick={() => setActiveTab("profile")} />;
+        return <HomeFeed postsData={postsData} onProfileClick={() => setActiveTab("profile")} />;
       case "search":
         return <LazySearchPage />;
       case "collections":
@@ -38,7 +40,7 @@ const MainApp = () => {
       case "profile":
         return <LazyProfilePage onEditProfile={() => setShowProfileEdit(true)} />;
       default:
-        return <HomeFeed onProfileClick={() => setActiveTab("profile")} />;
+        return <HomeFeed postsData={postsData} onProfileClick={() => setActiveTab("profile")} />;
     }
   };
 

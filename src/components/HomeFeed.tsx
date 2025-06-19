@@ -13,13 +13,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface HomeFeedProps {
+  postsData: ReturnType<typeof usePosts>;
   onProfileClick?: () => void;
 }
 
-const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
+const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { posts, loading, refreshing, refreshPosts, handleLike, handleSave, handleComment, handleEditPost, handleDeletePost } = usePosts();
+  const { posts, loading, refreshing, refreshPosts, handleLike, handleSave, handleComment, handleEditPost, handleDeletePost } = postsData;
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
