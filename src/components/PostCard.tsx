@@ -84,27 +84,81 @@ const PostCard = ({
       }
     }
   };
-  return <div className="mb-6 shadow-lg border border-gray-200 overflow-hidden relative rounded-xl bg-slate-200">
-      <PostCardHeader userName={post.userName} userAvatar={post.userAvatar} speciesName={post.speciesName} postId={post.id} postUserId={post.userId} onEdit={onEdit} onDelete={onDelete} onInfo={onInfo} />
-
+  return (
+    <div className="w-full max-w-sm mx-auto mb-6 bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.15)] border border-gray-200 overflow-hidden">
+      {/* Header with Background Image and Profile Overlay */}
       <div 
-        onClick={() => onPostClick?.(post.id)} 
-        className={`${onPostClick ? 'cursor-pointer hover:bg-secondary/30 transition-colors' : ''}`}
+        className="relative h-[300px] bg-cover bg-center cursor-pointer"
+        style={{ backgroundImage: `url(${post.image})` }}
+        onClick={() => onPostClick?.(post.id)}
       >
-        <PostCardImage image={post.image} speciesName={post.speciesName} />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
+        
+        {/* Profile Info - Top Left */}
+        <div className="absolute top-4 left-4 flex items-center space-x-3">
+          <div className="w-11 h-11 rounded-full bg-gradient-to-r from-primary to-emerald-500 flex items-center justify-center text-white font-semibold text-lg shadow-lg">
+            {post.userName.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <h3 className="text-white font-semibold text-base drop-shadow-sm">{post.userName}</h3>
+            <p className="text-white/90 text-sm drop-shadow-sm">{post.speciesName}</p>
+          </div>
+        </div>
 
-        <PostCardContent aiInfo={post.aiInfo} tags={post.tags} userNotes={post.userNotes} userName={post.userName} />
+        {/* Three Dots Menu - Top Right */}
+        <div className="absolute top-4 right-4">
+          <PostCardHeader 
+            userName={post.userName} 
+            userAvatar={post.userAvatar} 
+            speciesName={post.speciesName} 
+            postId={post.id} 
+            postUserId={post.userId} 
+            onEdit={onEdit} 
+            onDelete={onDelete} 
+            onInfo={onInfo}
+            isOverlay={true}
+          />
+        </div>
+
+        {/* Quick Actions Bar */}
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="bg-black/50 backdrop-blur-sm rounded-2xl px-4 py-3 text-white/90 text-sm hover:bg-black/60 transition-all cursor-pointer">
+            <div className="flex items-center space-x-2">
+              <span>Ask for quick changes here...</span>
+              <span className="ml-auto">→</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content Section */}
+      <div className="p-4 bg-white">
+        <PostCardContent 
+          aiInfo={post.aiInfo} 
+          tags={post.tags} 
+          userNotes={post.userNotes} 
+          userName={post.userName} 
+        />
 
         {onPostClick && (
-          <div className="px-4 pb-2">
-            <div className="text-xs text-emerald-600 font-medium">
-              Click to read more →
-            </div>
+          <div className="mt-3 text-xs text-emerald-600 font-medium">
+            Click to read more →
           </div>
         )}
       </div>
 
-      <PostCardActions postId={post.id} likes={post.likes} isLiked={post.isLiked} isSaved={post.isSaved} commentsCount={post.comments.length} onLike={onLike} onSave={onSave} onShare={handleShare} onToggleComments={() => setShowComments(!showComments)} />
+      <PostCardActions 
+        postId={post.id} 
+        likes={post.likes} 
+        isLiked={post.isLiked} 
+        isSaved={post.isSaved} 
+        commentsCount={post.comments.length} 
+        onLike={onLike} 
+        onSave={onSave} 
+        onShare={handleShare} 
+        onToggleComments={() => setShowComments(!showComments)} 
+      />
 
       <PostComments
         postId={post.id}
@@ -112,6 +166,7 @@ const PostCard = ({
         onClose={() => setShowComments(false)}
         isEducationalPost={false}
       />
-    </div>;
+    </div>
+  );
 };
 export default PostCard;
