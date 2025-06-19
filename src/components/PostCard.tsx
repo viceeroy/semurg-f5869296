@@ -96,18 +96,18 @@ const PostCard = ({
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
         
         {/* Profile Info - Top Left */}
-        <div className="absolute top-4 left-4 flex items-center space-x-3">
-          <div className="w-11 h-11 rounded-full bg-gradient-to-r from-primary to-emerald-500 flex items-center justify-center text-white font-semibold text-lg shadow-lg">
+        <div className="absolute top-3 left-3 flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-emerald-500 flex items-center justify-center text-white font-semibold text-sm shadow-lg">
             {post.userName.charAt(0).toUpperCase()}
           </div>
           <div>
-            <h3 className="text-white font-semibold text-base drop-shadow-sm">{post.userName}</h3>
-            <p className="text-white/90 text-sm drop-shadow-sm">{post.speciesName}</p>
+            <h3 className="text-white font-medium text-sm drop-shadow-sm">{post.userName}</h3>
+            <p className="text-white/90 text-xs drop-shadow-sm">{post.speciesName}</p>
           </div>
         </div>
 
         {/* Three Dots Menu - Top Right */}
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-3 right-3">
           <PostCardHeader 
             userName={post.userName} 
             userAvatar={post.userAvatar} 
@@ -124,7 +124,7 @@ const PostCard = ({
       </div>
 
       {/* Content Section */}
-      <div className="p-4 bg-white">
+      <div className="py-4 bg-white">
         <PostCardContent 
           aiInfo={post.aiInfo} 
           tags={post.tags} 
@@ -133,7 +133,7 @@ const PostCard = ({
         />
 
         {onPostClick && (
-          <div className="mt-3 text-xs text-emerald-600 font-medium">
+          <div className="mt-3 px-6 text-xs text-emerald-600 font-medium">
             Click to read more →
           </div>
         )}

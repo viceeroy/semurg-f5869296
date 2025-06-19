@@ -21,7 +21,7 @@ const PostCardContent = ({
     : aiInfo;
 
   return (
-    <div className="mb-4 px-4">
+    <div className="mb-4 px-6">
       <h4 className="font-bold text-foreground mb-2">AI Identification</h4>
       <p className="text-sm text-muted-foreground leading-relaxed mb-3">
         {displayText}
