@@ -121,15 +121,6 @@ const PostCard = ({
           />
         </div>
 
-        {/* Quick Actions Bar */}
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="bg-black/50 backdrop-blur-sm rounded-2xl px-4 py-3 text-white/90 text-sm hover:bg-black/60 transition-all cursor-pointer">
-            <div className="flex items-center space-x-2">
-              <span>Ask for quick changes here...</span>
-              <span className="ml-auto">→</span>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Content Section */}
