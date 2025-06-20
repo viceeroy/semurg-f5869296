@@ -45,11 +45,22 @@ export const usePostActions = (
 
         // Create notification for the post owner
         if (!isLiked && post.user_id !== user.id) {
+          // Get the current user's profile data
+          const { data: userProfile } = await supabase
+            .from('profiles')
+            .select('username, first_name, last_name')
+            .eq('id', user.id)
+            .single();
+
+          const displayName = userProfile?.first_name && userProfile?.last_name 
+            ? `${userProfile.first_name} ${userProfile.last_name}`
+            : userProfile?.username || 'Someone';
+
           await createNotification(
             post.user_id,
             'like',
             'New Like',
-            `Someone liked your post`,
+            `${displayName} liked your post`,
             postId,
             user.id
           );
@@ -131,11 +142,22 @@ export const usePostActions = (
       // Create notification for the post owner
       const post = posts.find(p => p.id === postId);
       if (post && post.user_id !== user.id) {
+        // Get the current user's profile data
+        const { data: userProfile } = await supabase
+          .from('profiles')
+          .select('username, first_name, last_name')
+          .eq('id', user.id)
+          .single();
+
+        const displayName = userProfile?.first_name && userProfile?.last_name 
+          ? `${userProfile.first_name} ${userProfile.last_name}`
+          : userProfile?.username || 'Someone';
+
         await createNotification(
           post.user_id,
           'comment',
           'New Comment',
-          `Someone commented on your post: "${content.substring(0, 50)}${content.length > 50 ? '...' : ''}"`,
+          `${displayName} commented on your post: "${content.substring(0, 50)}${content.length > 50 ? '...' : ''}"`,
           postId,
           user.id
         );
