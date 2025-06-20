@@ -1,4 +1,4 @@
-import { Settings, Grid3X3, Bookmark, MapPin, Calendar, Edit, LogOut } from "lucide-react";
+import { Settings, Grid3X3, Bookmark, MapPin, Calendar, Edit, LogOut, UserPlus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import DetailedPostView from "./DetailedPostView";
 import { usePosts } from "@/hooks/usePosts";
 import { useProfile } from "@/hooks/useProfile";
+import { useFollows } from "@/hooks/useFollows";
 interface ProfilePageProps {
   profileData: ReturnType<typeof useProfile>;
   onEditProfile: () => void;
@@ -25,7 +26,22 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
     setActiveTab 
   } = profileData;
   
+  const { 
+    followerCount, 
+    followingCount, 
+    suggestedUsers, 
+    followUser, 
+    loading: followsLoading 
+  } = useFollows();
+  
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  
+  const getDisplayName = (profile: any) => {
+    if (profile?.first_name && profile?.last_name) {
+      return `${profile.first_name} ${profile.last_name}`;
+    }
+    return profile?.username || 'User';
+  };
   const handleSignOut = async () => {
     await signOut();
   };
@@ -78,7 +94,8 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
           <div className="flex items-start space-x-4 mb-4">
             <img src={profile?.avatar_url || "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100"} alt="Profile" className="w-20 h-20 rounded-full object-cover" />
             <div className="flex-1">
-              <h2 className="text-xl font-bold text-gray-900 mb-1">{profile?.username || 'User'}</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-1">{getDisplayName(profile)}</h2>
+              <p className="text-gray-600 text-sm mb-2">@{profile?.username || 'user'}</p>
               <div className="flex items-center text-gray-600 text-sm mb-2">
                 <Calendar className="w-4 h-4 mr-1" />
                 <span>Joined {new Date(profile?.created_at || '').toLocaleDateString()}</span>
@@ -95,19 +112,61 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
               <div className="text-xs text-gray-600">Posts</div>
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">0</div>
+              <div className="text-xl font-bold text-gray-900">{followerCount}</div>
               <div className="text-xs text-gray-600">Followers</div>
             </div>
             <div>
-              <div className="text-xl font-bold text-gray-900">0</div>
+              <div className="text-xl font-bold text-gray-900">{followingCount}</div>
               <div className="text-xs text-gray-600">Following</div>
             </div>
           </div>
         </div>
 
+        {/* Friends Suggestions */}
+        {suggestedUsers.length > 0 && (
+          <div className="glass-card rounded-2xl p-6 mb-6 bg-white/70 backdrop-blur-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <Users className="w-5 h-5 text-emerald-600" />
+              <h3 className="font-semibold text-gray-900">Suggested for you</h3>
+            </div>
+            <div className="space-y-3">
+              {suggestedUsers.slice(0, 3).map(suggestedUser => (
+                <div key={suggestedUser.id} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <img 
+                      src={suggestedUser.avatar_url || "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100"} 
+                      alt="User" 
+                      className="w-10 h-10 rounded-full object-cover" 
+                    />
+                    <div>
+                      <p className="font-medium text-gray-900 text-sm">
+                        {suggestedUser.first_name && suggestedUser.last_name 
+                          ? `${suggestedUser.first_name} ${suggestedUser.last_name}`
+                          : suggestedUser.username
+                        }
+                      </p>
+                      <p className="text-xs text-gray-600">@{suggestedUser.username}</p>
+                    </div>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => followUser(suggestedUser.id)}
+                    disabled={followsLoading}
+                    className="text-xs"
+                  >
+                    <UserPlus className="w-3 h-3 mr-1" />
+                    Follow
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Content Tabs */}
         <Tabs defaultValue="posts" className="w-full" onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 backdrop-blur-sm bg-white/70 rounded-2xl p-1">
+          <TabsList className="grid w-full grid-cols-3 backdrop-blur-sm bg-white/70 rounded-2xl p-1">
             <TabsTrigger 
               value="posts" 
               className="flex items-center justify-center text-gray-600 hover:text-emerald-600 hover:bg-white/50 data-[state=active]:bg-white data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm transition-all duration-200"
@@ -121,6 +180,13 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
             >
               <Bookmark className="w-4 h-4 mr-2" />
               Saved
+            </TabsTrigger>
+            <TabsTrigger 
+              value="friends" 
+              className="flex items-center justify-center text-gray-600 hover:text-emerald-600 hover:bg-white/50 data-[state=active]:bg-white data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm transition-all duration-200"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Friends
             </TabsTrigger>
           </TabsList>
 
@@ -160,6 +226,53 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
                 ))}
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="friends" className="mt-4">
+            <div className="space-y-4">
+              <div className="text-center py-8">
+                <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="font-semibold text-gray-900 mb-2">Connect with friends</h3>
+                <p className="text-sm text-gray-600">
+                  Find and follow other wildlife enthusiasts
+                </p>
+              </div>
+              
+              {/* Show more suggested users */}
+              {suggestedUsers.length > 0 && (
+                <div className="space-y-3">
+                  {suggestedUsers.map(suggestedUser => (
+                    <div key={suggestedUser.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+                      <div className="flex items-center space-x-3">
+                        <img 
+                          src={suggestedUser.avatar_url || "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100"} 
+                          alt="User" 
+                          className="w-12 h-12 rounded-full object-cover" 
+                        />
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {suggestedUser.first_name && suggestedUser.last_name 
+                              ? `${suggestedUser.first_name} ${suggestedUser.last_name}`
+                              : suggestedUser.username
+                            }
+                          </p>
+                          <p className="text-sm text-gray-600">@{suggestedUser.username}</p>
+                        </div>
+                      </div>
+                      <Button 
+                        size="sm" 
+                        onClick={() => followUser(suggestedUser.id)}
+                        disabled={followsLoading}
+                        className="bg-emerald-600 hover:bg-emerald-700"
+                      >
+                        <UserPlus className="w-4 h-4 mr-1" />
+                        Follow
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </TabsContent>
         </Tabs>
       </div>

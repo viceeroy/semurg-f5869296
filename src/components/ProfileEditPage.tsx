@@ -22,6 +22,8 @@ const ProfileEditPage = ({
     t
   } = useLanguage();
   const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [bio, setBio] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [languagePreference, setLanguagePreference] = useState<'english' | 'uzbek'>('english');
@@ -46,6 +48,8 @@ const ProfileEditPage = ({
       }
       if (data) {
         setUsername(data.username || '');
+        setFirstName(data.first_name || '');
+        setLastName(data.last_name || '');
         setBio(data.bio || '');
         setAvatarUrl(data.avatar_url || '');
         setLanguagePreference(data.language_preference === 'uzbek' ? 'uzbek' : 'english');
@@ -103,6 +107,8 @@ const ProfileEditPage = ({
       } = await supabase.from('profiles').upsert({
         id: user.id,
         username,
+        first_name: firstName,
+        last_name: lastName,
         bio,
         avatar_url: avatarUrl,
         language_preference: languagePreference,
@@ -143,6 +149,17 @@ const ProfileEditPage = ({
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSave} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input id="firstName" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" className="rounded" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input id="lastName" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" className="rounded" />
+                </div>
+              </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
                 <Input id="username" value={username} onChange={e => setUsername(e.target.value)} placeholder="Enter your username" required className="rounded" />

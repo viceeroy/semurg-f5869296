@@ -187,6 +187,27 @@ export type Database = {
         }
         Relationships: []
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
       likes: {
         Row: {
           created_at: string
@@ -354,8 +375,10 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          first_name: string | null
           id: string
           language_preference: string | null
+          last_name: string | null
           updated_at: string
           username: string
         }
@@ -363,8 +386,10 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          first_name?: string | null
           id: string
           language_preference?: string | null
+          last_name?: string | null
           updated_at?: string
           username: string
         }
@@ -372,8 +397,10 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          first_name?: string | null
           id?: string
           language_preference?: string | null
+          last_name?: string | null
           updated_at?: string
           username?: string
         }
@@ -534,6 +561,14 @@ export type Database = {
           p_from_user_id?: string
         }
         Returns: string
+      }
+      get_follower_count: {
+        Args: { user_id: string }
+        Returns: number
+      }
+      get_following_count: {
+        Args: { user_id: string }
+        Returns: number
       }
     }
     Enums: {
