@@ -9,7 +9,7 @@ import { useCollections } from "@/hooks/useCollections";
 import { useSearch } from "@/hooks/useSearch";
 import BottomNavigation from "@/components/BottomNavigation";
 import DesktopSidebar from "@/components/DesktopSidebar";
-import RightSidebar from "@/components/RightSidebar";
+
 import HomeFeed from "@/components/HomeFeed";
 import { LazySearchPage, LazyCollectionsPage, LazyProfilePage, LazyUploadFlow } from "@/components/LazyComponents";
 import AuthPage from "@/components/AuthPage";
@@ -106,19 +106,13 @@ const MainApp = () => {
       />
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 xl:mr-80">
+      <div className="flex-1 ml-64">
         <div className="max-w-2xl mx-auto">
           {!showProfileEdit && renderContent()}
           {showProfileEdit && renderContent()}
         </div>
       </div>
 
-      {/* Right Sidebar - Only visible on xl screens and above */}
-      <div className="hidden xl:block">
-        <RightSidebar 
-          searchQuery={currentSearchQuery}
-        />
-      </div>
 
       {showUploadFlow && (
         <LazyUploadFlow 
