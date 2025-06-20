@@ -17,7 +17,15 @@ export const useFollows = () => {
     setLoading(true);
 
     try {
-      // Get followers
+      // Get current user's following list
+      const { data: currentFollowing } = await supabase
+        .from('follows')
+        .select('following_id')
+        .eq('follower_id', user.id);
+
+      const followingIds = currentFollowing?.map(f => f.following_id) || [];
+
+      // Get followers with profile data
       const { data: followersData } = await supabase
         .from('follows')
         .select(`
@@ -32,7 +40,7 @@ export const useFollows = () => {
         `)
         .eq('following_id', user.id);
 
-      // Get following
+      // Get following with profile data
       const { data: followingData } = await supabase
         .from('follows')
         .select(`
@@ -47,22 +55,34 @@ export const useFollows = () => {
         `)
         .eq('follower_id', user.id);
 
-      // Get suggested users (users not followed)
-      const followingIds = followingData?.map(f => f.following_id) || [];
+      // Get suggested users (exclude current user and already followed users)
+      const excludeIds = [user.id, ...followingIds];
       const { data: suggestedData } = await supabase
         .from('profiles')
         .select('id, username, first_name, last_name, avatar_url')
-        .not('id', 'in', `(${[user.id, ...followingIds].join(',')})`)
-        .limit(5);
+        .not('id', 'in', `(${excludeIds.join(',')})`)
+        .limit(10);
+
+      // Get follower and following counts
+      const { data: followerCountData } = await supabase
+        .from('follows')
+        .select('id', { count: 'exact' })
+        .eq('following_id', user.id);
+
+      const { data: followingCountData } = await supabase
+        .from('follows')
+        .select('id', { count: 'exact' })
+        .eq('follower_id', user.id);
 
       setFollowers(followersData || []);
       setFollowing(followingData || []);
-      setFollowerCount(followersData?.length || 0);
-      setFollowingCount(followingData?.length || 0);
+      setFollowerCount(followerCountData?.length || 0);
+      setFollowingCount(followingCountData?.length || 0);
       setSuggestedUsers(suggestedData || []);
 
     } catch (error) {
       console.error('Error fetching follow data:', error);
+      toast.error('Failed to load follow data');
     } finally {
       setLoading(false);
     }
@@ -74,16 +94,18 @@ export const useFollows = () => {
     try {
       const { error } = await supabase
         .from('follows')
-        .insert({ follower_id: user.id, following_id: userId });
+        .insert([{ follower_id: user.id, following_id: userId }]);
 
       if (error) {
+        console.error('Follow error:', error);
         toast.error('Failed to follow user');
         return;
       }
 
       toast.success('User followed successfully!');
-      fetchFollowData(); // Refresh data
+      await fetchFollowData(); // Refresh data
     } catch (error) {
+      console.error('Error following user:', error);
       toast.error('Error following user');
     }
   };
@@ -99,13 +121,15 @@ export const useFollows = () => {
         .eq('following_id', userId);
 
       if (error) {
+        console.error('Unfollow error:', error);
         toast.error('Failed to unfollow user');
         return;
       }
 
       toast.success('User unfollowed successfully!');
-      fetchFollowData(); // Refresh data
+      await fetchFollowData(); // Refresh data
     } catch (error) {
+      console.error('Error unfollowing user:', error);
       toast.error('Error unfollowing user');
     }
   };

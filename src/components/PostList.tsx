@@ -43,7 +43,7 @@ const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick, onEd
               (post.description || ''), // Show abbreviated description in feed
             userNotes: post.caption || '', // Use caption field for user notes
             userName: getDisplayName(post.profiles),
-            userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+            userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
             likes: post.likes.length,
             isLiked: post.likes.some(like => like.user_id === user?.id),
             isSaved: post.isSaved || false, // Use the passed isSaved value or default to false

@@ -254,7 +254,7 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
           aiInfo: selectedPost.description || '',
           userNotes: selectedPost.caption || '', // Use caption field for user notes
           userName: getDisplayName(selectedPost.profiles),
-          userAvatar: selectedPost.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+          userAvatar: selectedPost.profiles?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
           userId: selectedPost.user_id,
           likes: selectedPost.likes.length,
           isLiked: selectedPost.likes.some(like => like.user_id === user?.id),
@@ -359,7 +359,7 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
           id: editingPost?.id || '',
           title: editingPost?.title || '',
           userName: getDisplayName(editingPost?.profiles),
-          userAvatar: editingPost?.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+          userAvatar: editingPost?.profiles?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
           uploadDate: editingPost?.created_at || '',
           aiSource: 'OpenAI Vision API'
         }}

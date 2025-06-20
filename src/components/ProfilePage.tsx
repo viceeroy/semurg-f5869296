@@ -55,7 +55,7 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
       aiInfo: selectedPost.description || '',
       userNotes: selectedPost.caption || '',
       userName: getDisplayName(selectedPost.profiles) || getDisplayName(profile) || 'Anonymous',
-      userAvatar: selectedPost.profiles?.avatar_url || profile?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      userAvatar: selectedPost.profiles?.avatar_url || profile?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
       userId: selectedPost.user_id,
       likes: selectedPost.likes?.length || 0,
       isLiked: selectedPost.likes?.some(like => like.user_id === user?.id) || false,
@@ -92,7 +92,7 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
         {/* Profile Info */}
         <div className="glass-card rounded-2xl p-6 mb-6 bg-white/70 backdrop-blur-sm">
           <div className="flex items-start space-x-4 mb-4">
-            <img src={profile?.avatar_url || "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100"} alt="Profile" className="w-20 h-20 rounded-full object-cover" />
+            <img src={profile?.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100"} alt="Profile" className="w-20 h-20 rounded-full object-cover border-2 border-gray-200" />
             <div className="flex-1">
               <h2 className="text-xl font-bold text-gray-900 mb-1">{getDisplayName(profile)}</h2>
               <p className="text-gray-600 text-sm mb-2">@{profile?.username || 'user'}</p>
@@ -134,9 +134,9 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
                 <div key={suggestedUser.id} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <img 
-                      src={suggestedUser.avatar_url || "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100"} 
+                      src={suggestedUser.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100"} 
                       alt="User" 
-                      className="w-10 h-10 rounded-full object-cover" 
+                      className="w-10 h-10 rounded-full object-cover border-2 border-gray-200" 
                     />
                     <div>
                       <p className="font-medium text-gray-900 text-sm">
@@ -245,9 +245,9 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
                     <div key={suggestedUser.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
                       <div className="flex items-center space-x-3">
                         <img 
-                          src={suggestedUser.avatar_url || "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100"} 
+                          src={suggestedUser.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100"} 
                           alt="User" 
-                          className="w-12 h-12 rounded-full object-cover" 
+                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-200" 
                         />
                         <div>
                           <p className="font-medium text-gray-900">
