@@ -21,6 +21,14 @@ interface PostListProps {
 const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick, onEdit, onDelete, onInfo }: PostListProps) => {
   const { user } = useAuth();
 
+  // Helper function to get display name
+  const getDisplayName = (profile: any) => {
+    if (profile?.first_name && profile?.last_name) {
+      return `${profile.first_name} ${profile.last_name}`;
+    }
+    return profile?.username || 'Anonymous';
+  };
+
   return (
     <div className="max-w-md mx-auto px-4 py-6 pb-32">
       {posts.map((post) => (
@@ -34,7 +42,7 @@ const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick, onEd
               (post.description || '').substring(0, 120) + '...' : 
               (post.description || ''), // Show abbreviated description in feed
             userNotes: post.caption || '', // Use caption field for user notes
-            userName: post.profiles?.username || 'Anonymous',
+            userName: getDisplayName(post.profiles),
             userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
             likes: post.likes.length,
             isLiked: post.likes.some(like => like.user_id === user?.id),

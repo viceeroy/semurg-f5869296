@@ -9,14 +9,14 @@ export const fetchPosts = async (): Promise<Post[]> => {
       .from('posts')
       .select(`
         *,
-        profiles (username, avatar_url),
+        profiles (username, first_name, last_name, avatar_url),
         likes (user_id),
         comments (
           id,
           user_id,
           content,
           created_at,
-          profiles (username)
+          profiles (username, first_name, last_name)
         )
       `)
       .eq('is_private', false)

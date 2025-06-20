@@ -54,7 +54,7 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
       speciesName: selectedPost.title,
       aiInfo: selectedPost.description || '',
       userNotes: selectedPost.caption || '',
-      userName: selectedPost.profiles?.username || profile?.username || 'Anonymous',
+      userName: getDisplayName(selectedPost.profiles) || getDisplayName(profile) || 'Anonymous',
       userAvatar: selectedPost.profiles?.avatar_url || profile?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
       userId: selectedPost.user_id,
       likes: selectedPost.likes?.length || 0,

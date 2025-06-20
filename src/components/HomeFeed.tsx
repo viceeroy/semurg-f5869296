@@ -39,6 +39,14 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
 
   const editingPost = editingPostId ? posts.find(p => p.id === editingPostId) : null;
 
+  // Helper function to get display name
+  const getDisplayName = (profile: any) => {
+    if (profile?.first_name && profile?.last_name) {
+      return `${profile.first_name} ${profile.last_name}`;
+    }
+    return profile?.username || 'Anonymous';
+  };
+
   // Save scroll position before navigation
   const saveScrollPosition = () => {
     if (scrollContainerRef.current) {
@@ -245,7 +253,7 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
           scientificName: selectedPost.scientific_name,
           aiInfo: selectedPost.description || '',
           userNotes: selectedPost.caption || '', // Use caption field for user notes
-          userName: selectedPost.profiles?.username || 'Anonymous',
+          userName: getDisplayName(selectedPost.profiles),
           userAvatar: selectedPost.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
           userId: selectedPost.user_id,
           likes: selectedPost.likes.length,
@@ -350,7 +358,7 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
         post={{
           id: editingPost?.id || '',
           title: editingPost?.title || '',
-          userName: editingPost?.profiles?.username || 'Anonymous',
+          userName: getDisplayName(editingPost?.profiles),
           userAvatar: editingPost?.profiles?.avatar_url || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
           uploadDate: editingPost?.created_at || '',
           aiSource: 'OpenAI Vision API'

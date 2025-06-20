@@ -37,14 +37,14 @@ export const useProfile = () => {
         .from('posts')
         .select(`
           *,
-          profiles (username, avatar_url),
+          profiles (username, first_name, last_name, avatar_url),
           likes (user_id),
           comments (
             id,
             user_id,
             content,
             created_at,
-            profiles (username)
+            profiles (username, first_name, last_name)
           )
         `)
         .eq('user_id', user.id)
@@ -72,14 +72,14 @@ export const useProfile = () => {
         .select(`
           posts (
             *,
-            profiles (username, avatar_url),
+            profiles (username, first_name, last_name, avatar_url),
             likes (user_id),
             comments (
               id,
               user_id,
               content,
               created_at,
-              profiles (username)
+              profiles (username, first_name, last_name)
             )
           )
         `)
