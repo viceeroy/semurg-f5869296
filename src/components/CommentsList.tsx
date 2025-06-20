@@ -1,5 +1,6 @@
 import { User, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import AvatarFallback from "./ui/avatar-fallback";
 import { Comment } from "@/types/comment";
 
 interface CommentsListProps {
@@ -37,17 +38,12 @@ const CommentsList = ({ comments, loading }: CommentsListProps) => {
           className="flex space-x-3 py-2"
         >
           <div className="flex-shrink-0">
-            {comment.profiles?.avatar_url ? (
-              <img
-                src={comment.profiles.avatar_url}
-                alt={comment.profiles.username || 'User'}
-                className="w-8 h-8 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                <User className="w-4 h-4 text-muted-foreground" />
-              </div>
-            )}
+            <AvatarFallback
+              src={comment.profiles?.avatar_url}
+              name={comment.profiles?.username || 'User'}
+              size="sm"
+              alt={comment.profiles?.username || 'User'}
+            />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-1">

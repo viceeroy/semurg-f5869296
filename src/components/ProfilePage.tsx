@@ -1,6 +1,7 @@
 import { Settings, Grid3X3, Bookmark, MapPin, Calendar, Edit, LogOut, UserPlus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AvatarFallback from "@/components/ui/avatar-fallback";
 import { useAuth } from "@/hooks/useAuth";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -92,7 +93,12 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
         {/* Profile Info */}
         <div className="glass-card rounded-2xl p-6 mb-6 bg-white/70 backdrop-blur-sm">
           <div className="flex items-start space-x-4 mb-4">
-            <img src={profile?.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100"} alt="Profile" className="w-20 h-20 rounded-full object-cover border-2 border-gray-200" />
+            <AvatarFallback
+              src={profile?.avatar_url}
+              name={getDisplayName(profile)}
+              size="xl"
+              alt="Profile"
+            />
             <div className="flex-1">
               <h2 className="text-xl font-bold text-gray-900 mb-1">{getDisplayName(profile)}</h2>
               <p className="text-gray-600 text-sm mb-2">@{profile?.username || 'user'}</p>
@@ -133,10 +139,13 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
               {suggestedUsers.slice(0, 3).map(suggestedUser => (
                 <div key={suggestedUser.id} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <img 
-                      src={suggestedUser.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100"} 
-                      alt="User" 
-                      className="w-10 h-10 rounded-full object-cover border-2 border-gray-200" 
+                    <AvatarFallback
+                      src={suggestedUser.avatar_url}
+                      name={suggestedUser.first_name && suggestedUser.last_name 
+                        ? `${suggestedUser.first_name} ${suggestedUser.last_name}`
+                        : suggestedUser.username}
+                      size="md"
+                      alt="User"
                     />
                     <div>
                       <p className="font-medium text-gray-900 text-sm">
@@ -244,10 +253,13 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
                   {suggestedUsers.map(suggestedUser => (
                     <div key={suggestedUser.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
                       <div className="flex items-center space-x-3">
-                        <img 
-                          src={suggestedUser.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100"} 
-                          alt="User" 
-                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-200" 
+                        <AvatarFallback
+                          src={suggestedUser.avatar_url}
+                          name={suggestedUser.first_name && suggestedUser.last_name 
+                            ? `${suggestedUser.first_name} ${suggestedUser.last_name}`
+                            : suggestedUser.username}
+                          size="lg"
+                          alt="User"
                         />
                         <div>
                           <p className="font-medium text-gray-900">

@@ -4,6 +4,7 @@ import PostHeader from "./PostHeader";
 import PostContent from "./PostContent";
 import PostEngagement from "./PostEngagement";
 import PostComments from "./PostComments";
+import AvatarFallback from "./ui/avatar-fallback";
 import { handleShare } from "@/utils/postUtils";
 import { DetailedPost } from "@/types/detailedPost";
 
@@ -63,17 +64,13 @@ const DetailedPostView = ({
       {/* Profile Section */}
       <div className="px-6 py-4 border-b border-gray-100">
         <div className="flex items-center space-x-3">
-          {post.userAvatar ? (
-            <img 
-              src={post.userAvatar} 
-              alt={post.userName}
-              className="w-10 h-10 rounded-full object-cover shadow-lg"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-emerald-500 flex items-center justify-center text-white font-semibold text-sm shadow-lg">
-              {post.userName.charAt(0).toUpperCase()}
-            </div>
-          )}
+          <AvatarFallback
+            src={post.userAvatar}
+            name={post.userName}
+            size="md"
+            alt={post.userName}
+            className="shadow-lg"
+          />
           <div>
             <h3 className="font-semibold text-foreground">{post.userName}</h3>
             <p className="text-sm text-emerald-600 font-medium">{post.speciesName}</p>

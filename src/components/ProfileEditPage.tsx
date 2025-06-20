@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AvatarFallback from '@/components/ui/avatar-fallback';
 import { ArrowLeft, Save, Upload, User, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -175,9 +176,12 @@ const ProfileEditPage = ({
                 <Label>Profile Photo</Label>
                 <div className="flex items-center space-x-4">
                   <div className="relative">
-                    {avatarUrl ? <img src={avatarUrl} alt="Current avatar" className="w-16 h-16 rounded-full object-cover border-2 border-gray-200" /> : <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
-                        <User className="w-8 h-8 text-gray-400" />
-                      </div>}
+                    <AvatarFallback
+                      src={avatarUrl}
+                      name={firstName && lastName ? `${firstName} ${lastName}` : username}
+                      size="lg"
+                      alt="Current avatar"
+                    />
                   </div>
                   <div className="flex-1">
                     <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />

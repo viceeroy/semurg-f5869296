@@ -5,6 +5,7 @@ import PostCardContent from "./PostCardContent";
 import PostCardActions from "./PostCardActions";
 import PostComments from "./PostComments";
 import OptimizedPostImage from "./OptimizedPostImage";
+import AvatarFallback from "./ui/avatar-fallback";
 interface Comment {
   id: string;
   user_id: string;
@@ -105,17 +106,13 @@ const PostCard = ({
         
         {/* Profile Info - Top Left */}
         <div className="absolute top-3 left-3 flex items-center space-x-2">
-          {post.userAvatar ? (
-            <img 
-              src={post.userAvatar} 
-              alt={post.userName}
-              className="w-8 h-8 rounded-full object-cover shadow-lg border-2 border-white"
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-emerald-500 flex items-center justify-center text-white font-semibold text-sm shadow-lg border-2 border-white">
-              {post.userName.charAt(0).toUpperCase()}
-            </div>
-          )}
+          <AvatarFallback
+            src={post.userAvatar}
+            name={post.userName}
+            size="sm"
+            alt={post.userName}
+            className="shadow-lg border-2 border-white"
+          />
           <div>
             <h3 className="text-white font-medium text-sm drop-shadow-sm">{post.userName}</h3>
             <p className="text-white/90 text-xs drop-shadow-sm">{post.speciesName}</p>
