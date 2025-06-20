@@ -13,30 +13,36 @@ interface ProfilePageProps {
   profileData: ReturnType<typeof useProfile>;
   onEditProfile: () => void;
 }
-
-const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
-  const { user, signOut } = useAuth();
-  const { handleLike, handleSave, handleComment } = usePosts();
-  const { 
-    profile, 
-    userPosts, 
-    savedPosts, 
-    loading, 
-    savedLoading, 
-    activeTab, 
-    setActiveTab 
+const ProfilePage = ({
+  profileData,
+  onEditProfile
+}: ProfilePageProps) => {
+  const {
+    user,
+    signOut
+  } = useAuth();
+  const {
+    handleLike,
+    handleSave,
+    handleComment
+  } = usePosts();
+  const {
+    profile,
+    userPosts,
+    savedPosts,
+    loading,
+    savedLoading,
+    activeTab,
+    setActiveTab
   } = profileData;
-  
-  const { 
-    followerCount, 
-    followingCount, 
-    suggestedUsers, 
-    followUser, 
-    loading: followsLoading 
+  const {
+    followerCount,
+    followingCount,
+    suggestedUsers,
+    followUser,
+    loading: followsLoading
   } = useFollows();
-  
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
-  
   const getDisplayName = (profile: any) => {
     if (profile?.first_name && profile?.last_name) {
       return `${profile.first_name} ${profile.last_name}`;
@@ -93,12 +99,7 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
         {/* Profile Info */}
         <div className="glass-card rounded-2xl p-6 mb-6 bg-white/70 backdrop-blur-sm">
           <div className="flex items-start space-x-4 mb-4">
-            <AvatarFallback
-              src={profile?.avatar_url}
-              name={getDisplayName(profile)}
-              size="xl"
-              alt="Profile"
-            />
+            <AvatarFallback src={profile?.avatar_url} name={getDisplayName(profile)} size="xl" alt="Profile" />
             <div className="flex-1">
               <h2 className="text-xl font-bold text-gray-900 mb-1">{getDisplayName(profile)}</h2>
               <p className="text-gray-600 text-sm mb-2">@{profile?.username || 'user'}</p>
@@ -129,71 +130,42 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
         </div>
 
         {/* Friends Suggestions */}
-        {suggestedUsers.length > 0 && (
-          <div className="glass-card rounded-2xl p-6 mb-6 bg-white/70 backdrop-blur-sm">
+        {suggestedUsers.length > 0 && <div className="glass-card rounded-2xl p-6 mb-6 bg-white/70 backdrop-blur-sm">
             <div className="flex items-center gap-2 mb-4">
               <Users className="w-5 h-5 text-emerald-600" />
               <h3 className="font-semibold text-gray-900">Suggested for you</h3>
             </div>
             <div className="space-y-3">
-              {suggestedUsers.slice(0, 3).map(suggestedUser => (
-                <div key={suggestedUser.id} className="flex items-center justify-between">
+              {suggestedUsers.slice(0, 3).map(suggestedUser => <div key={suggestedUser.id} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <AvatarFallback
-                      src={suggestedUser.avatar_url}
-                      name={suggestedUser.first_name && suggestedUser.last_name 
-                        ? `${suggestedUser.first_name} ${suggestedUser.last_name}`
-                        : suggestedUser.username}
-                      size="md"
-                      alt="User"
-                    />
+                    <AvatarFallback src={suggestedUser.avatar_url} name={suggestedUser.first_name && suggestedUser.last_name ? `${suggestedUser.first_name} ${suggestedUser.last_name}` : suggestedUser.username} size="md" alt="User" />
                     <div>
                       <p className="font-medium text-gray-900 text-sm">
-                        {suggestedUser.first_name && suggestedUser.last_name 
-                          ? `${suggestedUser.first_name} ${suggestedUser.last_name}`
-                          : suggestedUser.username
-                        }
+                        {suggestedUser.first_name && suggestedUser.last_name ? `${suggestedUser.first_name} ${suggestedUser.last_name}` : suggestedUser.username}
                       </p>
                       <p className="text-xs text-gray-600">@{suggestedUser.username}</p>
                     </div>
                   </div>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => followUser(suggestedUser.id)}
-                    disabled={followsLoading}
-                    className="text-xs"
-                  >
+                  <Button size="sm" variant="outline" onClick={() => followUser(suggestedUser.id)} disabled={followsLoading} className="text-xs rounded">
                     <UserPlus className="w-3 h-3 mr-1" />
                     Follow
                   </Button>
-                </div>
-              ))}
+                </div>)}
             </div>
-          </div>
-        )}
+          </div>}
 
         {/* Content Tabs */}
         <Tabs defaultValue="posts" className="w-full" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3 backdrop-blur-sm bg-white/70 rounded-2xl p-1">
-            <TabsTrigger 
-              value="posts" 
-              className="flex items-center justify-center text-gray-600 hover:text-emerald-600 hover:bg-white/50 data-[state=active]:bg-white data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm transition-all duration-200"
-            >
+            <TabsTrigger value="posts" className="flex items-center justify-center text-gray-600 hover:text-emerald-600 hover:bg-white/50 data-[state=active]:bg-white data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm transition-all duration-200">
               <Grid3X3 className="w-4 h-4 mr-2" />
               Posts
             </TabsTrigger>
-            <TabsTrigger 
-              value="saved" 
-              className="flex items-center justify-center text-gray-600 hover:text-emerald-600 hover:bg-white/50 data-[state=active]:bg-white data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm transition-all duration-200"
-            >
+            <TabsTrigger value="saved" className="flex items-center justify-center text-gray-600 hover:text-emerald-600 hover:bg-white/50 data-[state=active]:bg-white data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm transition-all duration-200">
               <Bookmark className="w-4 h-4 mr-2" />
               Saved
             </TabsTrigger>
-            <TabsTrigger 
-              value="friends" 
-              className="flex items-center justify-center text-gray-600 hover:text-emerald-600 hover:bg-white/50 data-[state=active]:bg-white data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm transition-all duration-200"
-            >
+            <TabsTrigger value="friends" className="flex items-center justify-center text-gray-600 hover:text-emerald-600 hover:bg-white/50 data-[state=active]:bg-white data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm transition-all duration-200">
               <Users className="w-4 h-4 mr-2" />
               Friends
             </TabsTrigger>
@@ -214,27 +186,19 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
           </TabsContent>
 
           <TabsContent value="saved" className="mt-4">
-            {savedLoading ? (
-              <div className="text-center py-12">
+            {savedLoading ? <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto"></div>
-              </div>
-            ) : savedPosts.length === 0 ? (
-              <div className="text-center py-12">
+              </div> : savedPosts.length === 0 ? <div className="text-center py-12">
                 <Bookmark className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">No saved posts yet</h3>
                 <p className="text-sm text-gray-600">
                   Posts you save will appear here
                 </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-1">
-                {savedPosts.map(post => (
-                  <div key={post.id} className="aspect-square bg-white rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setSelectedPostId(post.id)}>
+              </div> : <div className="grid grid-cols-3 gap-1">
+                {savedPosts.map(post => <div key={post.id} className="aspect-square bg-white rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setSelectedPostId(post.id)}>
                     <img src={post.image_url} alt={post.title} className="w-full h-full object-cover" />
-                  </div>
-                ))}
-              </div>
-            )}
+                  </div>)}
+              </div>}
           </TabsContent>
 
           <TabsContent value="friends" className="mt-4">
@@ -248,42 +212,23 @@ const ProfilePage = ({ profileData, onEditProfile }: ProfilePageProps) => {
               </div>
               
               {/* Show more suggested users */}
-              {suggestedUsers.length > 0 && (
-                <div className="space-y-3">
-                  {suggestedUsers.map(suggestedUser => (
-                    <div key={suggestedUser.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+              {suggestedUsers.length > 0 && <div className="space-y-3">
+                  {suggestedUsers.map(suggestedUser => <div key={suggestedUser.id} className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded">
                       <div className="flex items-center space-x-3">
-                        <AvatarFallback
-                          src={suggestedUser.avatar_url}
-                          name={suggestedUser.first_name && suggestedUser.last_name 
-                            ? `${suggestedUser.first_name} ${suggestedUser.last_name}`
-                            : suggestedUser.username}
-                          size="lg"
-                          alt="User"
-                        />
+                        <AvatarFallback src={suggestedUser.avatar_url} name={suggestedUser.first_name && suggestedUser.last_name ? `${suggestedUser.first_name} ${suggestedUser.last_name}` : suggestedUser.username} size="lg" alt="User" />
                         <div>
                           <p className="font-medium text-gray-900">
-                            {suggestedUser.first_name && suggestedUser.last_name 
-                              ? `${suggestedUser.first_name} ${suggestedUser.last_name}`
-                              : suggestedUser.username
-                            }
+                            {suggestedUser.first_name && suggestedUser.last_name ? `${suggestedUser.first_name} ${suggestedUser.last_name}` : suggestedUser.username}
                           </p>
                           <p className="text-sm text-gray-600">@{suggestedUser.username}</p>
                         </div>
                       </div>
-                      <Button 
-                        size="sm" 
-                        onClick={() => followUser(suggestedUser.id)}
-                        disabled={followsLoading}
-                        className="bg-emerald-600 hover:bg-emerald-700"
-                      >
+                      <Button size="sm" onClick={() => followUser(suggestedUser.id)} disabled={followsLoading} className="bg-emerald-600 hover:bg-emerald-700 rounded">
                         <UserPlus className="w-4 h-4 mr-1" />
                         Follow
                       </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    </div>)}
+                </div>}
             </div>
           </TabsContent>
         </Tabs>
