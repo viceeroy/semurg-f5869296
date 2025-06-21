@@ -22,19 +22,9 @@ export default defineConfig(({ mode }) => ({
   build: {
     // Enhanced compression and optimization for Android
     target: 'es2020',
-    minify: 'terser',
+    minify: 'esbuild',
     cssMinify: true,
     reportCompressedSize: false, // Faster builds
-    terserOptions: {
-      compress: {
-        drop_console: mode === 'production',
-        drop_debugger: mode === 'production',
-        pure_funcs: mode === 'production' ? ['console.log', 'console.info'] : [],
-      },
-      mangle: {
-        safari10: true,
-      },
-    },
     rollupOptions: {
       output: {
         // Enhanced code splitting for better caching
