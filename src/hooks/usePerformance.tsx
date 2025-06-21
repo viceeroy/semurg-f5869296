@@ -68,7 +68,7 @@ export const preloadImage = (src: string): Promise<void> => {
 // Preload critical resources
 export const preloadCriticalResources = async () => {
   const criticalImages = [
-    '/lovable-uploads/27ae4cc5-04c1-4658-9874-0047f68ae963.png',
+    '/semurg-logo.png',
     // Add other critical images here
   ];
 
