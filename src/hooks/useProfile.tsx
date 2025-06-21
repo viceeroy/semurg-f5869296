@@ -109,6 +109,9 @@ export const useProfile = () => {
       } else if (activeTab === "saved") {
         fetchSavedPosts();
       }
+    } else {
+      // Set loading to false when no user
+      setLoading(false);
     }
   }, [user, activeTab]);
 

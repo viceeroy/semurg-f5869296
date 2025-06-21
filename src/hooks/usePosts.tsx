@@ -12,6 +12,11 @@ export const usePosts = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   const refreshPosts = async (showRefreshing = false) => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    
     if (showRefreshing) {
       setRefreshing(true);
     }
@@ -26,6 +31,11 @@ export const usePosts = () => {
   };
 
   const fetchPosts = async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    
     console.log('fetchPosts called');
     setLoading(true);
     try {
@@ -41,7 +51,7 @@ export const usePosts = () => {
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [user]); // Add user to dependency array
 
   return {
     posts,
