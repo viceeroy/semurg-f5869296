@@ -25,6 +25,15 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   const [language, setLanguageState] = useState<LanguageCode>('uz');
   const [loading, setLoading] = useState(true);
 
+  // Convert between UI language codes and database values
+  const convertDbToUi = (dbLang: string): LanguageCode => {
+    return dbLang === 'uzbek' ? 'uz' : 'en';
+  };
+
+  const convertUiToDb = (uiLang: LanguageCode): string => {
+    return uiLang === 'uz' ? 'uzbek' : 'english';
+  };
+
   // Load user's language preference from profile
   useEffect(() => {
     const loadLanguagePreference = async () => {
@@ -37,7 +46,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
             .single();
           
           if (!error && data?.language_preference) {
-            setLanguageState(data.language_preference as LanguageCode);
+            setLanguageState(convertDbToUi(data.language_preference));
           }
         } catch (error) {
           console.error('Error loading language preference:', error);
@@ -57,7 +66,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       try {
         await supabase
           .from('profiles')
-          .update({ language_preference: newLanguage })
+          .update({ language_preference: convertUiToDb(newLanguage) })
           .eq('id', user.id);
       } catch (error) {
         console.error('Error saving language preference:', error);
