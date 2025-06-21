@@ -22,7 +22,7 @@ export const useLanguage = () => {
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
-  const [language, setLanguageState] = useState<LanguageCode>('en');
+  const [language, setLanguageState] = useState<LanguageCode>('uz');
   const [loading, setLoading] = useState(true);
 
   // Load user's language preference from profile

@@ -132,10 +132,10 @@ const LanguageSelectionPage = ({ onLanguageSelected }: LanguageSelectionPageProp
         {/* Skip Option */}
         <div className="text-center mt-4">
           <button
-            onClick={() => onLanguageSelected('en')}
+            onClick={() => onLanguageSelected('uz')}
             className="text-sm text-gray-500 hover:text-gray-700 underline"
           >
-            Skip for now (English will be used)
+            Skip for now (Uzbek will be used) / Hozircha o'tkazib yuborish (O'zbek tili ishlatiladi)
           </button>
         </div>
       </div>
