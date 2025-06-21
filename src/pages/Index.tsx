@@ -20,15 +20,41 @@ const MainApp = () => {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
   
-  
-  const postsData = usePosts();
-  const profileData = useProfile();
-  const collectionsData = useCollections();
-  const searchData = useSearch(postsData.posts);
   const [activeTab, setActiveTab] = useState("home");
   const [showUploadFlow, setShowUploadFlow] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Only call data hooks when user is authenticated
+  const postsData = user ? usePosts() : { 
+    posts: [], 
+    loading: false, 
+    refreshing: false, 
+    refreshPosts: async () => {}, 
+    handleLike: async () => {}, 
+    handleSave: async () => {}, 
+    handleComment: async () => {}, 
+    handleEditPost: async () => {}, 
+    handleDeletePost: async () => {} 
+  };
+  const profileData = user ? useProfile() : { 
+    profile: null, 
+    loading: false, 
+    refreshProfile: async () => {}, 
+    handleFollow: async () => {}, 
+    handleUnfollow: async () => {} 
+  };
+  const collectionsData = user ? useCollections() : { 
+    collections: [], 
+    loading: false, 
+    refreshCollections: async () => {} 
+  };
+  const searchData = user ? useSearch(postsData.posts) : { 
+    searchResults: [], 
+    searchQuery: '', 
+    setSearchQuery: () => {}, 
+    isSearching: false 
+  };
 
   // Pass search query to right sidebar when on search page
   const currentSearchQuery = activeTab === 'search' ? searchQuery : '';
