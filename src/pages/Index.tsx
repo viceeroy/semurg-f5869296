@@ -7,8 +7,6 @@ import { usePosts } from "@/hooks/usePosts";
 import { useProfile } from "@/hooks/useProfile";
 import { useCollections } from "@/hooks/useCollections";
 import { useSearch } from "@/hooks/useSearch";
-import { useAndroidOptimization } from "@/hooks/useAndroidOptimization";
-import { usePerformance } from "@/hooks/usePerformance";
 import BottomNavigation from "@/components/BottomNavigation";
 import DesktopSidebar from "@/components/DesktopSidebar";
 
@@ -21,11 +19,6 @@ const MainApp = () => {
   const { user, loading } = useAuth();
   const { t } = useLanguage();
   const isMobile = useIsMobile();
-  
-  // Initialize performance monitoring and Android optimizations
-  usePerformance();
-  useAndroidOptimization();
-  
   const postsData = usePosts();
   const profileData = useProfile();
   const collectionsData = useCollections();

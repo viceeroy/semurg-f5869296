@@ -15,27 +15,6 @@ const config: CapacitorConfig = {
         'photos'
       ]
     }
-  },
-  android: {
-    webContentsDebuggingEnabled: false,
-    allowMixedContent: false,
-    captureInput: true,
-    webViewPreferences: {
-      javaScriptEnabled: true,
-      loadsImagesAutomatically: true,
-      allowFileAccessFromFileURLs: false,
-      allowUniversalAccessFromFileURLs: false
-    },
-    // Android-specific performance optimizations
-    backgroundColor: '#ffffff',
-    toolbar: {
-      height: 0
-    }
-  },
-  ios: {
-    webContentsDebuggingEnabled: false,
-    allowsLinkPreview: false,
-    backgroundColor: '#ffffff'
   }
 };
 
