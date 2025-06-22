@@ -1,11 +1,11 @@
 import { useState } from "react";
 import PostCardHeader from "./PostCardHeader";
-import PostCardImage from "./PostCardImage";
 import PostCardContent from "./PostCardContent";
 import PostCardActions from "./PostCardActions";
 import PostComments from "./PostComments";
-import OptimizedPostImage from "./OptimizedPostImage";
+import LazyFeedImage from "./LazyFeedImage";
 import AvatarFallback from "./ui/avatar-fallback";
+
 interface Comment {
   id: string;
   user_id: string;
@@ -93,11 +93,10 @@ const PostCard = ({
         className="relative h-[300px] cursor-pointer overflow-hidden"
         onClick={() => onPostClick?.(post.id)}
       >
-        <OptimizedPostImage 
+        <LazyFeedImage 
           src={post.image}
           alt={post.speciesName}
           className="w-full h-full"
-          width={400}
           priority={false}
         />
         
@@ -133,7 +132,6 @@ const PostCard = ({
             isOverlay={true}
           />
         </div>
-
       </div>
 
       {/* Content Section */}

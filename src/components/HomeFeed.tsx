@@ -6,21 +6,35 @@ import DetailedPostView from "./DetailedPostView";
 import EditCaptionModal from "./EditCaptionModal";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import PostInfoModal from "./PostInfoModal";
-import { usePosts } from "@/hooks/usePosts";
+import { usePaginatedPosts } from "@/hooks/usePaginatedPosts";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface HomeFeedProps {
-  postsData: ReturnType<typeof usePosts>;
+  postsData?: any; // Keep for compatibility but we'll use our own hook
   onProfileClick?: () => void;
 }
 
-const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
+const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { posts, loading, refreshing, refreshPosts, handleLike, handleSave, handleComment, handleEditPost, handleDeletePost } = postsData;
+  const { 
+    posts, 
+    loading, 
+    refreshing, 
+    hasMore,
+    isFetchingNextPage,
+    loadingElementRef,
+    refreshPosts, 
+    handleLike, 
+    handleSave, 
+    handleComment, 
+    handleEditPost, 
+    handleDeletePost 
+  } = usePaginatedPosts();
+  
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -174,7 +188,6 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
     }
   };
 
-
   // Pull to refresh functionality
   const handleTouchStart = (e: React.TouchEvent) => {
     if (scrollContainerRef.current?.scrollTop === 0) {
@@ -244,7 +257,7 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
   if (selectedPost) {
     return (
       <div className="min-h-screen bg-gray-100">
-        <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} onProfileClick={onProfileClick} />
+        <AppHeader onRefresh={() => refreshPosts(true)} refreshing={refreshing} onProfileClick={onProfileClick} />
         <DetailedPostView
         post={{
           id: selectedPost.id,
@@ -252,8 +265,10 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
           speciesName: selectedPost.title,
           scientificName: selectedPost.scientific_name,
           aiInfo: selectedPost.description || '',
-          userNotes: selectedPost.caption || '', // Use caption field for user notes
-          userName: getDisplayName(selectedPost.profiles),
+          userNotes: selectedPost.caption || '',
+          userName: selectedPost.profiles?.first_name && selectedPost.profiles?.last_name ? 
+            `${selectedPost.profiles.first_name} ${selectedPost.profiles.last_name}` : 
+            selectedPost.profiles?.username || 'Anonymous',
           userAvatar: selectedPost.profiles?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
           userId: selectedPost.user_id,
           likes: selectedPost.likes.length,
@@ -274,9 +289,9 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
         onSave={handleSaveWithRefresh}
         onComment={handleComment}
         onShare={() => {}}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onInfo={handleInfo}
+        onEdit={() => {}}
+        onDelete={() => {}}
+        onInfo={() => {}}
         />
       </div>
     );
@@ -284,7 +299,7 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} onProfileClick={onProfileClick} />
+      <AppHeader onRefresh={() => refreshPosts(true)} refreshing={refreshing} onProfileClick={onProfileClick} />
       
       {/* Pull to refresh indicator */}
       {isPulling && (
@@ -299,29 +314,25 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
       <div 
         ref={scrollContainerRef}
         className="overflow-auto"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        style={{ 
-          height: '100vh', 
-          paddingTop: isPulling ? `${Math.min(pullDistance * 0.5, 50)}px` : '0',
-          transition: isPulling ? 'none' : 'padding-top 0.3s ease-out'
-        }}
+        style={{ height: '100vh' }}
       >
         <PostList
-        posts={posts.map(post => ({
-          ...post,
-          isSaved: savedPostIds.has(post.id)
-        }))}
-        onLike={handleLike}
-        onSave={handleSaveWithRefresh}
-        onComment={handleComment}
-        onShare={() => {}}
-        onPostClick={handlePostClick}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onInfo={handleInfo}
-      />
+          posts={posts.map(post => ({
+            ...post,
+            isSaved: savedPostIds.has(post.id)
+          }))}
+          onLike={handleLike}
+          onSave={handleSaveWithRefresh}
+          onComment={handleComment}
+          onShare={() => {}}
+          onPostClick={handlePostClick}
+          onEdit={() => {}}
+          onDelete={() => {}}
+          onInfo={() => {}}
+          loadingElementRef={loadingElementRef}
+          hasMore={hasMore}
+          isFetchingNextPage={isFetchingNextPage}
+        />
       </div>
       
       {/* Edit Caption Modal */}
