@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Search, Filter, Lightbulb } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -83,15 +84,22 @@ const SearchPage = ({ searchData }: SearchPageProps) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentFact((prev) => (prev + 1) % facts.length);
-    }, 5000); // Change fact every 5 seconds
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [facts.length]);
 
-  // Generate random heights for masonry effect
   const getRandomHeight = (index: number) => {
     const heights = ['h-48', 'h-56', 'h-64', 'h-52', 'h-60'];
     return heights[index % heights.length];
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    // Clear search query when selecting a category to show category-based results
+    if (searchQuery) {
+      setSearchQuery("");
+    }
   };
 
   return (
@@ -123,7 +131,7 @@ const SearchPage = ({ searchData }: SearchPageProps) => {
           {categoryFilters.map(category => (
             <button 
               key={category.id} 
-              onClick={() => setSelectedCategory(category.id)} 
+              onClick={() => handleCategoryClick(category.id)} 
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 hover:scale-105 ${
                 selectedCategory === category.id ? `${category.color} ring-2 ring-emerald-500/30` : category.color
               }`}
@@ -152,7 +160,13 @@ const SearchPage = ({ searchData }: SearchPageProps) => {
       {/* Results Info */}
       <div className="mb-4">
         <p className="text-sm text-gray-600">
-          {searchQuery ? `Found ${filteredPosts.length} results for "${searchQuery}"` : `Showing ${filteredPosts.length} wildlife discoveries`}
+          {searchQuery ? (
+            `Found ${filteredPosts.length} results for "${searchQuery}"`
+          ) : selectedCategory === "all" ? (
+            `Showing ${filteredPosts.length} wildlife discoveries`
+          ) : (
+            `Showing ${filteredPosts.length} ${categoryFilters.find(c => c.id === selectedCategory)?.label?.toLowerCase() || 'results'}`
+          )}
         </p>
       </div>
 
@@ -166,10 +180,11 @@ const SearchPage = ({ searchData }: SearchPageProps) => {
                 <Search className="w-8 h-8 mx-auto mb-3 text-gray-400" />
               </div>
               <p className="text-gray-600 font-medium">No results found</p>
-              <p className="text-sm text-gray-500 mt-2">Try different keywords or browse all categories</p>
+              <p className="text-sm text-gray-500 mt-2">
+                {searchQuery ? "Try different keywords or browse all categories" : "Try selecting a different category or search for specific wildlife"}
+              </p>
             </div>
           ) : (
-            /* Masonry Grid Layout */
             <div className="columns-2 gap-3 space-y-3">
               {filteredPosts.map((post, index) => (
                 <div 
@@ -186,7 +201,6 @@ const SearchPage = ({ searchData }: SearchPageProps) => {
                         width={400}
                       />
                       
-                      {/* Overlay with info */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <div className="absolute bottom-0 left-0 right-0 p-3">
                           <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">
@@ -204,7 +218,6 @@ const SearchPage = ({ searchData }: SearchPageProps) => {
                         </div>
                       </div>
 
-                      {/* Category Badge */}
                       {post.category && (
                         <div className="absolute top-2 right-2">
                           <span className="bg-white/90 backdrop-blur-sm text-gray-800 text-xs px-2 py-1 rounded-full font-medium capitalize">
@@ -214,7 +227,6 @@ const SearchPage = ({ searchData }: SearchPageProps) => {
                       )}
                     </div>
 
-                    {/* Post Stats */}
                     <div className="p-3">
                       <div className="flex items-center justify-between text-xs text-gray-500">
                         <div className="flex items-center gap-3">

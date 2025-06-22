@@ -25,8 +25,6 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   const [language, setLanguageState] = useState<LanguageCode>('uz');
   const [loading, setLoading] = useState(true);
 
-  console.log('LanguageProvider render:', { user: !!user, language, loading });
-
   // Convert between UI language codes and database values
   const convertDbToUi = (dbLang: string): LanguageCode => {
     return dbLang === 'uzbek' ? 'uz' : 'en';
