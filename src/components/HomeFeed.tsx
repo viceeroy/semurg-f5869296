@@ -20,7 +20,20 @@ interface HomeFeedProps {
 const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { posts, loading, refreshing, refreshPosts, handleLike, handleSave, handleComment, handleEditPost, handleDeletePost } = postsData;
+  const { 
+    posts, 
+    loading, 
+    refreshing, 
+    backgroundLoading, 
+    allPostsLoaded, 
+    refreshPosts, 
+    trackPostView, 
+    handleLike, 
+    handleSave, 
+    handleComment, 
+    handleEditPost, 
+    handleDeletePost 
+  } = postsData;
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -71,9 +84,10 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
     }
   };
 
-  // Handle post click with scroll position saving
+  // Handle post click with scroll position saving and view tracking
   const handlePostClick = (postId: string) => {
     saveScrollPosition();
+    trackPostView(); // Track that user viewed a post
     setSelectedPostId(postId);
   };
 
@@ -296,6 +310,14 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
         </div>
       )}
       
+      {/* Background loading indicator */}
+      {backgroundLoading && (
+        <div className="fixed top-20 right-4 bg-emerald-600 text-white px-3 py-1 rounded-full text-xs z-30 flex items-center gap-2">
+          <div className="animate-spin rounded-full h-3 w-3 border border-white border-t-transparent"></div>
+          Loading more posts...
+        </div>
+      )}
+      
       <div 
         ref={scrollContainerRef}
         className="overflow-auto"
@@ -322,6 +344,13 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
         onDelete={handleDelete}
         onInfo={handleInfo}
       />
+
+      {/* Status indicator */}
+      {allPostsLoaded && (
+        <div className="text-center py-4 text-gray-500 text-sm">
+          All posts loaded! 🎉
+        </div>
+      )}
       </div>
       
       {/* Edit Caption Modal */}
