@@ -30,7 +30,13 @@ export const fetchPosts = async (limit: number = 20, offset: number = 0): Promis
         user_id,
         profiles!inner (username, avatar_url),
         likes (user_id),
-        comments (id)
+        comments (
+          id,
+          user_id,
+          content,
+          created_at,
+          profiles (username)
+        )
       `)
       .eq('is_private', false)
       .order('created_at', { ascending: false })
@@ -41,7 +47,7 @@ export const fetchPosts = async (limit: number = 20, offset: number = 0): Promis
       return offset === 0 ? mockPosts.slice(0, limit) : [];
     }
 
-    const posts = data && data.length > 0 ? data : (offset === 0 ? mockPosts.slice(0, limit) : []);
+    const posts = data && data.length > 0 ? data as Post[] : (offset === 0 ? mockPosts.slice(0, limit) : []);
     
     // Cache only the initial load
     if (offset === 0 && posts.length > 0) {
