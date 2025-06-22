@@ -8,7 +8,7 @@ let postsCache: Post[] | null = null;
 let cacheTimestamp: number = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-export const fetchPosts = async (limit: number = 20, offset: number = 0): Promise<Post[]> => {
+export const fetchPosts = async (limit: number = 10, offset: number = 0): Promise<Post[]> => {
   console.log('postService fetchPosts called with limit:', limit, 'offset:', offset);
   
   // Check cache first for initial load

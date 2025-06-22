@@ -24,14 +24,10 @@ const OptimizedPostImage = ({
   const [error, setError] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
-  // Optimize image URL for mobile devices
+  // Simple image optimization for mobile
   const getOptimizedSrc = (originalSrc: string) => {
-    // For mobile devices, use smaller images
-    const isMobile = window.innerWidth < 768;
-    const targetWidth = isMobile ? 320 : width;
-    
     if (originalSrc.includes('unsplash.com')) {
-      return `${originalSrc}&w=${targetWidth}&q=75&fm=webp&auto=format`;
+      return `${originalSrc}&w=400&q=75&fm=webp`;
     }
     return originalSrc;
   };
@@ -49,25 +45,18 @@ const OptimizedPostImage = ({
           observer.disconnect();
         }
       },
-      { 
-        threshold: 0.1,
-        rootMargin: '50px'
-      }
+      { threshold: 0.1 }
     );
 
     observer.observe(imgRef.current);
     return () => observer.disconnect();
   }, [priority]);
 
-  const optimizedSrc = getOptimizedSrc(src);
-
   return (
     <div ref={imgRef} className={cn('relative overflow-hidden bg-gray-100', className)}>
       {/* Loading placeholder */}
       {!isLoaded && !error && (
-        <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
-        </div>
+        <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
       )}
       
       {/* Error state */}
@@ -83,7 +72,7 @@ const OptimizedPostImage = ({
       {/* Actual image */}
       {isInView && !error && (
         <img
-          src={optimizedSrc}
+          src={getOptimizedSrc(src)}
           alt={alt}
           width={width}
           height={height}

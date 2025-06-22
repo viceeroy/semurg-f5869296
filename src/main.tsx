@@ -3,20 +3,16 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
-// Only preload on desktop or fast connections
-const shouldPreload = () => {
-  const connection = (navigator as any).connection;
-  if (!connection) return window.innerWidth > 768; // Desktop fallback
-  
-  return connection.effectiveType === '4g' || 
-         connection.effectiveType === 'wifi' || 
-         window.innerWidth > 768;
-};
+// Minimal resource preloading for faster startup
+const connection = (navigator as any).connection;
+const isSlowConnection = connection && (connection.effectiveType === '2g' || connection.effectiveType === '3g');
 
-// Preload critical resources only when appropriate
-if (shouldPreload()) {
+// Only preload on fast connections and desktop
+if (!isSlowConnection && window.innerWidth > 768) {
   import('./hooks/usePerformance').then(({ preloadCriticalResources }) => {
-    preloadCriticalResources().catch(console.warn);
+    preloadCriticalResources().catch(() => {
+      // Silently fail to avoid blocking app startup
+    });
   });
 }
 

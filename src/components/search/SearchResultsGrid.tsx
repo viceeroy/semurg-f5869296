@@ -1,6 +1,6 @@
 
 import { Search } from "lucide-react";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import OptimizedPostImage from "../OptimizedPostImage";
 import { Post } from "@/types/post";
 
@@ -13,30 +13,28 @@ interface SearchResultsGridProps {
   onPostClick: (post: Post) => void;
 }
 
-// Memoized post card component
+// Optimized post card component
 const PostCard = memo(({ post, index, onPostClick }: { 
   post: Post; 
   index: number; 
   onPostClick: (post: Post) => void;
 }) => {
-  const getRandomHeight = (index: number) => {
-    const heights = ['h-48', 'h-56', 'h-64', 'h-52', 'h-60'];
-    return heights[index % heights.length];
-  };
+  const heights = useMemo(() => ['h-48', 'h-56', 'h-64', 'h-52', 'h-60'], []);
+  const cardHeight = heights[index % heights.length];
 
   return (
     <div 
       className="break-inside-avoid cursor-pointer group"
       onClick={() => onPostClick(post)}
     >
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 group-hover:scale-[1.01]">
+      <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-lg transition-shadow duration-200">
         <div className="relative">
           <OptimizedPostImage 
             src={post.image_url} 
             alt={post.title || 'Wildlife discovery'} 
-            className={`${getRandomHeight(index)}`}
+            className={cardHeight}
             width={320}
-            priority={index < 4}
+            priority={index < 2}
           />
           
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -86,6 +84,9 @@ const SearchResultsGrid = ({
   loading, 
   onPostClick 
 }: SearchResultsGridProps) => {
+  // Limit results for better performance
+  const displayPosts = useMemo(() => filteredPosts.slice(0, 12), [filteredPosts]);
+
   return (
     <>
       <div className="mb-4">
@@ -93,9 +94,9 @@ const SearchResultsGrid = ({
           {searchQuery ? (
             `Found ${filteredPosts.length} results for "${searchQuery}"`
           ) : selectedCategory === "all" ? (
-            `Showing ${filteredPosts.length} wildlife discoveries`
+            `Showing ${displayPosts.length} wildlife discoveries`
           ) : (
-            `Showing ${filteredPosts.length} ${categoryFilters.find(c => c.id === selectedCategory)?.label?.toLowerCase() || 'results'}`
+            `Showing ${displayPosts.length} ${categoryFilters.find(c => c.id === selectedCategory)?.label?.toLowerCase() || 'results'}`
           )}
         </p>
       </div>
@@ -106,7 +107,7 @@ const SearchResultsGrid = ({
         </div>
       ) : (
         <>
-          {filteredPosts.length === 0 ? (
+          {displayPosts.length === 0 ? (
             <div className="text-center py-12">
               <div className="animate-bounce">
                 <Search className="w-8 h-8 mx-auto mb-3 text-gray-400" />
@@ -118,7 +119,7 @@ const SearchResultsGrid = ({
             </div>
           ) : (
             <div className="columns-2 gap-3 space-y-3">
-              {filteredPosts.slice(0, 20).map((post, index) => (
+              {displayPosts.map((post, index) => (
                 <PostCard
                   key={post.id}
                   post={post}

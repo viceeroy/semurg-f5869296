@@ -19,9 +19,9 @@ export const usePosts = () => {
     }
     try {
       clearPostsCache(); // Clear cache on refresh
-      const data = await fetchPostsService(20, 0); // Load first 20 posts
+      const data = await fetchPostsService(10, 0); // Load only 10 posts initially
       setPosts(data);
-      setHasMore(data.length === 20);
+      setHasMore(data.length === 10);
     } finally {
       if (showRefreshing) {
         setRefreshing(false);
@@ -33,9 +33,9 @@ export const usePosts = () => {
     console.log('fetchPosts called');
     setLoading(true);
     try {
-      const data = await fetchPostsService(15, 0); // Reduce initial load to 15
+      const data = await fetchPostsService(8, 0); // Reduce to 8 for faster initial load
       setPosts(data);
-      setHasMore(data.length === 15);
+      setHasMore(data.length === 8);
       console.log('fetchPosts completed, loaded:', data.length, 'posts');
     } finally {
       setLoading(false);
@@ -46,10 +46,10 @@ export const usePosts = () => {
     if (!hasMore || loading) return;
     
     try {
-      const newPosts = await fetchPostsService(10, posts.length);
+      const newPosts = await fetchPostsService(6, posts.length); // Load 6 more at a time
       if (newPosts.length > 0) {
         setPosts(prev => [...prev, ...newPosts]);
-        setHasMore(newPosts.length === 10);
+        setHasMore(newPosts.length === 6);
       } else {
         setHasMore(false);
       }

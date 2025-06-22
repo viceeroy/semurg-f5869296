@@ -1,24 +1,20 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react';
 
-// Hook for performance monitoring (simplified for mobile)
+// Simplified performance monitoring
 export const usePerformance = () => {
   const performanceRef = useRef<{[key: string]: number}>({});
 
   const markStart = useCallback((label: string) => {
-    if (typeof performance !== 'undefined') {
-      performanceRef.current[`${label}_start`] = performance.now();
-    }
+    performanceRef.current[`${label}_start`] = Date.now();
   }, []);
 
   const markEnd = useCallback((label: string) => {
-    if (typeof performance === 'undefined') return 0;
-    
     const startTime = performanceRef.current[`${label}_start`];
     if (startTime) {
-      const duration = performance.now() - startTime;
-      if (duration > 100) { // Only log slow operations
-        console.log(`Performance: ${label} took ${duration.toFixed(2)}ms`);
+      const duration = Date.now() - startTime;
+      if (duration > 200) { // Only log very slow operations
+        console.log(`Performance: ${label} took ${duration}ms`);
       }
       return duration;
     }
@@ -28,7 +24,7 @@ export const usePerformance = () => {
   return { markStart, markEnd };
 };
 
-// Hook for debounced API calls
+// Simplified debounce hook
 export function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
@@ -43,43 +39,29 @@ export function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-// Hook for request idle callback (optimized for mobile)
+// Minimal idle callback
 export const useIdleCallback = (callback: () => void, dependencies: any[] = []) => {
   useEffect(() => {
-    const handle = requestIdleCallback ? 
-      requestIdleCallback(callback, { timeout: 1000 }) : 
-      setTimeout(callback, 50); // Shorter timeout for mobile
-
-    return () => {
-      if (requestIdleCallback && typeof handle === 'number') {
-        cancelIdleCallback(handle);
-      } else {
-        clearTimeout(handle as number);
-      }
-    };
+    const handle = setTimeout(callback, 100); // Simple timeout for mobile
+    return () => clearTimeout(handle);
   }, dependencies);
 };
 
-// Preload critical resources (reduced for mobile)
+// Minimal resource preloading
 export const preloadCriticalResources = async () => {
-  const criticalImages = ['/semurg-logo.png']; // Reduced list
-  
-  // Only preload on fast connections
-  const connection = (navigator as any).connection;
-  if (connection && (connection.effectiveType === '4g' || connection.effectiveType === 'wifi')) {
-    try {
-      await Promise.all(criticalImages.map(preloadImage));
-    } catch (error) {
-      console.warn('Failed to preload some images:', error);
-    }
+  try {
+    const img = new Image();
+    img.src = '/semurg-logo.png';
+  } catch (error) {
+    // Silently fail
   }
 };
 
-// Preload images with timeout
+// Simple image preloader
 export const preloadImage = (src: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    const timeout = setTimeout(() => reject(new Error('Timeout')), 3000);
+    const timeout = setTimeout(() => reject(new Error('Timeout')), 2000);
     
     img.onload = () => {
       clearTimeout(timeout);
