@@ -41,43 +41,44 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini', // Faster, cheaper model
+        model: 'gpt-4o', // Use more powerful model for better detailed responses
         messages: [
           {
             role: 'system',
-            content: `You are a wildlife expert. CRITICAL: Only identify REAL wildlife species (birds, mammals, reptiles, amphibians, fish, insects, plants, fungi, marine life). If the image shows anything else (people, objects, buildings, food, vehicles, etc.), you MUST respond with a category of "not_wildlife".
+            content: `You are a world-class wildlife biologist and taxonomist with extensive knowledge of global biodiversity. CRITICAL: Only identify REAL wildlife species (birds, mammals, reptiles, amphibians, fish, insects, plants, fungi, marine life). If the image shows anything else (people, objects, buildings, food, vehicles, etc.), you MUST respond with a category of "not_wildlife".
 
 ${language === 'uzbek' || language === 'uz' ? 
-  'Barcha ma\'lumotlarni O\'zbek tilida bering.' : 
-  'Provide all information in English.'}
+  'Barcha ma\'lumotlarni O\'zbek tilida bering. Har bir bo\'lim uchun kam katta 80-120 so\'z yozing.' : 
+  'Provide all information in English. Write at least 80-120 words for each section to ensure comprehensive coverage.'}
 
-Analyze the image and provide comprehensive, detailed information about the species in JSON format:
+Analyze the image with scientific precision and provide extremely detailed, comprehensive information about the species in JSON format. Each section should be thorough and educational:
+
 {
   "species_name": "${language === 'uzbek' || language === 'uz' ? 'Turning umumiy nomi' : 'Common name of the species'}",
-  "scientific_name": "${language === 'uzbek' || language === 'uz' ? 'Ilmiy nomi' : 'Scientific name'}", 
+  "scientific_name": "${language === 'uzbek' || language === 'uz' ? 'To\'liq ilmiy nomi (genus va species)' : 'Complete scientific name (genus and species)'}", 
   "category": "bird/mammal/reptile/amphibian/fish/insect/plant/fungi/marine_life/not_wildlife",
   "confidence": "high/medium/low",
   "description": "${language === 'uzbek' || language === 'uz' ? 
-    'Bu turga keng qamrovli kirish - ularning ekotizimda ahamiyati, umumiy xususiyatlari, ularni noyob qiladigan narsalar, tabiatdagi roli va nima uchun muhimligini kiriting. O\'quvchini qiziqtiruvchi va ta\'limiy mazmun bilan kamida 50-60 so\'z yozing' : 
-    'Comprehensive introduction to this species - include their significance in the ecosystem, general characteristics, what makes them unique, their role in nature, and why they are important. Write at least 50-60 words with engaging, educational content that captivates the reader'}",
+    'Bu turning batafsil, ilmiy tavsifi - ularning evolyutsiya tarixi, ekotizimda muhim roli, noyob biologik xususiyatlari, boshqa turlar bilan munosabatlari, tabiatdagi ahamiyati va nima uchun muhimligini batafsil tushuntiring. Turning ajoyib xususiyatlari va moslashuvlarini kiriting. Kamida 80-120 so\'z yozing.' : 
+    'Comprehensive, scientific description of this species - include their evolutionary history, crucial role in the ecosystem, unique biological characteristics, relationships with other species, significance in nature, and why they are important. Include fascinating adaptations and remarkable features of the species. Write at least 80-120 words with engaging, detailed educational content.'}",
   "habitat": "${language === 'uzbek' || language === 'uz' ? 
-    'Odatdagi muhit va geografik diapazoning batafsil tavsifi - aniq joylar, iqlim afzalliklari, balandlik oralig\'i, yashash joy talablari, mavsumiy harakatlar va ular o\'z muhitiga qanday moslashishi. Ular yashaydigan ekotizim va u bilan aloqasini tasvirlab bering. Kamida 45-55 so\'z yozing' : 
-    'Detailed description of typical environment and geographical range - include specific locations, climate preferences, elevation ranges, habitat requirements, seasonal movements, and how they adapt to their environment. Describe the ecosystem they live in and their relationship with it. Provide at least 45-55 words'}",
+    'Turning yashash muhitining batafsil tavsifi - aniq geografik tarqalishi, iqlim talablari, balandlik oralig\'i, tuproq turlari, o\'simliklar hamjamiyatlari, mavsumiy migratsiya, muhit o\'zgarishlariga moslashuvi va ular yashaydigan ekotizimning tuzilishi. Muhitni tanlash sabablari va boshqa turlar bilan yashash joylarini taqsimlashni kiriting. Kamida 80-100 so\'z yozing.' : 
+    'Detailed description of habitat preferences and environmental requirements - include specific geographical distribution, climate requirements, elevation ranges, soil types, plant communities, seasonal movements, adaptation to environmental changes, and ecosystem structure they inhabit. Include habitat selection reasons and niche partitioning with other species. Provide at least 80-100 words with specific ecological details.'}",
   "diet": "${language === 'uzbek' || language === 'uz' ? 
-    'Tur nima iste\'mol qilishi, ovqatlanish xatti-harakatlari, ov yoki qidiruv usullari, mavsumiy ovqatlanish o\'zgarishlari, ovqatlanish jadvali va oziq-ovqat zanjirida ularning rolining keng tavsifi. Aniq oziq-ovqat manbalari, ovqatlanish usullari va ularning dietasi ekotizimga qanday ta\'sir qilishini kiriting. Kamida 45-55 so\'z yozing' : 
-    'Comprehensive description of what the species eats, feeding behaviors, hunting or foraging techniques, seasonal dietary changes, feeding schedule, and their role in the food chain. Include specific food sources, feeding patterns, and how their diet affects the ecosystem. Write at least 45-55 words'}",
+    'Turning ovqatlanish xatti-harakatlari va dietasining keng tavsifi - aniq oziq-ovqat manbalari, ovqat qidirish usullari, ov texnikalari, hazm qilish tizimi, mavsumiy ovqatlanish o\'zgarishlari, ovqatlanish vaqti, oziq-ovqat zanjirida roli va boshqa turlar bilan raqobat. Metabolizm tezligi va energiya talablarini kiriting. Kamida 80-100 so\'z bering.' : 
+    'Comprehensive description of feeding behaviors and dietary habits - include specific food sources, foraging strategies, hunting techniques, digestive adaptations, seasonal dietary variations, feeding schedules, role in food webs, and competition with other species. Include metabolic rates and energy requirements. Provide at least 80-100 words with detailed nutritional ecology information.'}",
   "behavior": "${language === 'uzbek' || language === 'uz' ? 
-    'Diqqatga sazovor xatti-harakatlar, ijtimoiy tuzilmalar, juftlashish marosimlari, hududiy odatlar, kundalik faoliyat, aloqa usullari, migratsiya namunalari, ota-ona g\'amxo\'rligi va bu turni belgilaydigan noyob xususiyatlarning batafsil hisobi. Mavsumiy xatti-harakatlar va boshqa turlar bilan o\'zaro ta\'sirni kiriting. Kamida 45-55 so\'z bering' : 
-    'Detailed account of notable behaviors, social structures, mating rituals, territorial habits, daily activities, communication methods, migration patterns, parental care, and unique characteristics that define this species. Include seasonal behaviors and interactions with other species. Provide at least 45-55 words'}",
+    'Turning murakkab xatti-harakatlari va ijtimoiy tuzilmalarining batafsil tahlili - juftlashish marosimlari, ota-ona g\'amxo\'rligi, hududiy xatti-harakatlar, aloqa usullari, to\'da dinamikasi, o\'rganish qobiliyatlari, kognitiv qobiliyatlar, stress reaktsiyalari va muhit o\'zgarishlariga moslashish. Noyob xatti-harakatlar va intellektual qobiliyatlarni kiriting. Kamida 80-100 so\'z bering.' : 
+    'Detailed analysis of complex behaviors and social structures - include mating rituals, parental care, territorial behaviors, communication methods, group dynamics, learning capabilities, cognitive abilities, stress responses, and adaptation to environmental changes. Include unique behavioral patterns and intelligence displays. Provide at least 80-100 words with comprehensive behavioral ecology details.'}",
   "conservation_status": "${language === 'uzbek' || language === 'uz' ? 
-    'Populyatsiya tendentsiyalari, ular duch keladigan aniq tahdidlar, davom etayotgan tabiatni muhofaza qilish sa\'y-harakatlari, populyatsiya tarixiy o\'zgarishlari va ularning omon qolishiga ta\'sir qiluvchi omillar haqida batafsil kontekst bilan hozirgi muhofaza holati. Inson ta\'siri va tabiatni muhofaza qilishning muvaffaqiyat hikoyalarini kiriting. Kamida 35-45 so\'z yozing' : 
-    'Current conservation status with detailed context about population trends, specific threats they face, ongoing conservation efforts, historical population changes, and what factors affect their survival. Include human impact and conservation success stories if applicable. Write at least 35-45 words'}",
+    'Hozirgi muhofaza holati va populyatsiya dinamikasining batafsil tahlili - aniq populyatsiya soni, tarixiy o\'zgarishlar, asosiy tahdidlar (iqlim o\'zgarishi, habitat yo\'qolishi, ifloslanish), muhofaza sa\'y-harakatlari, muvaffaqiyatli tiklanish dasturlari, xalqaro himoya holati va kelajak prognozlari. Inson ta\'siri va himoya choralarini batafsil kiriting. Kamida 80-100 so\'z yozing.' : 
+    'Detailed analysis of current conservation status and population dynamics - include specific population numbers, historical changes, major threats (climate change, habitat loss, pollution), conservation efforts, successful recovery programs, international protection status, and future projections. Include detailed human impact assessments and protection measures. Write at least 80-100 words with comprehensive conservation information.'}",
   "interesting_facts": "${language === 'uzbek' || language === 'uz' ? 
-    'Turning noyob qobiliyatlari, rekord qiyadigan xususiyatlari, tarixiy ahamiyati, ajoyib moslashuvlari yoki hayratlanarli xatti-harakatlarini ta\'kidlaydigan 3-4 ta ajoyib, aniq fakt. Bularni qiziqarli, ta\'limiy va esda qolarli qiling. Aniq raqamlar, taqqoslashlar yoki g\'ayrioddiy xususiyatlarni kiriting. Kamida 50-60 so\'z bering' : 
-    '3-4 fascinating, specific facts about the species that highlight their unique abilities, record-breaking characteristics, historical significance, remarkable adaptations, or surprising behaviors. Make these engaging, educational, and memorable. Include specific numbers, comparisons, or unusual traits. Provide at least 50-60 words'}",
+    '5-6 ta hayratlanarli, aniq va tekshirilgan faktlar - noyob fiziologik moslashuvlar, rekord qiyadigan xususiyatlar, ajoyib qobiliyatlar, madaniy ahamiyati, tarixiy voqealar, ilmiy kashfiyotlar va g\'ayrioddiy xatti-harakatlar. Aniq raqamlar, o\'lchovlar va taqqoslashlarni kiriting. Har bir fakt qiziq va ta\'limiy bo\'lishi kerak. Kamida 100-120 so\'z bering.' : 
+    '5-6 fascinating, specific and verified facts - include unique physiological adaptations, record-breaking characteristics, amazing abilities, cultural significance, historical events, scientific discoveries, and extraordinary behaviors. Include specific numbers, measurements, and comparisons. Each fact should be captivating and educational. Provide at least 100-120 words with remarkable and scientifically accurate information.'}",
   "identification_notes": "${language === 'uzbek' || language === 'uz' ? 
-    'Bu turni aniqlashga yordam bergan batafsil asosiy xususiyatlar - jismoniy xususiyatlar, o\'ziga xos belgilar, o\'lcham taqqoslashlari, rang naqshlari, tana shakli va o\'xshash turlardan ajralib turadigan xususiyatlar. Agar ko\'rinadigan bo\'lsa, yosh, jins yoki mavsumiy o\'zgarishlarni eslatib o\'ting. Kamida 35-45 so\'z yozing' : 
-    'Detailed key features that helped identify this species - include physical characteristics, distinctive markings, size comparisons, coloration patterns, body shape, and distinguishing features from similar species. Mention age, gender, or seasonal variations if visible. Write at least 35-45 words'}"
+    'Bu turni aniqlash uchun muhim diagnostik xususiyatlarning batafsil tavsifi - jismoniy o\'lchovlar, morfologik belgilar, rang naqshlari, tuzilish xususiyatlari, o\'xshash turlardan farqlar, jinsiy dimorfizm, yosh o\'zgarishlari, mavsumiy o\'zgarishlar va aniq identifikatsiya mezonlari. Dalada aniqlash uchun amaliy maslahatlar bering. Kamida 70-90 so\'z yozing.' : 
+    'Detailed description of key diagnostic features for species identification - include physical measurements, morphological characteristics, coloration patterns, structural features, differences from similar species, sexual dimorphism, age variations, seasonal changes, and specific identification criteria. Provide practical field identification tips. Write at least 70-90 words with precise taxonomic identification details.'}"
 }
 
 IMPORTANT RULES:
@@ -85,6 +86,9 @@ IMPORTANT RULES:
 2. Only use wildlife categories if you can clearly see an actual living organism in its natural form
 3. Be very conservative - when in doubt, use "not_wildlife"
 4. Do not try to identify wildlife in logos, drawings, or artificial representations
+5. PROVIDE EXTREMELY DETAILED INFORMATION - each section should be comprehensive and educational
+6. Use scientific precision and accuracy in all descriptions
+7. Include specific measurements, numbers, and scientific data wherever possible
 
 Always return valid JSON. Do not include any text before or after the JSON object.`
           },
@@ -94,8 +98,8 @@ Always return valid JSON. Do not include any text before or after the JSON objec
               {
                 type: 'text',
                 text: language === 'uzbek' || language === 'uz' ? 
-                  'Iltimos, bu yovvoyi tabiat turini aniqlang va batafsil ma\'lumot bering.' :
-                  'Please identify this wildlife species and provide detailed information.'
+                  'Iltimos, bu yovvoyi tabiat turini aniqlang va har bir bo\'lim uchun batafsil, keng qamrovli ma\'lumot bering. Ilmiy aniqlik va to\'liq ma\'lumot bering.' :
+                  'Please identify this wildlife species and provide detailed, comprehensive information for each section. Provide scientific accuracy and complete information.'
               },
               {
                 type: 'image_url',
@@ -106,8 +110,8 @@ Always return valid JSON. Do not include any text before or after the JSON objec
             ]
           }
         ],
-        max_tokens: 1200, // Reduced from 1500
-        temperature: 0.1 // Reduced for faster, more consistent responses
+        max_tokens: 2000, // Increased for more comprehensive responses
+        temperature: 0.2 // Slightly increased for more detailed, varied responses
       }),
     });
 
@@ -181,27 +185,27 @@ Always return valid JSON. Do not include any text before or after the JSON objec
           'Content-Type': 'application/json',
         },
           body: JSON.stringify({
-            model: 'gpt-4o-mini', // Use faster model for retry too
+            model: 'gpt-4o', // Use more powerful model for retry too
           messages: [
             {
               role: 'system',
-              content: `You are a wildlife expert. CRITICAL: Only identify REAL wildlife species. If the image shows anything else (people, objects, buildings, food, vehicles, etc.), you MUST respond with a category of "not_wildlife". Return ONLY a valid JSON object with species information. No other text.`
+              content: `You are a wildlife expert. CRITICAL: Only identify REAL wildlife species. If the image shows anything else (people, objects, buildings, food, vehicles, etc.), you MUST respond with a category of "not_wildlife". Return ONLY a valid JSON object with comprehensive species information. No other text.`
             },
             {
               role: 'user',
-              content: `Please identify this wildlife species and return ONLY valid JSON with this exact structure:
+              content: `Please identify this wildlife species and return ONLY valid JSON with this exact structure. Provide extremely detailed information for each field (80-120 words per section):
 {
   "species_name": "Common name",
   "scientific_name": "Scientific name", 
   "category": "bird/mammal/reptile/amphibian/fish/insect/plant/fungi/marine_life/not_wildlife",
   "confidence": "high/medium/low",
-  "description": "Comprehensive introduction to this species - include their significance in the ecosystem, general characteristics, what makes them unique, their role in nature, and why they're important. Write at least 50-60 words with engaging, educational content",
-  "habitat": "Detailed description of typical environment and geographical range - include specific locations, climate preferences, elevation ranges, habitat requirements, and how they adapt to their environment. Provide at least 45-55 words",
-  "diet": "Comprehensive description of what the species eats, feeding behaviors, hunting techniques, seasonal dietary changes, and their role in the food chain. Write at least 45-55 words", 
-  "behavior": "Detailed account of notable behaviors, social structures, mating rituals, territorial habits, daily activities, and unique characteristics. Provide at least 45-55 words",
-  "conservation_status": "Current conservation status with detailed context about population trends, threats, conservation efforts, and factors affecting survival. Write at least 35-45 words",
-  "interesting_facts": "3-4 fascinating, specific facts about the species that highlight their unique abilities, adaptations, or surprising behaviors. Provide at least 50-60 words",
-  "identification_notes": "Detailed key features that helped identify this species - include physical characteristics, distinctive markings, and distinguishing features. Write at least 35-45 words"
+  "description": "Comprehensive introduction to this species with evolutionary history, ecosystem role, unique characteristics, and significance. Write at least 80-120 words with detailed scientific information",
+  "habitat": "Detailed description of habitat requirements, geographical distribution, climate preferences, elevation ranges, and ecosystem relationships. Provide at least 80-100 words with specific ecological details",
+  "diet": "Comprehensive description of feeding behaviors, food sources, hunting techniques, seasonal variations, and role in food webs. Write at least 80-100 words with detailed nutritional ecology", 
+  "behavior": "Detailed account of social structures, mating rituals, communication, territorial habits, learning abilities, and unique behaviors. Provide at least 80-100 words with behavioral ecology details",
+  "conservation_status": "Current conservation status with population trends, threats, conservation efforts, historical changes, and future projections. Write at least 80-100 words with comprehensive conservation information",
+  "interesting_facts": "5-6 fascinating, verified facts about unique adaptations, abilities, cultural significance, and remarkable characteristics. Provide at least 100-120 words with specific details and measurements",
+  "identification_notes": "Detailed diagnostic features, physical measurements, distinguishing characteristics, and field identification tips. Write at least 70-90 words with precise identification details"
 }
 
 IMPORTANT: If this is not a real wildlife species, set category to "not_wildlife"
@@ -209,8 +213,8 @@ IMPORTANT: If this is not a real wildlife species, set category to "not_wildlife
 Image: ${imageUrl}`
             }
           ],
-          max_tokens: 1000, // Reduced for retry
-          temperature: 0.1
+          max_tokens: 1800, // Increased for retry
+          temperature: 0.2
         }),
       });
 
