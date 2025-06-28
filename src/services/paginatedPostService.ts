@@ -69,6 +69,7 @@ export const fetchPostsPaginated = async (
       console.error('Error fetching posts:', error);
       // Return mock data for the first page if there's an error
       if (!cursor) {
+        console.log('Using mock data due to error');
         return {
           posts: mockPosts.slice(0, limit),
           nextCursor: mockPosts.length > limit ? mockPosts[limit - 1].created_at : null,
@@ -79,9 +80,11 @@ export const fetchPostsPaginated = async (
     }
 
     const posts = data || [];
+    console.log('Fetched posts from database:', posts.length);
     
     // If no posts from database and this is the first page, use mock data
     if (posts.length === 0 && !cursor) {
+      console.log('No posts in database, using mock data');
       return {
         posts: mockPosts.slice(0, limit),
         nextCursor: mockPosts.length > limit ? mockPosts[limit - 1].created_at : null,
@@ -93,6 +96,8 @@ export const fetchPostsPaginated = async (
     const hasMore = posts.length === limit;
     const nextCursor = hasMore && posts.length > 0 ? posts[posts.length - 1].created_at : null;
 
+    console.log('Returning posts:', { postsCount: posts.length, hasMore, nextCursor });
+
     return {
       posts,
       nextCursor,
@@ -102,6 +107,7 @@ export const fetchPostsPaginated = async (
     console.error('Error in fetchPostsPaginated:', error);
     // Return mock data for the first page on error
     if (!cursor) {
+      console.log('Using mock data due to catch error');
       return {
         posts: mockPosts.slice(0, limit),
         nextCursor: mockPosts.length > limit ? mockPosts[limit - 1].created_at : null,
