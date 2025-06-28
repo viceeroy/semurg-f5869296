@@ -266,9 +266,7 @@ const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
           scientificName: selectedPost.scientific_name,
           aiInfo: selectedPost.description || '',
           userNotes: selectedPost.caption || '',
-          userName: selectedPost.profiles?.first_name && selectedPost.profiles?.last_name ? 
-            `${selectedPost.profiles.first_name} ${selectedPost.profiles.last_name}` : 
-            selectedPost.profiles?.username || 'Anonymous',
+          userName: getDisplayName(selectedPost.profiles),
           userAvatar: selectedPost.profiles?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
           userId: selectedPost.user_id,
           likes: selectedPost.likes.length,
