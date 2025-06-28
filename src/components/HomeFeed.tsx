@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import AppHeader from "./AppHeader";
@@ -7,35 +6,21 @@ import DetailedPostView from "./DetailedPostView";
 import EditCaptionModal from "./EditCaptionModal";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import PostInfoModal from "./PostInfoModal";
-import { usePaginatedPosts } from "@/hooks/usePaginatedPosts";
+import { usePosts } from "@/hooks/usePosts";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface HomeFeedProps {
-  postsData?: any; // Keep for compatibility but we'll use our own hook
+  postsData: ReturnType<typeof usePosts>;
   onProfileClick?: () => void;
 }
 
-const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
+const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { 
-    posts, 
-    loading, 
-    refreshing, 
-    hasMore,
-    isFetchingNextPage,
-    loadingElementRef,
-    refreshPosts, 
-    handleLike, 
-    handleSave, 
-    handleComment, 
-    handleEditPost, 
-    handleDeletePost 
-  } = usePaginatedPosts();
-  
+  const { posts, loading, refreshing, refreshPosts, handleLike, handleSave, handleComment, handleEditPost, handleDeletePost } = postsData;
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -189,6 +174,7 @@ const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
     }
   };
 
+
   // Pull to refresh functionality
   const handleTouchStart = (e: React.TouchEvent) => {
     if (scrollContainerRef.current?.scrollTop === 0) {
@@ -251,8 +237,6 @@ const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
 
   const selectedPost = selectedPostId ? posts.find(p => p.id === selectedPostId) : null;
 
-  console.log('HomeFeed render:', { loading, postsCount: posts.length, hasMore, isFetchingNextPage });
-
   if (loading) {
     return <LoadingSpinner text={t.feed.loadingFeed} />;
   }
@@ -260,39 +244,39 @@ const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
   if (selectedPost) {
     return (
       <div className="min-h-screen bg-gray-100">
-        <AppHeader onRefresh={() => refreshPosts(true)} refreshing={refreshing} onProfileClick={onProfileClick} />
+        <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} onProfileClick={onProfileClick} />
         <DetailedPostView
-          post={{
-            id: selectedPost.id,
-            image: selectedPost.image_url,
-            speciesName: selectedPost.title,
-            scientificName: selectedPost.scientific_name,
-            aiInfo: selectedPost.description || '',
-            userNotes: selectedPost.caption || '',
-            userName: getDisplayName(selectedPost.profiles),
-            userAvatar: selectedPost.profiles?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
-            userId: selectedPost.user_id,
-            likes: selectedPost.likes.length,
-            isLiked: selectedPost.likes.some(like => like.user_id === user?.id),
-            isSaved: savedPostIds.has(selectedPost.id),
-            tags: [`#${selectedPost.title.replace(/\s+/g, '')}`, selectedPost.category ? `#${selectedPost.category}` : '#Wildlife'],
-            comments: selectedPost.comments || [],
-            uploadDate: selectedPost.created_at,
-            characteristics: selectedPost.identification_notes ? [selectedPost.identification_notes] : undefined,
-            habitat: selectedPost.habitat,
-            diet: selectedPost.diet,
-            behavior: selectedPost.behavior,
-            conservationStatus: selectedPost.conservation_status,
-            badge: selectedPost.confidence ? `${selectedPost.confidence.charAt(0).toUpperCase() + selectedPost.confidence.slice(1)} Confidence` : undefined
-          }}
-          onClose={() => setSelectedPostId(null)}
-          onLike={handleLike}
-          onSave={handleSaveWithRefresh}
-          onComment={handleComment}
-          onShare={() => {}}
-          onEdit={() => {}}
-          onDelete={() => {}}
-          onInfo={() => {}}
+        post={{
+          id: selectedPost.id,
+          image: selectedPost.image_url,
+          speciesName: selectedPost.title,
+          scientificName: selectedPost.scientific_name,
+          aiInfo: selectedPost.description || '',
+          userNotes: selectedPost.caption || '', // Use caption field for user notes
+          userName: getDisplayName(selectedPost.profiles),
+          userAvatar: selectedPost.profiles?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+          userId: selectedPost.user_id,
+          likes: selectedPost.likes.length,
+          isLiked: selectedPost.likes.some(like => like.user_id === user?.id),
+          isSaved: savedPostIds.has(selectedPost.id),
+          tags: [`#${selectedPost.title.replace(/\s+/g, '')}`, selectedPost.category ? `#${selectedPost.category}` : '#Wildlife'],
+          comments: selectedPost.comments || [],
+          uploadDate: selectedPost.created_at,
+          characteristics: selectedPost.identification_notes ? [selectedPost.identification_notes] : undefined,
+          habitat: selectedPost.habitat,
+          diet: selectedPost.diet,
+          behavior: selectedPost.behavior,
+          conservationStatus: selectedPost.conservation_status,
+          badge: selectedPost.confidence ? `${selectedPost.confidence.charAt(0).toUpperCase() + selectedPost.confidence.slice(1)} Confidence` : undefined
+        }}
+        onClose={handlePostClose}
+        onLike={handleLike}
+        onSave={handleSaveWithRefresh}
+        onComment={handleComment}
+        onShare={() => {}}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onInfo={handleInfo}
         />
       </div>
     );
@@ -300,7 +284,7 @@ const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <AppHeader onRefresh={() => refreshPosts(true)} refreshing={refreshing} onProfileClick={onProfileClick} />
+      <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} onProfileClick={onProfileClick} />
       
       {/* Pull to refresh indicator */}
       {isPulling && (
@@ -315,31 +299,29 @@ const HomeFeed = ({ onProfileClick }: HomeFeedProps) => {
       <div 
         ref={scrollContainerRef}
         className="overflow-auto"
-        style={{ height: '100vh' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        style={{ 
+          height: '100vh', 
+          paddingTop: isPulling ? `${Math.min(pullDistance * 0.5, 50)}px` : '0',
+          transition: isPulling ? 'none' : 'padding-top 0.3s ease-out'
+        }}
       >
         <PostList
-          posts={posts.map(post => ({
-            ...post,
-            isSaved: savedPostIds.has(post.id)
-          }))}
-          onLike={handleLike}
-          onSave={handleSaveWithRefresh}
-          onComment={handleComment}
-          onShare={() => {}}
-          onPostClick={(postId: string) => {
-            saveScrollPosition();
-            setSelectedPostId(postId);
-          }}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onInfo={handleInfo}
-          loadingElementRef={loadingElementRef}
-          hasMore={hasMore}
-          isFetchingNextPage={isFetchingNextPage}
-        />
+        posts={posts.map(post => ({
+          ...post,
+          isSaved: savedPostIds.has(post.id)
+        }))}
+        onLike={handleLike}
+        onSave={handleSaveWithRefresh}
+        onComment={handleComment}
+        onShare={() => {}}
+        onPostClick={handlePostClick}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onInfo={handleInfo}
+      />
       </div>
       
       {/* Edit Caption Modal */}

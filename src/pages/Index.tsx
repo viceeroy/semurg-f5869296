@@ -1,7 +1,9 @@
+
 import { useState } from "react";
 import { useAuth, AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePosts } from "@/hooks/usePosts";
 import { useProfile } from "@/hooks/useProfile";
 import { useCollections } from "@/hooks/useCollections";
 import { useSearch } from "@/hooks/useSearch";
@@ -17,9 +19,10 @@ const MainApp = () => {
   const { user, loading } = useAuth();
   const { t } = useLanguage();
   const isMobile = useIsMobile();
+  const postsData = usePosts();
   const profileData = useProfile();
   const collectionsData = useCollections();
-  const searchData = useSearch([]);
+  const searchData = useSearch(postsData.posts);
   const [activeTab, setActiveTab] = useState("home");
   const [showUploadFlow, setShowUploadFlow] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
@@ -35,7 +38,7 @@ const MainApp = () => {
 
     switch (activeTab) {
       case "home":
-        return <HomeFeed onProfileClick={() => setActiveTab("profile")} />;
+        return <HomeFeed postsData={postsData} onProfileClick={() => setActiveTab("profile")} />;
       case "search":
         return <LazySearchPage searchData={searchData} />;
       case "collections":
@@ -43,12 +46,13 @@ const MainApp = () => {
       case "profile":
         return <LazyProfilePage profileData={profileData} onEditProfile={() => setShowProfileEdit(true)} />;
       default:
-        return <HomeFeed onProfileClick={() => setActiveTab("profile")} />;
+        return <HomeFeed postsData={postsData} onProfileClick={() => setActiveTab("profile")} />;
     }
   };
 
   const handlePostCreated = () => {
     setActiveTab("home");
+    // Refresh the home feed would happen automatically when we switch tabs
   };
 
   if (loading) {
@@ -66,7 +70,7 @@ const MainApp = () => {
     return <AuthPage />;
   }
 
-  // Mobile layout
+  // Mobile layout (unchanged)
   if (isMobile) {
     return (
       <div className="min-h-screen bg-gray-50 relative">
@@ -91,21 +95,24 @@ const MainApp = () => {
     );
   }
 
-  // Desktop layout
+  // Desktop layout (3-column on large screens, 2-column on tablets)
   return (
     <div className="min-h-screen bg-gray-50 flex">
+      {/* Left Sidebar */}
       <DesktopSidebar
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onUploadClick={() => setShowUploadFlow(true)}
       />
 
+      {/* Main Content */}
       <div className="flex-1 ml-64">
         <div className="max-w-2xl mx-auto">
           {!showProfileEdit && renderContent()}
           {showProfileEdit && renderContent()}
         </div>
       </div>
+
 
       {showUploadFlow && (
         <LazyUploadFlow 
