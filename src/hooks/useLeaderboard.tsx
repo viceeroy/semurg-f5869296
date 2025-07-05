@@ -28,12 +28,15 @@ export const useLeaderboard = () => {
 
       if (error) {
         console.error('Error loading leaderboard:', error);
+        setLeaderboard([]);
         return;
       }
 
+      console.log('Leaderboard data for', period, ':', data);
       setLeaderboard(data || []);
     } catch (error) {
       console.error('Error loading leaderboard:', error);
+      setLeaderboard([]);
     } finally {
       setLoading(false);
     }
