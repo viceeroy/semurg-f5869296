@@ -5,13 +5,12 @@ import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePosts } from "@/hooks/usePosts";
 import { useProfile } from "@/hooks/useProfile";
-import { useCollections } from "@/hooks/useCollections";
 import { useSearch } from "@/hooks/useSearch";
 import BottomNavigation from "@/components/BottomNavigation";
 import DesktopSidebar from "@/components/DesktopSidebar";
-
 import HomeFeed from "@/components/HomeFeed";
-import { LazySearchPage, LazyCollectionsPage, LazyProfilePage, LazyUploadFlow } from "@/components/LazyComponents";
+import LeaderboardPage from "@/components/LeaderboardPage";
+import { LazySearchPage, LazyProfilePage, LazyUploadFlow } from "@/components/LazyComponents";
 import AuthPage from "@/components/AuthPage";
 import ProfileEditPage from "@/components/ProfileEditPage";
 
@@ -21,15 +20,11 @@ const MainApp = () => {
   const isMobile = useIsMobile();
   const postsData = usePosts();
   const profileData = useProfile();
-  const collectionsData = useCollections();
   const searchData = useSearch(postsData.posts);
   const [activeTab, setActiveTab] = useState("home");
   const [showUploadFlow, setShowUploadFlow] = useState(false);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Pass search query to right sidebar when on search page
-  const currentSearchQuery = activeTab === 'search' ? searchQuery : '';
 
   const renderContent = () => {
     if (showProfileEdit) {
@@ -41,8 +36,8 @@ const MainApp = () => {
         return <HomeFeed postsData={postsData} onProfileClick={() => setActiveTab("profile")} />;
       case "search":
         return <LazySearchPage searchData={searchData} />;
-      case "collections":
-        return <LazyCollectionsPage collectionsData={collectionsData} />;
+      case "leaderboard":
+        return <LeaderboardPage />;
       case "profile":
         return <LazyProfilePage profileData={profileData} onEditProfile={() => setShowProfileEdit(true)} />;
       default:
@@ -70,7 +65,7 @@ const MainApp = () => {
     return <AuthPage />;
   }
 
-  // Mobile layout (unchanged)
+  // Mobile layout
   if (isMobile) {
     return (
       <div className="min-h-screen bg-gray-50 relative">
@@ -95,7 +90,7 @@ const MainApp = () => {
     );
   }
 
-  // Desktop layout (3-column on large screens, 2-column on tablets)
+  // Desktop layout
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Left Sidebar */}
@@ -112,7 +107,6 @@ const MainApp = () => {
           {showProfileEdit && renderContent()}
         </div>
       </div>
-
 
       {showUploadFlow && (
         <LazyUploadFlow 

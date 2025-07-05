@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      badges: {
+        Row: {
+          created_at: string | null
+          description_en: string
+          description_uz: string
+          icon_url: string | null
+          id: string
+          name_en: string
+          name_uz: string
+        }
+        Insert: {
+          created_at?: string | null
+          description_en: string
+          description_uz: string
+          icon_url?: string | null
+          id: string
+          name_en: string
+          name_uz: string
+        }
+        Update: {
+          created_at?: string | null
+          description_en?: string
+          description_uz?: string
+          icon_url?: string | null
+          id?: string
+          name_en?: string
+          name_uz?: string
+        }
+        Relationships: []
+      }
       challenges: {
         Row: {
           category: string | null
@@ -205,6 +235,30 @@ export type Database = {
           follower_id?: string
           following_id?: string
           id?: string
+        }
+        Relationships: []
+      }
+      leaderboard_stats: {
+        Row: {
+          date: string
+          id: string
+          species_count: number | null
+          total_likes: number | null
+          user_id: string
+        }
+        Insert: {
+          date?: string
+          id?: string
+          species_count?: number | null
+          total_likes?: number | null
+          user_id: string
+        }
+        Update: {
+          date?: string
+          id?: string
+          species_count?: number | null
+          total_likes?: number | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -462,6 +516,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_challenges: {
         Row: {
           challenge_id: string
@@ -569,6 +652,18 @@ export type Database = {
       get_following_count: {
         Args: { user_id: string }
         Returns: number
+      }
+      get_leaderboard: {
+        Args: { period_type: string }
+        Returns: {
+          user_id: string
+          username: string
+          first_name: string
+          last_name: string
+          avatar_url: string
+          species_count: number
+          rank: number
+        }[]
       }
     }
     Enums: {
