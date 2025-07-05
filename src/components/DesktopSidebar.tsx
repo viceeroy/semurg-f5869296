@@ -10,7 +10,7 @@ interface DesktopSidebarProps {
 }
 
 const DesktopSidebar = ({ activeTab, onTabChange, onUploadClick }: DesktopSidebarProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const tabs = [
     {
@@ -26,7 +26,7 @@ const DesktopSidebar = ({ activeTab, onTabChange, onUploadClick }: DesktopSideba
     {
       id: 'leaderboard',
       icon: Trophy,
-      label: t.language === 'uz' ? 'Reyting' : 'Leaderboard'
+      label: language === 'uz' ? 'Reyting' : 'Leaderboard'
     },
     {
       id: 'profile',

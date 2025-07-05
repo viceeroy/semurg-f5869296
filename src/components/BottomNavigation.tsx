@@ -10,7 +10,7 @@ interface BottomNavigationProps {
 }
 
 const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavigationProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   const tabs = [
     {
@@ -32,7 +32,7 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
     {
       id: 'leaderboard',
       icon: Trophy,
-      label: t.language === 'uz' ? 'Reyting' : 'Leaderboard'
+      label: language === 'uz' ? 'Reyting' : 'Leaderboard'
     },
     {
       id: 'profile',
