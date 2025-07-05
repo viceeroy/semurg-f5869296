@@ -16,17 +16,17 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
     {
       id: 'home',
       icon: Home,
-      label: t.nav.home
+      label: language === 'uz' ? 'Bosh sahifa' : 'Home'
     },
     {
       id: 'search',
       icon: Search,
-      label: 'Search'
+      label: language === 'uz' ? 'Qidirish' : 'Search'
     },
     {
       id: 'upload',
       icon: Sparkles,
-      label: t.upload.identifyWildlife,
+      label: language === 'uz' ? 'Yuklash' : 'Upload',
       isSpecial: true
     },
     {
@@ -37,7 +37,7 @@ const BottomNavigation = ({ activeTab, onTabChange, onUploadClick }: BottomNavig
     {
       id: 'profile',
       icon: User,
-      label: t.nav.profile
+      label: language === 'uz' ? 'Foydalanuvchi' : 'Profile'
     }
   ];
 

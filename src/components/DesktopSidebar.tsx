@@ -16,22 +16,22 @@ const DesktopSidebar = ({ activeTab, onTabChange, onUploadClick }: DesktopSideba
     {
       id: 'home',
       icon: Home,
-      label: t.nav.home
+      label: language === 'uz' ? 'Bosh sahifa [Home]' : 'Home'
     },
     {
       id: 'search',
       icon: Search,
-      label: 'Search'
+      label: language === 'uz' ? 'Qidirish [Search]' : 'Search'
     },
     {
       id: 'leaderboard',
       icon: Trophy,
-      label: language === 'uz' ? 'Reyting' : 'Leaderboard'
+      label: language === 'uz' ? 'Reyting [Leaderboard]' : 'Leaderboard'
     },
     {
       id: 'profile',
       icon: User,
-      label: t.nav.profile
+      label: language === 'uz' ? 'Foydalanuvchi [Profile]' : 'Profile'
     }
   ];
 
@@ -69,7 +69,7 @@ const DesktopSidebar = ({ activeTab, onTabChange, onUploadClick }: DesktopSideba
           className="w-full justify-start gap-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white mt-4"
         >
           <Sparkles className="w-5 h-5" />
-          {t.upload.identifyWildlife}
+          {language === 'uz' ? 'Yuklash [Identifying Species]' : t.upload.identifyWildlife}
         </Button>
       </nav>
     </div>
