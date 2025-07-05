@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Camera, Upload, X, Loader2, Sparkles, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,6 @@ import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capa
 import { Capacitor } from '@capacitor/core';
 import { useImageOptimization } from "@/hooks/useImageOptimization";
 import { usePerformance } from "@/hooks/usePerformance";
-
 
 interface UploadFlowProps {
   onClose: () => void;
@@ -44,26 +42,43 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      console.log('File selected:', file.name, file.size);
       markStart('image_upload');
-      const optimizedFile = await optimizeImage(file);
-      processImage(optimizedFile);
-      markEnd('image_upload');
+      
+      try {
+        const optimizedFile = await optimizeImage(file);
+        console.log('Image optimized:', optimizedFile.size);
+        processImage(optimizedFile);
+      } catch (error) {
+        console.error('Error optimizing image:', error);
+        // Fallback to original file if optimization fails
+        processImage(file);
+      } finally {
+        markEnd('image_upload');
+      }
     }
   };
 
   const processImage = (file: File) => {
+    console.log('Processing image:', file.name, file.size);
     setSelectedFile(file);
     const reader = new FileReader();
     reader.onload = (e) => {
       const imageDataUrl = e.target?.result as string;
+      console.log('Image converted to data URL, length:', imageDataUrl.length);
       setSelectedImage(imageDataUrl);
       setCurrentStep("confirm");
+    };
+    reader.onerror = (error) => {
+      console.error('Error reading file:', error);
+      toast.error('Error reading image file');
     };
     reader.readAsDataURL(file);
   };
 
   const handleTakePhoto = async () => {
     try {
+      console.log('Taking photo with camera...');
       const image = await CapacitorCamera.getPhoto({
         quality: 90,
         allowEditing: false,
@@ -72,6 +87,7 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
       });
 
       if (image.dataUrl) {
+        console.log('Photo taken successfully');
         // Convert dataUrl to file
         const response = await fetch(image.dataUrl);
         const blob = await response.blob();
@@ -86,6 +102,7 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
 
   const handleChooseFromGallery = async () => {
     try {
+      console.log('Choosing photo from gallery...');
       const image = await CapacitorCamera.getPhoto({
         quality: 90,
         allowEditing: false,
@@ -94,6 +111,7 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
       });
 
       if (image.dataUrl) {
+        console.log('Photo selected from gallery');
         // Convert dataUrl to file
         const response = await fetch(image.dataUrl);
         const blob = await response.blob();
@@ -109,32 +127,51 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
   const isMobile = Capacitor.isNativePlatform();
 
   const identifySpecies = async () => {
-    if (!selectedImage) return;
+    if (!selectedImage) {
+      console.error('No image selected for identification');
+      return;
+    }
     
+    console.log('Starting species identification...');
     setCurrentStep("identifying");
     
     try {
+      console.log('Calling identify-species function...');
       const { data, error } = await supabase.functions.invoke('identify-species', {
-        body: { imageUrl: selectedImage, language: language === 'uz' ? 'uzbek' : 'english' }
+        body: { 
+          imageUrl: selectedImage, 
+          language: language === 'uz' ? 'uzbek' : 'english' 
+        }
       });
 
+      console.log('Species identification response:', { data, error });
+
       if (error) {
+        console.error('Supabase function error:', error);
         setCurrentStep("failed");
         return;
       }
 
-      if (data.success) {
+      if (data && data.success) {
+        console.log('Species identified successfully:', data.data);
         setSpeciesInfo(data.data);
         setCurrentStep("results");
       } else {
+        console.error('Species identification failed:', data);
         setCurrentStep("failed");
+        if (data && data.error) {
+          toast.error(data.error);
+        }
       }
     } catch (error) {
+      console.error('Error during species identification:', error);
       setCurrentStep("failed");
+      toast.error('Failed to identify species');
     }
   };
 
   const handleTryAgain = () => {
+    console.log('Trying again - resetting state');
     setSelectedImage(null);
     setSelectedFile(null);
     setSpeciesInfo(null);
@@ -143,10 +180,12 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
 
   const handlePublish = async () => {
     if (!user || !selectedFile || !speciesInfo) {
+      console.error('Missing required information for publishing');
       toast.error('Missing required information');
       return;
     }
 
+    console.log('Publishing discovery...');
     setCurrentStep("publishing");
 
     try {
@@ -173,17 +212,20 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
         });
 
       if (error) {
+        console.error('Error creating post:', error);
         toast.error('Error creating post: ' + error.message);
         setCurrentStep("results");
         return;
       }
 
+      console.log('Discovery published successfully');
       toast.success('Discovery shared successfully!');
       onPostCreated?.();
       setTimeout(() => {
         onClose();
       }, 1000);
     } catch (error) {
+      console.error('Error publishing discovery:', error);
       toast.error('Error publishing discovery');
       setCurrentStep("results");
     }
@@ -191,9 +233,12 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
 
   const handleSaveToCollection = async () => {
     if (!user || !speciesInfo || !selectedImage) {
+      console.error('Missing information for saving to collection');
       toast.error('Please sign in to save discoveries');
       return;
     }
+
+    console.log('Saving to collection...');
 
     try {
       // Create a private post for personal collection
@@ -222,6 +267,7 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
         .single();
 
       if (postError) {
+        console.error('Error saving discovery:', postError);
         toast.error('Error saving discovery');
         return;
       }
@@ -232,12 +278,15 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
         .insert({ user_id: user.id, post_id: postData.id });
 
       if (saveError) {
+        console.error('Error adding to saved collection:', saveError);
         toast.error('Error adding to saved collection');
         return;
       }
 
+      console.log('Discovery saved to collection successfully');
       toast.success('Discovery saved to your collection!');
     } catch (error) {
+      console.error('Error saving discovery:', error);
       toast.error('Error saving discovery');
     }
   };
@@ -508,7 +557,7 @@ const UploadFlow = ({ onClose, onPostCreated }: UploadFlowProps) => {
                   <div className="w-2 h-2 bg-blue-500 rounded-full" />
                   Identification Notes
                 </h4>
-                <p className="text-sm text-gray-700 leading-relaxed">AI analysis provided</p>
+                <p className="text-sm text-gray-700 leading-relaxed">{speciesInfo.identification_notes}</p>
               </div>
 
               {/* Action Buttons */}

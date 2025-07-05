@@ -1,35 +1,71 @@
+
 // Image optimization utilities
 export const compressImage = (file: File, maxWidth = 1024, quality = 0.8): Promise<File> => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    console.log('Compressing image:', file.name, 'maxWidth:', maxWidth, 'quality:', quality);
+    
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d')!;
+    const ctx = canvas.getContext('2d');
     const img = new Image();
 
-    img.onload = () => {
-      // Calculate new dimensions
-      const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
-      canvas.width = img.width * ratio;
-      canvas.height = img.height * ratio;
+    if (!ctx) {
+      console.error('Could not get canvas context');
+      reject(new Error('Could not get canvas context'));
+      return;
+    }
 
-      // Draw and compress
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            const compressedFile = new File([blob], file.name, {
-              type: 'image/jpeg',
-              lastModified: Date.now(),
-            });
-            resolve(compressedFile);
-          }
-        },
-        'image/jpeg',
-        quality
-      );
+    img.onload = () => {
+      try {
+        console.log('Image loaded, original dimensions:', img.width, 'x', img.height);
+        
+        // Calculate new dimensions
+        const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+        const newWidth = Math.floor(img.width * ratio);
+        const newHeight = Math.floor(img.height * ratio);
+        
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+
+        console.log('New dimensions:', newWidth, 'x', newHeight);
+
+        // Draw and compress
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+        
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const compressedFile = new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+              console.log('Compression successful, new size:', compressedFile.size);
+              resolve(compressedFile);
+            } else {
+              console.error('Failed to create blob from canvas');
+              reject(new Error('Failed to create blob from canvas'));
+            }
+          },
+          'image/jpeg',
+          quality
+        );
+      } catch (error) {
+        console.error('Error during image processing:', error);
+        reject(error);
+      }
     };
 
-    img.src = URL.createObjectURL(file);
+    img.onerror = (error) => {
+      console.error('Error loading image:', error);
+      reject(new Error('Failed to load image'));
+    };
+
+    // Create object URL for the image
+    try {
+      img.src = URL.createObjectURL(file);
+    } catch (error) {
+      console.error('Error creating object URL:', error);
+      reject(new Error('Failed to create object URL'));
+    }
   });
 };
 
