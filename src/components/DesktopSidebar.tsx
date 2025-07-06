@@ -38,7 +38,7 @@ const DesktopSidebar = ({ activeTab, onTabChange, onUploadClick }: DesktopSideba
   return (
     <div className="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 p-6">
       <div className="flex items-center gap-3 mb-8">
-        <img src="/semurg-logo.png" alt="Semurg" className="w-10 h-10" />
+        <img src="/semurg-logo.png" alt="Semurg" className="w-10 h-10 object-contain" />
         <span className="text-xl font-bold text-emerald-600">Semurg</span>
       </div>
 
