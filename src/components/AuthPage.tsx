@@ -1,28 +1,29 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
 import { LogIn, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 import LanguageSelectionPage from './LanguageSelectionPage';
-
 const AuthPage = () => {
-  const { signIn, signUp } = useAuth();
-  const { t, setLanguage } = useLanguage();
+  const {
+    signIn,
+    signUp
+  } = useAuth();
+  const {
+    t,
+    setLanguage
+  } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState('');
   const [showLanguageSelection, setShowLanguageSelection] = useState(false);
-
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
-
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!email || !password) {
       setError("Please enter both email and password.");
       return;
@@ -31,13 +32,13 @@ const AuthPage = () => {
       setError("Please enter a valid email address.");
       return;
     }
-    
     setError("");
     setLoading(true);
-    
     try {
       if (isSignUp) {
-        const { error } = await signUp(email, password);
+        const {
+          error
+        } = await signUp(email, password);
         if (error) {
           setError(error.message);
         } else {
@@ -46,7 +47,9 @@ const AuthPage = () => {
           toast.success('Account created! Please select your preferred language.');
         }
       } else {
-        const { error } = await signIn(email, password);
+        const {
+          error
+        } = await signIn(email, password);
         if (error) {
           setError(error.message);
         } else {
@@ -56,24 +59,19 @@ const AuthPage = () => {
     } catch (err) {
       setError('An unexpected error occurred.');
     }
-    
     setLoading(false);
   };
-
   const handleLanguageSelected = async (language: 'en' | 'uz') => {
     // Update the app language
     await setLanguage(language);
     // The user will be automatically redirected to the main app by the auth state change
   };
 
-
   // Show language selection after successful signup
   if (showLanguageSelection) {
     return <LanguageSelectionPage onLanguageSelected={handleLanguageSelected} />;
   }
-
-  return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50">
+  return <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50">
       <div className="w-full max-w-sm bg-gradient-to-b from-sky-50/50 to-white rounded-3xl shadow-xl p-8 flex flex-col items-center border border-blue-100 text-black">
         <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white mb-6 shadow-lg">
           <LogIn className="w-7 h-7 text-black" />
@@ -90,69 +88,39 @@ const AuthPage = () => {
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               <Mail className="w-4 h-4" />
             </span>
-            <input
-              placeholder={t.auth.email}
-              type="email"
-              value={email}
-              className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm"
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+            <input placeholder={t.auth.email} type="email" value={email} className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm" onChange={e => setEmail(e.target.value)} required />
           </div>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               <Mail className="w-4 h-4" />
             </span>
-            <input
-              placeholder={t.auth.password}
-              type="password"
-              value={password}
-              className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm"
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <input placeholder={t.auth.password} type="password" value={password} className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200 bg-gray-50 text-black text-sm" onChange={e => setPassword(e.target.value)} required />
           </div>
           
           <div className="w-full flex justify-between items-center">
-            {error && (
-              <div className="text-sm text-red-500 flex-1">{error}</div>
-            )}
-            {!isSignUp && (
-              <button type="button" className="text-xs hover:underline font-medium ml-auto">
+            {error && <div className="text-sm text-red-500 flex-1">{error}</div>}
+            {!isSignUp && <button type="button" className="text-xs hover:underline font-medium ml-auto">
                 {t.auth.forgotPassword}
-              </button>
-            )}
+              </button>}
           </div>
           
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 cursor-pointer transition mb-4 mt-2 disabled:opacity-50"
-          >
-            {loading ? (isSignUp ? t.common.loading : t.common.loading) : (isSignUp ? t.auth.createAccount : t.auth.signIn)}
+          <button type="submit" disabled={loading} className="w-full bg-gradient-to-b from-gray-700 to-gray-900 text-white font-medium py-2 rounded-xl shadow hover:brightness-105 cursor-pointer transition mb-4 mt-2 disabled:opacity-50">
+            {loading ? isSignUp ? t.common.loading : t.common.loading : isSignUp ? t.auth.createAccount : t.auth.signIn}
           </button>
         </form>
 
         <div className="w-full text-center">
-          <button
-            type="button"
-            onClick={() => {
-              setIsSignUp(!isSignUp);
-              setError('');
-            }}
-            className="w-full py-3 px-4 text-base font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl border border-gray-200 transition-colors duration-200"
-          >
+          <button type="button" onClick={() => {
+          setIsSignUp(!isSignUp);
+          setError('');
+        }} className="text-sm text-gray-600 hover:underline">
             {isSignUp ? t.auth.alreadyHaveAccount : t.auth.dontHaveAccount}
           </button>
-          {!isSignUp && (
-            <div className="mt-1">
-              <span className="text-sm text-gray-500">{t.auth.createNewAccount}</span>
-            </div>
-          )}
+          {!isSignUp && <div className="mt-1">
+              
+            </div>}
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default AuthPage;
