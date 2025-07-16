@@ -68,7 +68,19 @@ export const usePosts = () => {
   const { handleEditPost, handleDeletePost } = usePostMutations(user, posts, setPosts);
 
   useEffect(() => {
-    fetchPosts();
+    let isMounted = true;
+    
+    const initializePosts = async () => {
+      if (isMounted) {
+        await fetchPosts();
+      }
+    };
+    
+    initializePosts();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return {

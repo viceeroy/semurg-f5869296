@@ -1,5 +1,6 @@
 import React from "react";
 import PostCard from "./PostCard";
+import PostListSkeleton from "./PostListSkeleton";
 import { useAuth } from "@/hooks/useAuth";
 import { Post } from "@/types/post";
 
@@ -55,6 +56,11 @@ const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick, onEd
     return () => observer.disconnect();
   }, [hasMore, loadingMore, onLoadMore]);
 
+  // Show skeleton for initial loading
+  if (posts.length === 0 && loadingMore) {
+    return <PostListSkeleton count={5} />;
+  }
+
   return (
     <div className="max-w-md mx-auto px-4 py-6 pb-32">
       {posts.map((post, index) => (
@@ -92,10 +98,8 @@ const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick, onEd
         </div>
       ))}
       
-      {loadingMore && (
-        <div className="flex justify-center py-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
+      {loadingMore && posts.length > 0 && (
+        <PostListSkeleton count={2} />
       )}
       
       {!hasMore && posts.length > 0 && (

@@ -11,8 +11,15 @@ export const fetchPosts = async (page: number = 0, pageSize: number = 10): Promi
     const { data, error } = await supabase
       .from('posts')
       .select(`
-        *,
-        profiles (username, first_name, last_name, avatar_url),
+        id,
+        user_id,
+        title,
+        description,
+        image_url,
+        caption,
+        category,
+        created_at,
+        profiles!inner (username, first_name, last_name, avatar_url),
         likes (user_id),
         comments (
           id,

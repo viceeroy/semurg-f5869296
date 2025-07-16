@@ -29,6 +29,12 @@ const OptimizedPostImage = ({
   const getOptimizedSrc = (originalSrc: string, targetWidth: number = 400) => {
     console.log('Getting optimized src for:', originalSrc);
     
+    // For large base64 images, we should handle them differently
+    if (originalSrc.startsWith('data:image/') && originalSrc.length > 50000) {
+      console.warn('Large base64 image detected, performance may be impacted');
+      // In a real app, you'd want to upload these to storage and use URLs instead
+    }
+    
     // For mobile, we want smaller images for better performance
     const isMobile = window.innerWidth < 768;
     if (isMobile && originalSrc.includes('unsplash.com')) {
