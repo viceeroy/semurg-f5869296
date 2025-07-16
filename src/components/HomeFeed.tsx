@@ -321,6 +321,9 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onInfo={handleInfo}
+        loadingMore={postsData.loadingMore}
+        hasMore={postsData.hasMore}
+        onLoadMore={postsData.loadMorePosts}
       />
       </div>
       
