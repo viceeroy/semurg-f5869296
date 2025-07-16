@@ -40,6 +40,7 @@ export interface Translations {
     createAccount: string;
     alreadyHaveAccount: string;
     dontHaveAccount: string;
+    createNewAccount: string;
     signInRequired: string;
     pleaseSignIn: string;
   };
@@ -243,6 +244,7 @@ export const translations: Record<'en' | 'uz', Translations> = {
       createAccount: "Create Account",
       alreadyHaveAccount: "Already have an account?",
       dontHaveAccount: "Don't have an account?",
+      createNewAccount: "Create new account",
       signInRequired: "Sign in required",
       pleaseSignIn: "Please sign in to identify wildlife"
     },
@@ -424,6 +426,7 @@ export const translations: Record<'en' | 'uz', Translations> = {
       createAccount: "Hisob yaratish",
       alreadyHaveAccount: "Hisobingiz bormi?",
       dontHaveAccount: "Hisobingiz yo'qmi?",
+      createNewAccount: "Yangi hiso oching",
       signInRequired: "Kirish talab qilinadi",
       pleaseSignIn: "Yovvoyi tabiatni aniqlash uchun tizimga kiring"
     },

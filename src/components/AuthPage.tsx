@@ -144,6 +144,11 @@ const AuthPage = () => {
           >
             {isSignUp ? t.auth.alreadyHaveAccount : t.auth.dontHaveAccount}
           </button>
+          {!isSignUp && (
+            <div className="mt-1">
+              <span className="text-sm text-gray-500">{t.auth.createNewAccount}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
