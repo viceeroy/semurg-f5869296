@@ -113,7 +113,7 @@ const AuthPage = () => {
           <button type="button" onClick={() => {
           setIsSignUp(!isSignUp);
           setError('');
-        }} className="text-sm text-gray-600 hover:underline">
+        }} className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl transition-colors text-base">
             {isSignUp ? t.auth.alreadyHaveAccount : t.auth.dontHaveAccount}
           </button>
           {!isSignUp && <div className="mt-1">
