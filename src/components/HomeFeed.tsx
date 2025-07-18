@@ -1,16 +1,20 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense, lazy } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import AppHeader from "./AppHeader";
 import PostList from "./PostList";
-import DetailedPostView from "./DetailedPostView";
-import EditCaptionModal from "./EditCaptionModal";
-import DeleteConfirmDialog from "./DeleteConfirmDialog";
-import PostInfoModal from "./PostInfoModal";
+import ErrorBoundary from "./ErrorBoundary";
 import { usePosts } from "@/hooks/usePosts";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
+// Lazy load heavy components
+const DetailedPostView = lazy(() => import("./DetailedPostView"));
+const EditCaptionModal = lazy(() => import("./EditCaptionModal"));
+const DeleteConfirmDialog = lazy(() => import("./DeleteConfirmDialog"));
+const PostInfoModal = lazy(() => import("./PostInfoModal"));
 
 interface HomeFeedProps {
   postsData: ReturnType<typeof usePosts>;
@@ -20,7 +24,21 @@ interface HomeFeedProps {
 const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const { posts, loading, refreshing, refreshPosts, handleLike, handleSave, handleComment, handleEditPost, handleDeletePost } = postsData;
+  const { trackUserAction, trackApiCall, logPerformanceReport } = usePerformanceMonitor('HomeFeed');
+  
+  const { 
+    posts, 
+    loading, 
+    refreshing, 
+    error,
+    refreshPosts, 
+    handleLike, 
+    handleSave, 
+    handleComment, 
+    handleEditPost, 
+    handleDeletePost 
+  } = postsData;
+
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -29,13 +47,13 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
   const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set());
   const [isPulling, setIsPulling] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const startY = useRef(0);
   const currentY = useRef(0);
   
-  // Scroll position management
+  // Performance optimized scroll restoration
   const savedScrollPosition = useRef<number>(0);
   const isRestoringScroll = useRef(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const editingPost = editingPostId ? posts.find(p => p.id === editingPostId) : null;
 
@@ -200,9 +218,24 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
     setPullDistance(0);
   };
 
+  // Enhanced error handling
+  const handleError = (error: Error, context: string) => {
+    console.error(`Error in ${context}:`, error);
+    toast.error(`Something went wrong with ${context}. Please try again.`);
+  };
+
+  // Optimized refresh with error handling
   const handleRefreshClick = async () => {
-    await refreshPosts(true);
-    toast.success(t.feed.refreshFeed);
+    const endTracking = trackUserAction('manual-refresh');
+    
+    try {
+      await refreshPosts(true);
+      toast.success(t.feed.refreshFeed);
+    } catch (error) {
+      handleError(error as Error, 'refresh');
+    } finally {
+      endTracking();
+    }
   };
 
   const handleSaveEdit = async (caption: string, hashtags: string) => {
@@ -235,7 +268,36 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
     setInfoModalOpen(true);
   };
 
+  // Performance monitoring on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      logPerformanceReport();
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [logPerformanceReport]);
+
   const selectedPost = selectedPostId ? posts.find(p => p.id === selectedPostId) : null;
+
+  // Error state handling
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Failed to load posts
+          </h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={handleRefreshClick}
+            className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return <LoadingSpinner text={t.feed.loadingFeed} />;
@@ -243,9 +305,11 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
 
   if (selectedPost) {
     return (
-      <div className="min-h-screen bg-gray-100">
-        <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} onProfileClick={onProfileClick} />
-        <DetailedPostView
+      <ErrorBoundary>
+        <div className="min-h-screen bg-gray-100">
+          <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} onProfileClick={onProfileClick} />
+          <Suspense fallback={<LoadingSpinner />}>
+            <DetailedPostView
         post={{
           id: selectedPost.id,
           image: selectedPost.image_url,
@@ -278,96 +342,100 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
         onDelete={handleDelete}
         onInfo={handleInfo}
         />
-      </div>
+          </Suspense>
+        </div>
+      </ErrorBoundary>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} onProfileClick={onProfileClick} />
-      
-      {/* Pull to refresh indicator */}
-      {isPulling && (
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gray-100">
+        <AppHeader onRefresh={handleRefreshClick} refreshing={refreshing} onProfileClick={onProfileClick} />
+        
+        {/* Pull to refresh indicator */}
+        {isPulling && (
+          <div 
+            className="fixed top-16 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-4 py-2 rounded-full text-sm z-30 transition-all duration-200"
+            style={{ transform: `translate(-50%, ${Math.min(pullDistance - 20, 40)}px)` }}
+          >
+            {pullDistance > 60 ? t.common.loading : t.feed.pullToRefresh}
+          </div>
+        )}
+        
         <div 
-          className="fixed top-16 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-4 py-2 rounded-full text-sm z-30 transition-all duration-200"
-          style={{ transform: `translate(-50%, ${Math.min(pullDistance - 20, 40)}px)` }}
+          ref={scrollContainerRef}
+          className="overflow-auto"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          style={{ 
+            height: '100vh', 
+            paddingTop: isPulling ? `${Math.min(pullDistance * 0.5, 50)}px` : '0',
+            transition: isPulling ? 'none' : 'padding-top 0.3s ease-out'
+          }}
         >
-          {pullDistance > 60 ? t.common.loading : t.feed.pullToRefresh}
+          <PostList
+            posts={posts.map(post => ({
+              ...post,
+              isSaved: savedPostIds.has(post.id)
+            }))}
+            onLike={handleLike}
+            onSave={handleSaveWithRefresh}
+            onComment={handleComment}
+            onShare={() => {}}
+            onPostClick={handlePostClick}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onInfo={handleInfo}
+            loadingMore={postsData.loadingMore}
+            hasMore={postsData.hasMore}
+            onLoadMore={postsData.loadMorePosts}
+          />
         </div>
-      )}
-      
-      <div 
-        ref={scrollContainerRef}
-        className="overflow-auto"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        style={{ 
-          height: '100vh', 
-          paddingTop: isPulling ? `${Math.min(pullDistance * 0.5, 50)}px` : '0',
-          transition: isPulling ? 'none' : 'padding-top 0.3s ease-out'
-        }}
-      >
-        <PostList
-        posts={posts.map(post => ({
-          ...post,
-          isSaved: savedPostIds.has(post.id)
-        }))}
-        onLike={handleLike}
-        onSave={handleSaveWithRefresh}
-        onComment={handleComment}
-        onShare={() => {}}
-        onPostClick={handlePostClick}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onInfo={handleInfo}
-        loadingMore={postsData.loadingMore}
-        hasMore={postsData.hasMore}
-        onLoadMore={postsData.loadMorePosts}
-      />
+        
+        {/* Lazy loaded modals */}
+        <Suspense fallback={null}>
+          <EditCaptionModal
+            isOpen={editModalOpen}
+            onClose={() => {
+              setEditModalOpen(false);
+              setEditingPostId(null);
+            }}
+            onSave={handleSaveEdit}
+            currentCaption={editingPost?.caption || ''}
+            currentHashtags={`#${editingPost?.title.replace(/\s+/g, '')} #Wildlife`}
+            postTitle={editingPost?.title || ''}
+          />
+
+          <DeleteConfirmDialog
+            isOpen={deleteDialogOpen}
+            onClose={() => {
+              setDeleteDialogOpen(false);
+              setEditingPostId(null);
+            }}
+            onConfirm={handleConfirmDelete}
+            postTitle={editingPost?.title || ''}
+          />
+
+          <PostInfoModal
+            isOpen={infoModalOpen}
+            onClose={() => {
+              setInfoModalOpen(false);
+              setEditingPostId(null);
+            }}
+            post={{
+              id: editingPost?.id || '',
+              title: editingPost?.title || '',
+              userName: getDisplayName(editingPost?.profiles),
+              userAvatar: editingPost?.profiles?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+              uploadDate: editingPost?.created_at || '',
+              aiSource: 'OpenAI Vision API'
+            }}
+          />
+        </Suspense>
       </div>
-      
-      {/* Edit Caption Modal */}
-      <EditCaptionModal
-        isOpen={editModalOpen}
-        onClose={() => {
-          setEditModalOpen(false);
-          setEditingPostId(null);
-        }}
-        onSave={handleSaveEdit}
-        currentCaption={editingPost?.caption || ''}
-        currentHashtags={`#${editingPost?.title.replace(/\s+/g, '')} #Wildlife`}
-        postTitle={editingPost?.title || ''}
-      />
-
-      {/* Delete Confirmation Dialog */}
-      <DeleteConfirmDialog
-        isOpen={deleteDialogOpen}
-        onClose={() => {
-          setDeleteDialogOpen(false);
-          setEditingPostId(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        postTitle={editingPost?.title || ''}
-      />
-
-      {/* Post Info Modal */}
-      <PostInfoModal
-        isOpen={infoModalOpen}
-        onClose={() => {
-          setInfoModalOpen(false);
-          setEditingPostId(null);
-        }}
-        post={{
-          id: editingPost?.id || '',
-          title: editingPost?.title || '',
-          userName: getDisplayName(editingPost?.profiles),
-          userAvatar: editingPost?.profiles?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
-          uploadDate: editingPost?.created_at || '',
-          aiSource: 'OpenAI Vision API'
-        }}
-      />
-    </div>
+    </ErrorBoundary>
   );
 };
 

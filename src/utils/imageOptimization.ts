@@ -1,8 +1,8 @@
 
-// Image optimization utilities
-export const compressImage = (file: File, maxWidth = 1024, quality = 0.8): Promise<File> => {
+// Enhanced image optimization utilities with better compression
+export const compressImage = (file: File, maxWidth = 800, quality = 0.7): Promise<File> => {
   return new Promise((resolve, reject) => {
-    console.log('Compressing image:', file.name, 'maxWidth:', maxWidth, 'quality:', quality);
+    console.log('Starting advanced compression for:', file.name, 'Size:', file.size);
     
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -16,9 +16,7 @@ export const compressImage = (file: File, maxWidth = 1024, quality = 0.8): Promi
 
     img.onload = () => {
       try {
-        console.log('Image loaded, original dimensions:', img.width, 'x', img.height);
-        
-        // Calculate new dimensions
+        // Calculate optimal dimensions
         const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
         const newWidth = Math.floor(img.width * ratio);
         const newHeight = Math.floor(img.height * ratio);
@@ -26,9 +24,9 @@ export const compressImage = (file: File, maxWidth = 1024, quality = 0.8): Promi
         canvas.width = newWidth;
         canvas.height = newHeight;
 
-        console.log('New dimensions:', newWidth, 'x', newHeight);
-
-        // Draw and compress
+        // Use better image rendering
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, newWidth, newHeight);
         
         canvas.toBlob(
@@ -38,58 +36,61 @@ export const compressImage = (file: File, maxWidth = 1024, quality = 0.8): Promi
                 type: 'image/jpeg',
                 lastModified: Date.now(),
               });
-              console.log('Compression successful, new size:', compressedFile.size);
+              
+              const compressionRatio = ((file.size - compressedFile.size) / file.size * 100).toFixed(1);
+              console.log(`Compression successful: ${file.size} -> ${compressedFile.size} bytes (${compressionRatio}% reduction)`);
               resolve(compressedFile);
             } else {
-              console.error('Failed to create blob from canvas');
-              reject(new Error('Failed to create blob from canvas'));
+              reject(new Error('Failed to create compressed blob'));
             }
           },
           'image/jpeg',
           quality
         );
       } catch (error) {
-        console.error('Error during image processing:', error);
+        console.error('Error during compression:', error);
         reject(error);
       }
     };
 
-    img.onerror = (error) => {
-      console.error('Error loading image:', error);
-      reject(new Error('Failed to load image'));
-    };
-
-    // Create object URL for the image
-    try {
-      img.src = URL.createObjectURL(file);
-    } catch (error) {
-      console.error('Error creating object URL:', error);
-      reject(new Error('Failed to create object URL'));
-    }
+    img.onerror = () => reject(new Error('Failed to load image for compression'));
+    img.src = URL.createObjectURL(file);
   });
 };
 
-// Create optimized image URL
-export const createOptimizedImageUrl = (url: string, width?: number) => {
-  if (!width) return url;
+// Progressive image loading
+export const createProgressiveImageUrl = (url: string, size: 'thumb' | 'medium' | 'full' = 'medium') => {
+  if (!url || url.startsWith('data:')) return url;
   
-  // For Supabase storage, we could add resize parameters
-  // For now, return as-is since Lovable handles optimization
+  const sizeParams = {
+    thumb: { width: 200, quality: 60 },
+    medium: { width: 400, quality: 75 },
+    full: { width: 800, quality: 85 }
+  };
+  
+  const params = sizeParams[size];
+  
+  // For Supabase storage URLs
+  if (url.includes('.supabase.co/storage/')) {
+    return `${url}?width=${params.width}&quality=${params.quality}&format=webp`;
+  }
+  
+  // For other URLs (like Unsplash)
+  if (url.includes('unsplash.com')) {
+    return `${url}&w=${params.width}&q=${params.quality}&fm=webp&auto=compress`;
+  }
+  
   return url;
 };
 
-// Lazy load images with Intersection Observer
-export const lazyLoadImage = (img: HTMLImageElement, src: string) => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        img.src = src;
-        img.classList.remove('lazy');
-        observer.unobserve(img);
-      }
-    });
-  });
-
-  observer.observe(img);
-  return observer;
+// Preload critical images
+export const preloadImages = (urls: string[]) => {
+  return Promise.all(
+    urls.map(url => new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = createProgressiveImageUrl(url, 'thumb');
+    }))
+  );
 };
