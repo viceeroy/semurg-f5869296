@@ -41,7 +41,7 @@ export const fetchPosts = async (page: number = 0, pageSize: number = 10): Promi
           last_name, 
           avatar_url
         ),
-        likes!inner (count),
+        likes (user_id),
         comments!inner (
           id,
           user_id,
