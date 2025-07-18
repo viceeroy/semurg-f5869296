@@ -10,11 +10,13 @@ export const fetchPosts = async (page: number = 0, pageSize: number = 10): Promi
   
   const cacheKey = `posts-${page}-${pageSize}`;
   
-  // Check cache first
-  const cachedPosts = advancedCache.get<Post[]>(cacheKey);
-  if (cachedPosts) {
-    console.log('Returning cached posts');
-    return cachedPosts;
+  // Check cache first (only for page 0 to avoid stale pagination)
+  if (page === 0) {
+    const cachedPosts = advancedCache.get<Post[]>(cacheKey);
+    if (cachedPosts) {
+      console.log('Returning cached posts for page 0');
+      return cachedPosts;
+    }
   }
 
   try {
@@ -72,9 +74,9 @@ export const fetchPosts = async (page: number = 0, pageSize: number = 10): Promi
       comments: Array.isArray(post.comments) ? post.comments : []
     }));
 
-    // Cache successful results
-    if (transformedData.length > 0) {
-      advancedCache.set(cacheKey, transformedData, 300000); // Cache for 5 minutes
+    // Cache successful results (only cache page 0 to avoid stale pagination)
+    if (transformedData.length > 0 && page === 0) {
+      advancedCache.set(cacheKey, transformedData, 180000); // Cache for 3 minutes
     }
 
     return transformedData;

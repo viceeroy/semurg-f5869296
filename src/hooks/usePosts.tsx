@@ -21,14 +21,14 @@ export const usePosts = () => {
   const [error, setError] = useState<string | null>(null);
   const pageSize = 10;
 
-  // Advanced caching for posts
+  // Advanced caching for initial posts only
   const { 
     data: cachedPosts, 
     loading: cacheLoading, 
     refetch: refetchCached 
   } = useAdvancedCache(
-    `posts-page-${currentPage}`,
-    () => fetchPostsService(currentPage, pageSize),
+    `posts-page-0`,
+    () => fetchPostsService(0, pageSize),
     { 
       ttl: 300000, // 5 minutes
       staleWhileRevalidate: true 
@@ -131,29 +131,33 @@ export const usePosts = () => {
   const { handleLike, handleSave, handleComment } = usePostActions(user, posts, refreshPosts);
   const { handleEditPost, handleDeletePost } = usePostMutations(user, posts, setPosts);
 
-  // Use cached data when available
+  // Use cached data when available for initial load only
   useEffect(() => {
-    if (cachedPosts && !cacheLoading) {
+    if (cachedPosts && !cacheLoading && currentPage === 0 && posts.length === 0) {
       setPosts(cachedPosts);
+      setHasMore(cachedPosts.length === pageSize);
       setLoading(false);
     }
-  }, [cachedPosts, cacheLoading]);
+  }, [cachedPosts, cacheLoading, currentPage, posts.length, pageSize]);
 
   useEffect(() => {
     let isMounted = true;
     
     const initializePosts = async () => {
-      if (isMounted) {
+      if (isMounted && posts.length === 0 && !loading) {
         await fetchPosts();
       }
     };
     
-    initializePosts();
+    // Only fetch if we don't have cached data
+    if (!cachedPosts || cacheLoading) {
+      initializePosts();
+    }
     
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, []); // Remove dependencies to prevent re-fetching
 
   // Performance optimization: throttled scroll detection
   useEffect(() => {

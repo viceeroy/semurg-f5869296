@@ -1,6 +1,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { compressImageUrl } from '../utils/imageCompression';
 
 interface OptimizedPostImageProps {
   src: string;
@@ -25,24 +26,10 @@ const OptimizedPostImage = ({
   const [hasError, setHasError] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
-  // Generate optimized image URL for mobile
-  const getOptimizedSrc = (originalSrc: string, targetWidth: number = 400) => {
-    console.log('Getting optimized src for:', originalSrc);
-    
-    // For large base64 images, we should handle them differently
-    if (originalSrc.startsWith('data:image/') && originalSrc.length > 50000) {
-      console.warn('Large base64 image detected, performance may be impacted');
-      // In a real app, you'd want to upload these to storage and use URLs instead
-    }
-    
-    // For mobile, we want smaller images for better performance
-    const isMobile = window.innerWidth < 768;
-    if (isMobile && originalSrc.includes('unsplash.com')) {
-      const optimizedUrl = `${originalSrc}&w=${targetWidth}&q=75&fm=webp`;
-      console.log('Optimized URL for mobile:', optimizedUrl);
-      return optimizedUrl;
-    }
-    return originalSrc;
+  // Use the centralized compression utility
+  const getOptimizedSrc = (originalSrc: string) => {
+    // The compression utility handles all optimization logic
+    return compressImageUrl(originalSrc, 'medium');
   };
 
   useEffect(() => {
@@ -68,11 +55,10 @@ const OptimizedPostImage = ({
 
   useEffect(() => {
     if (isInView && src) {
-      const optimizedSrc = getOptimizedSrc(src, width);
-      console.log('Setting image src:', optimizedSrc);
+      const optimizedSrc = getOptimizedSrc(src);
       setImageSrc(optimizedSrc);
     }
-  }, [isInView, src, width]);
+  }, [isInView, src]);
 
   const handleImageLoad = () => {
     console.log('Image loaded successfully:', imageSrc);
