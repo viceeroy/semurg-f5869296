@@ -3,7 +3,7 @@ import LoadingSpinner from "./LoadingSpinner";
 import AppHeader from "./AppHeader";
 import PostList from "./PostList";
 import ErrorBoundary from "./ErrorBoundary";
-import { usePosts } from "@/hooks/usePosts";
+import { useSimplePosts } from "@/hooks/useSimplePosts";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
@@ -17,7 +17,7 @@ const DeleteConfirmDialog = lazy(() => import("./DeleteConfirmDialog"));
 const PostInfoModal = lazy(() => import("./PostInfoModal"));
 
 interface HomeFeedProps {
-  postsData: ReturnType<typeof usePosts>;
+  postsData: ReturnType<typeof useSimplePosts>;
   onProfileClick?: () => void;
 }
 
@@ -30,7 +30,6 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
     posts, 
     loading, 
     refreshing, 
-    error,
     refreshPosts, 
     handleLike, 
     handleSave, 
@@ -279,26 +278,7 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
 
   const selectedPost = selectedPostId ? posts.find(p => p.id === selectedPostId) : null;
 
-  // Error state handling
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Failed to load posts
-          </h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={handleRefreshClick}
-            className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+  // Loading state handling
   if (loading) {
     return <LoadingSpinner text={t.feed.loadingFeed} />;
   }

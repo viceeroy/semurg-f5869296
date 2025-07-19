@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAuth, AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { usePosts } from "@/hooks/usePosts";
+import { useSimplePosts } from "@/hooks/useSimplePosts";
 import { useProfile } from "@/hooks/useProfile";
 import { useSearch } from "@/hooks/useSearch";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -19,7 +19,7 @@ const MainApp = () => {
   const { user, loading } = useAuth();
   const { t } = useLanguage();
   const isMobile = useIsMobile();
-  const postsData = usePosts();
+  const postsData = useSimplePosts();
   const profileData = useProfile();
   const searchData = useSearch(postsData.posts);
   const [activeTab, setActiveTab] = useState("home");
