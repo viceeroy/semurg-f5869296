@@ -135,7 +135,8 @@ export const usePosts = () => {
   useEffect(() => {
     if (cachedPosts && !cacheLoading && currentPage === 0 && posts.length === 0) {
       setPosts(cachedPosts);
-      setHasMore(cachedPosts.length === pageSize);
+      // Always set hasMore to true for first page unless we get less than pageSize
+      setHasMore(cachedPosts.length >= pageSize);
       setLoading(false);
     }
   }, [cachedPosts, cacheLoading, currentPage, posts.length, pageSize]);
