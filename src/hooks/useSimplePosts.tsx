@@ -42,7 +42,10 @@ export const useSimplePosts = () => {
         .order('created_at', { ascending: false })
         .range(from, to);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching posts:', error);
+        throw error;
+      }
 
       const transformedData = (data || []).map(post => ({
         ...post,
@@ -109,7 +112,7 @@ export const useSimplePosts = () => {
     loadInitialPosts();
   }, [fetchPosts]);
 
-  const { handleLike, handleSave, handleComment } = usePostActions(user, posts, refreshPosts);
+  const { handleLike, handleSave, handleComment } = usePostActions(user, posts, () => refreshPosts(false));
   const { handleEditPost, handleDeletePost } = usePostMutations(user, posts, setPosts);
 
   return {

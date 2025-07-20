@@ -30,7 +30,10 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
     posts, 
     loading, 
     refreshing, 
-    refreshPosts, 
+    loadingMore,
+    hasMore,
+    refreshPosts,
+    loadMorePosts,
     handleLike, 
     handleSave, 
     handleComment, 
@@ -368,9 +371,9 @@ const HomeFeed = ({ postsData, onProfileClick }: HomeFeedProps) => {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onInfo={handleInfo}
-            loadingMore={postsData.loadingMore}
-            hasMore={postsData.hasMore}
-            onLoadMore={postsData.loadMorePosts}
+            loadingMore={loadingMore}
+            hasMore={hasMore}
+            onLoadMore={loadMorePosts}
           />
         </div>
         
