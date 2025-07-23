@@ -25,35 +25,29 @@ export const useFollows = () => {
 
       const followingIds = currentFollowing?.map(f => f.following_id) || [];
 
-      // Get followers with profile data
+      // Get followers with profile data - using manual join approach
       const { data: followersData } = await supabase
         .from('follows')
-        .select(`
-          follower_id,
-          profiles!follows_follower_id_fkey (
-            id,
-            username,
-            first_name,
-            last_name,
-            avatar_url
-          )
-        `)
+        .select('follower_id')
         .eq('following_id', user.id);
 
-      // Get following with profile data
+      const followerIds = followersData?.map(f => f.follower_id) || [];
+      const { data: followerProfiles } = await supabase
+        .from('profiles')
+        .select('id, username, first_name, last_name, avatar_url')
+        .in('id', followerIds);
+
+      // Get following with profile data - using manual join approach  
       const { data: followingData } = await supabase
         .from('follows')
-        .select(`
-          following_id,
-          profiles!follows_following_id_fkey (
-            id,
-            username,
-            first_name,
-            last_name,
-            avatar_url
-          )
-        `)
+        .select('following_id')
         .eq('follower_id', user.id);
+
+      const followingProfileIds = followingData?.map(f => f.following_id) || [];
+      const { data: followingProfiles } = await supabase
+        .from('profiles')
+        .select('id, username, first_name, last_name, avatar_url')
+        .in('id', followingProfileIds);
 
       // Get suggested users (exclude current user and already followed users)
       const excludeIds = [user.id, ...followingIds];
@@ -74,10 +68,21 @@ export const useFollows = () => {
         .select('id', { count: 'exact' })
         .eq('follower_id', user.id);
 
-      setFollowers(followersData || []);
-      setFollowing(followingData || []);
-      setFollowerCount(followerCountData?.length || 0);
-      setFollowingCount(followingCountData?.length || 0);
+      // Map profile data to followers and following arrays
+      const mappedFollowers = followerProfiles?.map(profile => ({
+        follower_id: profile.id,
+        profiles: profile
+      })) || [];
+      
+      const mappedFollowing = followingProfiles?.map(profile => ({
+        following_id: profile.id,
+        profiles: profile
+      })) || [];
+
+      setFollowers(mappedFollowers);
+      setFollowing(mappedFollowing);
+      setFollowerCount(followerIds.length);
+      setFollowingCount(followingProfileIds.length);
       setSuggestedUsers(suggestedData || []);
 
     } catch (error) {

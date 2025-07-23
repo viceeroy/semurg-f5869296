@@ -34,7 +34,9 @@ export const useSimplePosts = () => {
           caption,
           category,
           created_at,
-          profiles!inner (username, first_name, last_name, avatar_url),
+          confidence,
+          scientific_name,
+          profiles (username, first_name, last_name, avatar_url),
           likes (user_id),
           comments (id, user_id, content, created_at, profiles (username, first_name, last_name))
         `)
