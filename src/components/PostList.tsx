@@ -1,3 +1,4 @@
+
 import React from "react";
 import PostCard from "./PostCard";
 import PostListSkeleton from "./PostListSkeleton";
@@ -73,9 +74,7 @@ const PostList = ({ posts, onLike, onSave, onComment, onShare, onPostClick, onEd
               id: post.id,
               image: post.image_url,
               speciesName: post.title,
-              aiInfo: (post.description || '').length > 200 ? 
-                (post.description || '').substring(0, 200) + '...' : 
-                (post.description || ''), // Show abbreviated description in feed
+              aiInfo: post.description || '', // Pass full description, let PostCardContent handle truncation
               userNotes: post.caption || '', // Use caption field for user notes
               userName: getDisplayName(post.profiles),
               userAvatar: post.profiles?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
