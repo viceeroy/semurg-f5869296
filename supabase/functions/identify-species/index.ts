@@ -106,7 +106,7 @@ Always return valid JSON. Do not include any text before or after the JSON objec
             ]
           }
         ],
-        max_tokens: 1200, // Reduced from 1500
+        max_tokens: 2000, // Increased to allow full detailed responses
         temperature: 0.1 // Reduced for faster, more consistent responses
       }),
     });
@@ -209,7 +209,7 @@ IMPORTANT: If this is not a real wildlife species, set category to "not_wildlife
 Image: ${imageUrl}`
             }
           ],
-          max_tokens: 1000, // Reduced for retry
+          max_tokens: 1500, // Increased for retry to allow complete responses
           temperature: 0.1
         }),
       });
